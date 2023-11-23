@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 export default function Login({
   searchParams,
 }: {
-  searchParams: { message: string };
+  searchParams: { message: string; signin: string };
 }) {
   const signIn = async (formData: FormData) => {
     "use server";
@@ -53,10 +53,10 @@ export default function Login({
   };
 
   return (
-    <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
+    <div className="flex-1 flex flex-col w-full px-8 justify-center gap-2">
       <Link
         href="/"
-        className="absolute left-8 top-8 py-2 px-4 rounded-md no-underline text-foreground bg-btn-background hover:bg-btn-background-hover flex items-center group text-sm">
+        className="py-2 px-4 mt-10 rounded-md no-underline text-foreground bg-btn-background hover:bg-btn-background-hover flex items-center group text-sm">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -73,8 +73,19 @@ export default function Login({
         Back
       </Link>
 
+      {searchParams.signin !== "true" && (
+        <div className="flex gap-1 self-center mt-20">
+          <h3>If you already have an account</h3>
+          <Link
+            href="/login?signin=true"
+            className="underline underline-offset-4">
+            {" "}
+            Log in
+          </Link>
+        </div>
+      )}
       <form
-        className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground"
+        className="animate-in max-w-[500px] mb-10 flex-1 flex flex-col w-full self-center justify-center gap-2 text-foreground"
         action={signIn}>
         <label className="text-md" htmlFor="email">
           Email
@@ -95,16 +106,20 @@ export default function Login({
           placeholder="••••••••"
           required
         />
-        <button className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2">
-          Sign In
-        </button>
-        <button
-          formAction={signUp}
-          className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2">
-          Sign Up
-        </button>
+        {searchParams.signin === "true" ? (
+          <button className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2">
+            Sign In
+          </button>
+        ) : (
+          <button
+            formAction={signUp}
+            className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2">
+            Sign Up
+          </button>
+        )}
+
         {searchParams?.message && (
-          <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
+          <p className="mt-4 p-4 text-red-600 text-center">
             {searchParams.message}
           </p>
         )}
