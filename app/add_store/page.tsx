@@ -4,72 +4,62 @@ import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { handleInsertStore } from "@/lib/insertsupabase";
 
-const FormAddProducts: React.FC = () => {
-  const [addCollection, setAddCollection] = useState(false);
+const FormAddStore: React.FC = () => {
+  const [addComment, setAddComment] = useState(false);
 
   return (
-    <form action={(formData) => handleInsertStore(formData)}>
-      <label htmlFor="pageName">Name of your store</label>
-      <Input
-        type="text"
-        name="pageName"
-        id="pageName"
-        placeholder="Name of the product"
-      />
-      <label htmlFor="pageDescription">Description of your Store</label>
-      <Input
-        type="text"
-        name="pageDescription"
-        id="pageDescription"
-        placeholder="Description of the product"
-      />
-      <label htmlFor="collectionName">Name of collection</label>
-      <Input
-        type="text"
-        name="collectionName"
-        id="collectionName"
-        placeholder="Name of the product"
-      />
-      <label htmlFor="collectionDescription">Description of collection</label>
-      <Input
-        type="text"
-        name="collectionDescription"
-        id="collectionDescription"
-        placeholder="Name of the product"
-      />
-      {addCollection && (
-        <>
-          <label htmlFor="collectionName">Name of collection</label>
+    <div className="mt-10 mx-2 max-w-[500px]">
+      <h3 className="">Hi! Let's get started 💚 </h3>
+      {/* <h3 className="">Lest's talk about your store</h3> */}
+
+      <form
+        action={(formData) => handleInsertStore(formData)}
+        className="h-full">
+        <div className="text-3xl mt-6">
+          <label htmlFor="siteName">What is your store's name?</label>
           <Input
             type="text"
-            name="collectionName"
-            id="collectionName"
-            placeholder="Name of the product"
+            className="mt-2"
+            name="siteName"
+            required
+            onFocus={() => setAddComment(true)}
+            onBlur={() => setAddComment(false)}
+            placeholder="Name of your store"
           />
-          <label htmlFor="collectionDescription">
-            Description of collection
+          {addComment && (
+            <h3 className="text-gray-400 text-sm">
+              Don't worry, you can change this info later
+            </h3>
+          )}
+        </div>
+        <div className="text-3xl mt-6">
+          <label htmlFor="siteDescription">
+            What is your site about? (optional)
           </label>
           <Input
+            className="mt-2"
             type="text"
-            name="collectionDescription"
-            id="collectionDescription"
-            placeholder="Name of the product"
+            name="siteDescription"
+            placeholder="Description of your store of some key word"
           />
-        </>
-      )}
-      {/* <button
-        className="px-6 py-4 border border-red-500 rounded-lg mr-4"
-        onClick={() => setAddCollection(true)}>
-        +
-      </button> */}
-
-      <button
-        className="px-6 py-4 border border-blue-500 rounded-lg"
-        type="submit">
-        submit
-      </button>
-    </form>
+        </div>
+        <div className="text-3xl mt-6">
+          <label htmlFor="siteLocation">Where is your business located?</label>
+          <Input
+            className="mt-2"
+            type="text"
+            name="siteLocation"
+            placeholder="Location of the product"
+          />
+        </div>
+        <button
+          className="px-6 py-4 border border-emerald-300 rounded-lg mt-6"
+          type="submit">
+          submit
+        </button>
+      </form>
+    </div>
   );
 };
 
-export default FormAddProducts;
+export default FormAddStore;
