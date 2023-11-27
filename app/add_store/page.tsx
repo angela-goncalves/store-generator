@@ -1,65 +1,31 @@
-"use client";
+import Form_add_store from "@/components/forms/Form_add_store";
+import Link from "next/link";
 
-import React, { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { handleInsertStore } from "@/lib/insertsupabase";
-
-const FormAddStore: React.FC = () => {
-  const [addComment, setAddComment] = useState(false);
-
+const AddStorePage: React.FC = () => {
   return (
-    <div className="mt-10 mx-2 max-w-[500px]">
+    <div className="mt-10 mx-2 w-full flex flex-col items-center ">
+      <Link
+        href="/"
+        className="py-2 px-4 self-start mt-6 rounded-md no-underline text-foreground bg-btn-background hover:bg-btn-background-hover flex items-center group text-sm">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1">
+          <polyline points="15 18 9 12 15 6" />
+        </svg>
+        Back
+      </Link>
       <h3 className="">Hi! Let's get started 💚 </h3>
-      {/* <h3 className="">Lest's talk about your store</h3> */}
-
-      <form
-        action={(formData) => handleInsertStore(formData)}
-        className="h-full">
-        <div className="text-3xl mt-6">
-          <label htmlFor="siteName">What is your store's name?</label>
-          <Input
-            type="text"
-            className="mt-2"
-            name="siteName"
-            required
-            onFocus={() => setAddComment(true)}
-            onBlur={() => setAddComment(false)}
-            placeholder="Name of your store"
-          />
-          {addComment && (
-            <h3 className="text-gray-400 text-sm">
-              Don't worry, you can change this info later
-            </h3>
-          )}
-        </div>
-        <div className="text-3xl mt-6">
-          <label htmlFor="siteDescription">
-            What is your site about? (optional)
-          </label>
-          <Input
-            className="mt-2"
-            type="text"
-            name="siteDescription"
-            placeholder="Description of your store of some key word"
-          />
-        </div>
-        <div className="text-3xl mt-6">
-          <label htmlFor="siteLocation">Where is your business located?</label>
-          <Input
-            className="mt-2"
-            type="text"
-            name="siteLocation"
-            placeholder="Location of the product"
-          />
-        </div>
-        <button
-          className="px-6 py-4 border border-emerald-300 rounded-lg mt-6"
-          type="submit">
-          submit
-        </button>
-      </form>
+      <Form_add_store />
     </div>
   );
 };
 
-export default FormAddStore;
+export default AddStorePage;
