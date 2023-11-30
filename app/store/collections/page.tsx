@@ -19,7 +19,9 @@ export default async function Collections({
   // console.log("dataCollections", dataCollections);
 
   if (dataCollections === null || error !== null) {
-    redirect("&message=collections errors");
+    redirect(
+      `/store?id=${searchParams.id}/collections&message=collections errors`
+    );
   }
   // console.log("id in collections", searchParams.id);
   // console.log("searchParams.id", searchParams.id);
@@ -38,7 +40,7 @@ export default async function Collections({
       )}
       <Link
         href={{
-          pathname: "/store/add_collections",
+          pathname: "/store/collections/add_collections",
           query: { id: searchParams.id },
         }}
         className="text-blue-400">

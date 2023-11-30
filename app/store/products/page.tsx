@@ -16,7 +16,7 @@ export default async function Products({
     .select();
 
   if (dataProducts === null || error !== null) {
-    redirect("store?id=${searchParams.id}/products&message=products-errors");
+    redirect(`store?id=${searchParams.id}/products&message=products-errors`);
   }
 
   return (
@@ -33,7 +33,10 @@ export default async function Products({
         <h3>Don't have products yet</h3>
       )}
       <Link
-        href={`store?id=${searchParams.id}/products/add_products`}
+        href={{
+          pathname: `/store/products/add_products`,
+          query: `${searchParams.id}`,
+        }}
         className="text-blue-400">
         Add Products
       </Link>

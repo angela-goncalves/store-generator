@@ -16,7 +16,7 @@ export const getStore = async (id: UUID) => {
 
   if (data === null || error !== null) {
     redirect(
-      `/store?id${id}&message=something-went-wrong-with-stores-in-sidebar`
+      `/store?id=${id}&message=something-went-wrong-with-stores-in-sidebar`
     );
   }
   return data;
@@ -28,18 +28,18 @@ export const getCollections = async (id: UUID) => {
     .select()
     .eq("store_id", id);
   if (dataCollections === null || collectionsError !== null) {
-    redirect(`&message=collections-error`);
+    redirect(`/store?id=${id}/collections&message=collections-error`);
   }
   return dataCollections;
 };
 
-export const getProducts = async () => {
+export const getProducts = async (id: UUID) => {
   const { data: dataProducts, error: productsError } = await supabase
     .from("products")
     .select();
 
   if (dataProducts === null || productsError !== null) {
-    redirect(`&message=products-error`);
+    redirect(`/store?id=${id}/&message=products-error`);
   }
   return dataProducts;
 };
