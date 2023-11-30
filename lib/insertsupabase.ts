@@ -3,7 +3,6 @@ import { createClient } from "@/utils/supabase/server";
 import { UUID } from "crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { NextResponse } from "next/server";
 
 const cookieStore = cookies();
 const supabase = createClient(cookieStore);
@@ -28,7 +27,7 @@ export const handleInsertStore = async (formData: FormData) => {
         name: siteName,
         description: siteDescription,
         location: siteLocation,
-        user_id: "2ac0d492-170b-4529-a523-21e53dd2eb0d",
+        // user_id: user.id,
       },
     ])
     .select();
@@ -40,9 +39,9 @@ export const handleInsertStore = async (formData: FormData) => {
     redirect("/add_store?message=store error");
   }
 
-  redirect("/store");
-  // else {
-  //   throw new Error("You need to be authenticated");
+  redirect(`/store?id=${data[0].id}`);
+  // } else {
+  //   redirect("/add_store?message=You-need-to-be-authenticated");
   // }
 };
 
@@ -71,13 +70,13 @@ export const handleInsertCollections = async (formData: FormDataData) => {
       {
         name: collectionName,
         description: collectionDescription,
-        user_id: "2ac0d492-170b-4529-a523-21e53dd2eb0d",
+        // user_id: ,
         store_id: store_id,
       },
       {
         name: secondNameCollection,
         description: secondDescription,
-        user_id: "2ac0d492-170b-4529-a523-21e53dd2eb0d",
+        // user_id: ,
         store_id: store_id,
       },
     ])
@@ -88,11 +87,36 @@ export const handleInsertCollections = async (formData: FormDataData) => {
   }
 
   if (collectionsErrors !== null) {
-    redirect("/add_collections?message=collections errors");
+    redirect("add_collections&message=collections errors");
   }
 
   redirect("/collections");
   // } else {
-  //   redirect("/add_collections?message=You need to be authenticated");
+  //   redirect("/add_collections&message=You need to be authenticated");
   // }
+};
+
+export const handleInsertProduct = async (formData: FormData) => {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+  const name = formData.get("name") as string;
+  const description = formData.get("description") as string;
+  const price = formData.get("price");
+
+  const { data, error } = await supabase
+    .from("products")
+    .insert([
+      {
+        name,
+        description,
+        price,
+        // collection_id: searchParams.id,
+        // user_id: ,
+      },
+    ])
+    .select();
+  if (error !== null) {
+    redirect("add_products&message=products-error");
+  }
+  redirect("/products");
 };

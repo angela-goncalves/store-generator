@@ -4,7 +4,11 @@ import { cookies } from "next/headers";
 import React from "react";
 import Link from "next/link";
 
-export default async function Products() {
+export default async function Products({
+  searchParams,
+}: {
+  searchParams: { id: string };
+}) {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
   const { data: dataProducts, error } = await supabase
@@ -12,7 +16,7 @@ export default async function Products() {
     .select();
 
   if (dataProducts === null || error !== null) {
-    redirect("/collections?message=collections errors");
+    redirect("store?id=${searchParams.id}/products&message=products-errors");
   }
 
   return (
@@ -28,7 +32,9 @@ export default async function Products() {
       ) : (
         <h3>Don't have products yet</h3>
       )}
-      <Link href="/store/products/add_collections" className="text-blue-400">
+      <Link
+        href={`store?id=${searchParams.id}/products/add_products`}
+        className="text-blue-400">
         Add Products
       </Link>
     </div>

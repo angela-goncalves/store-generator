@@ -11,14 +11,18 @@ export default async function Collections({
 }) {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
+
   const { data: dataCollections, error } = await supabase
     .from("collections")
     .select();
 
-  if (dataCollections === null || error !== null) {
-    redirect("/collections?message=collections errors");
-  }
+  // console.log("dataCollections", dataCollections);
 
+  if (dataCollections === null || error !== null) {
+    redirect("&message=collections errors");
+  }
+  // console.log("id in collections", searchParams.id);
+  // console.log("searchParams.id", searchParams.id);
   return (
     <div className="w-full">
       {dataCollections.length > 0 ? (
@@ -33,7 +37,10 @@ export default async function Collections({
         <h3>Don't have collection yet</h3>
       )}
       <Link
-        href={`store/collections/add_collections`}
+        href={{
+          pathname: "/store/add_collections",
+          query: { id: searchParams.id },
+        }}
         className="text-blue-400">
         Add collections
       </Link>
