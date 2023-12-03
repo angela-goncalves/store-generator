@@ -2,11 +2,11 @@
 module.exports = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-	],
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
   theme: {
     container: {
       center: true,
@@ -29,6 +29,19 @@ module.exports = {
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
+        },
+        neutral: {
+          light: "hsl(var(--neutral-light))",
+          medium: "hsl(var(--neutral-medium))",
+          dark: "hsl(var(--neutral-dark))",
+          foreground: "hsl(var(--neutral-foreground))",
+        },
+        blackAndWhite: {
+          DEFAULT: "hsl(var(--blackAndWhite))",
+        },
+        btn: {
+          successBg: "hsl(var(--btn-successBg))",
+          foreground: "hsl(var(--btn-successBg-foreground))",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
@@ -73,4 +86,4 @@ module.exports = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+};

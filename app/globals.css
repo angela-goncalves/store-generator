@@ -4,69 +4,77 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
+    --background: 188, 69%, 55%, 10%;
+    --foreground: 187, 57%, 11%;
 
     --card: 0 0% 100%;
     --card-foreground: 0 0% 3.9%;
 
     --btn-background: 200 10% 91%;
-    --btn-background-hover: 200 10% 89%;
+    --btn-background-hover: 188, 69%, 55%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
+    --btn-successBg: 151, 68%, 7%;
+    --btn-successBg-foreground: 150, 64% 53%;
 
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
+    --popover: 188, 69%, 55%;
+    --popover-foreground: 187, 29%, 11%;
 
-    --secondary: 0 0% 96.1%;
+    --primary: 188, 69%, 55%;
+    --primary-foreground: 187, 57%, 11%;
+
+    --secondary: 187, 57%, 11%;
     --secondary-foreground: 0 0% 9%;
 
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
+    --neutral-light: 220, 12%, 95%;
+    --neutral-medium: 218, 13%, 88%;
+    --neutral-dark: 219, 13%, 74%;
+    --neutral-foreground: 218, 76%, 15%;
 
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
+    --muted: 0, 0%, 88%;
+    --muted-foreground: 0, 0%, 88%, 45%;
+
+    --accent: 170, 67%, 93%;
+    --accent-foreground: 169, 74%, 10%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
+    --ring: 205, 58%, 10%;
 
     --radius: 0.5rem;
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background: 200 50% 3%;
-      --btn-background: 200 10% 9%;
-      --btn-background-hover: 200 10% 12%;
-      --foreground: 200 20% 96%;
-    }
-  }
   .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
+    --background: 187, 57%, 11%;
+    --foreground: 188, 69%, 87%;
 
     --card: 0 0% 3.9%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 187, 29%, 11%;
+    --popover-foreground: 206, 100%, 84%;
 
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
+    --primary: 188, 69%, 55%;
+    --primary-foreground: 187, 57%, 11%;
 
-    --secondary: 0 0% 14.9%;
+    --neutral-light: 210, 11%, 7%;
+    --neutral-medium: 210, 11%, 13%;
+    --neutral-dark: 207, 12%, 18%;
+    --neutral-foreground: 210, 22%, 89%;
+
+    --secondary: 167 25% 69%;
     --secondary-foreground: 0 0% 98%;
+
+    --btn-successBg: 150, 64% 53%;
+    --btn-successBg-foreground: 151, 68%, 7%;
 
     --muted: 0 0% 14.9%;
     --muted-foreground: 0 0% 63.9%;
 
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 169, 74%, 10%;
+    --accent-foreground: 170, 67%, 93%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
