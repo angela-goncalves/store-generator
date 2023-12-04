@@ -4,7 +4,7 @@ import React, { ChangeEvent, FormEvent, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { handleInsertCollections } from "@/lib/insertsupabase";
 
-export default function AddCollections() {
+export default function Add_collections_Form() {
   const [add, setAdd] = useState<boolean>(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -25,13 +25,8 @@ export default function AddCollections() {
       additionalDescription: "",
     });
   };
-  // check if with a policy in service_key evething is ok
   return (
-    <div className="my-10 mx-2 max-w-[500px]">
-      <h3 className="">
-        Now, let's add some categories or collections to your store
-      </h3>
-      <h3>Dont worry, you can edit them later</h3>
+    <div className="w-1/2 max-w-[500px]">
       <form action={handleSubmit} className="flex flex-col">
         <div className="text-2xl mt-6">
           <label htmlFor="collectionName">Name</label>
