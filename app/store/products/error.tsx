@@ -1,8 +1,6 @@
-"use client"; // Error components must be Client Components
+"use client";
 
-import { useEffect } from "react";
-
-export default function ErrorCollectionsPage({
+export default function ErrorProductsPage({
   error,
   reset,
 }: {

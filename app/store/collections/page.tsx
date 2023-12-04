@@ -26,7 +26,7 @@ export default async function Collections({
   // console.log("id in collections", searchParams.id);
   // console.log("searchParams.id", searchParams.id);
   return (
-    <div className="w-full">
+    <div className="w-full flex flex-col items-center justify-center">
       {dataCollections.length > 0 ? (
         <div>
           <ul>
@@ -36,7 +36,9 @@ export default async function Collections({
           </ul>
         </div>
       ) : (
-        <h3>Don't have collection yet</h3>
+        <div className="">
+          <h3>Don't have collection yet</h3>
+        </div>
       )}
       <Link
         href={{

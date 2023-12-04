@@ -1,35 +1,24 @@
 import React from "react";
-import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import AuthButton from "./AuthButton";
 
 export default async function NavBar() {
-  const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
-  const { data: dataCollections, error } = await supabase
-    .from("collections")
-    .select();
-  if (dataCollections === null || error !== null) {
-    redirect("/store?message=something went wrong with stores in navbar");
-  }
+  // const cookieStore = cookies();
+  // const supabase = createClient(cookieStore);
+
+  // const { data, error } = await supabase.auth.getSession();
+
+  // const { session } = data;
+  // if (session === null || error !== null) {
+  //   redirect(`/login?signin=true`);
+  // }
   return (
-    <nav className="bg-gray-600 p-8 h-screen">
-      <ul>
-        <li>
-          <Link href="/collections">Collections</Link>
-        </li>
-        <li>
-          <Link href={"/products"}>Products</Link>
-        </li>
-        <li>
-          {dataCollections?.map((item) => (
-            <Link key={item.id} href="/store">
-              {item.name}
-            </Link>
-          ))}
-        </li>
-      </ul>
-    </nav>
+    <div className="w-full bg-white dark:bg-black self-center flex justify-between items-center p-3 text-sm">
+      <Link href="/">store-generator</Link>
+      <AuthButton />
+    </div>
   );
 }

@@ -1,6 +1,6 @@
-"use client"; // Error components must be Client Components
+"use client";
 
-export default function Error({
+export default function ErrorStore({
   error,
   reset,
 }: {

@@ -1,4 +1,4 @@
-import Form_add_store from "@/components/forms/Form_add_store";
+import AddStoreForm from "@/components/forms/addStoreForm";
 import Link from "next/link";
 
 const AddStorePage: React.FC = () => {
@@ -6,7 +6,7 @@ const AddStorePage: React.FC = () => {
     <div className="mt-10 mx-2 w-full flex flex-col items-center ">
       <Link
         href="/"
-        className="py-2 px-4 self-start mt-6 rounded-md no-underline text-foreground bg-btn-background hover:bg-btn-background-hover flex items-center group text-sm">
+        className="py-2 px-4 ml-16 self-start mt-6 rounded-md no-underline text-foreground bg-btn-background hover:bg-btn-background-hover flex items-center group text-sm">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -23,7 +23,7 @@ const AddStorePage: React.FC = () => {
         Back
       </Link>
       <h3 className="">Hi! Let's get started 💚 </h3>
-      <Form_add_store />
+      <AddStoreForm />
     </div>
   );
 };
