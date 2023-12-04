@@ -1,62 +1,25 @@
+"use client";
+
 import Link from "next/link";
-import { headers, cookies } from "next/headers";
-import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
+import { Input } from "@/components/ui/input";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { signIn, signUp } from "@/lib/auth";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export default function Login({
   searchParams,
 }: {
   searchParams: { message: string; signin: string };
 }) {
-  const signIn = async (formData: FormData) => {
-    "use server";
-
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    const cookieStore = cookies();
-    const supabase = createClient(cookieStore);
-
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      return redirect("/login?message=Could not authenticate user");
-    }
-
-    return redirect("/");
-  };
-
-  const signUp = async (formData: FormData) => {
-    "use server";
-
-    const origin = headers().get("origin");
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    const cookieStore = cookies();
-    const supabase = createClient(cookieStore);
-
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${origin}/auth/callback`,
-      },
-    });
-
-    if (error) {
-      return redirect("/login?message=Could not authenticate user");
-    }
-
-    return redirect("/login?message=Check email to continue sign in process");
-  };
+  const [viewPassword, setViewPassword] = useState(false);
+  const [valueEmail, setValueEmail] = useState("");
 
   return (
-    <div className="flex-1 flex flex-col w-full px-8 justify-center gap-2">
+    <div className="flex-1 flex flex-col w-full mx-8 justify-center h-full">
       <Link
         href="/"
-        className="py-2 px-4 mt-10 rounded-md no-underline text-foreground bg-btn-background hover:bg-btn-background-hover flex items-center group text-sm">
+        className="py-2 px-4 ml-16 w-max rounded-md no-underline text-foreground bg-btn-background hover:bg-btn-background-hover flex items-center group text-sm">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -73,47 +36,73 @@ export default function Login({
         Back
       </Link>
 
-      {searchParams.signin !== "true" && (
-        <div className="flex gap-1 self-center mt-20">
+      {searchParams.signin !== "true" ? (
+        <div className="flex gap-1 self-center mt-20 mb-10">
           <h3>If you already have an account</h3>
           <Link
             href="/login?signin=true"
             className="underline underline-offset-4">
-            {" "}
-            Log in
+            sign in
+          </Link>
+        </div>
+      ) : (
+        <div className="flex gap-1 self-center mt-20 mb-10">
+          <h3>If you don't have an account yet</h3>
+          <Link
+            href="/login?signin=false"
+            className="underline underline-offset-4">
+            sign up
           </Link>
         </div>
       )}
       <form
-        className="animate-in max-w-[500px] mb-10 flex-1 flex flex-col w-full self-center justify-center gap-2 text-foreground"
+        className="opacity-0 animate-in bg-white p-6 rounded-lg max-w-[500px] mb-10 flex flex-col w-full self-center justify-center text-foreground"
         action={signIn}>
-        <label className="text-md" htmlFor="email">
-          Email
-        </label>
-        <input
-          className="rounded-md px-4 py-2 bg-inherit border mb-6"
-          name="email"
-          placeholder="you@example.com"
-          required
-        />
-        <label className="text-md" htmlFor="password">
-          Password
-        </label>
-        <input
-          className="rounded-md px-4 py-2 bg-inherit border mb-6"
-          type="password"
-          name="password"
-          placeholder="••••••••"
-          required
-        />
+        <div className="mb-6">
+          <label className="text-md" htmlFor="email">
+            Email
+          </label>
+          <Input
+            type="email"
+            required
+            name="email"
+            className="mt-2 bg-secondary"
+            placeholder="you@example.com"
+          />
+        </div>
+        <div className="relative mb-10">
+          <Button
+            onClick={() => setViewPassword(!viewPassword)}
+            type="button"
+            className="absolute right-0 bottom-0 bg-transparent hover:bg-transparent">
+            {viewPassword ? (
+              <EyeIcon className="stroke-accent" />
+            ) : (
+              <EyeOffIcon className="stroke-accent" />
+            )}
+          </Button>
+          <label className="text-md" htmlFor="password">
+            Password
+          </label>
+          <Input
+            type={viewPassword ? "text" : "password"}
+            name="password"
+            required
+            value={valueEmail}
+            className="mt-2 bg-secondary"
+            placeholder="••••••••"
+            onChange={(e) => setValueEmail(e.target.value)}
+          />
+        </div>
+
         {searchParams.signin === "true" ? (
-          <button className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2">
+          <button className="border border-primary rounded-md px-4 py-2 text-primary-foreground mb-2">
             Sign In
           </button>
         ) : (
           <button
             formAction={signUp}
-            className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2">
+            className="border border-primary rounded-md px-4 py-2 text-foreground mb-2">
             Sign Up
           </button>
         )}
