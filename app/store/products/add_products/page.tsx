@@ -1,5 +1,4 @@
 import React from "react";
-
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import {
@@ -9,13 +8,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Add_products_form from "@/components/forms/Add_products_form";
+import AddProductsForm from "@/components/forms/addProductsForm";
 
-export default async function FormAddProducts({
-  searchParams,
-}: {
-  searchParams: { id: string };
-}) {
+export default async function FormAddProducts() {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
   const { data: dataCollections } = await supabase.from("collections").select();
@@ -43,7 +38,7 @@ export default async function FormAddProducts({
         </SelectContent>
       </Select>
       <h3 className="mt-6">Now, add your product</h3>
-      <Add_products_form />
+      <AddProductsForm />
     </div>
   );
 }
