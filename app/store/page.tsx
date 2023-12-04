@@ -45,7 +45,6 @@ export default async function Store({
 
   return (
     <div className="flex flex-col w-full items-center">
-      page [id]
       {dataStore.length > 0 ? (
         <div>
           <div className="border-gray-600 border rounded-full w-max p-4 m-6">
