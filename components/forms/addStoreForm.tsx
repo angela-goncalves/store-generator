@@ -4,13 +4,13 @@ import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { handleInsertStore } from "@/lib/insertsupabase";
 
-export default function Form_add_store() {
+export default function AddStoreForm() {
   const [addComment, setAddComment] = useState(false);
   return (
     <div className="w-1/2 max-w-[500px]">
       <form
         action={(formData) => handleInsertStore(formData)}
-        className="h-full">
+        className="h-full flex flex-col">
         <div className="text-3xl mt-6">
           <label htmlFor="siteName">What is your store's name?</label>
           <Input
@@ -49,7 +49,7 @@ export default function Form_add_store() {
           />
         </div>
         <button
-          className="px-6 py-4 border border-emerald-300 rounded-lg mt-6"
+          className="px-6 py-4 border border-emerald-300 rounded-lg mt-6 self-end"
           type="submit">
           submit
         </button>

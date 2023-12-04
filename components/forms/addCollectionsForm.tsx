@@ -3,8 +3,10 @@
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { handleInsertCollections } from "@/lib/insertsupabase";
+import { Button } from "../ui/button";
+import { UUID } from "crypto";
 
-export default function Add_collections_Form() {
+export default function AddCollectionsForm({ storeId }: { storeId: string }) {
   const [add, setAdd] = useState<boolean>(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -17,7 +19,7 @@ export default function Add_collections_Form() {
     setFormData((prevState) => ({ ...prevState, [name]: value }));
   };
   const handleSubmit = () => {
-    handleInsertCollections(formData);
+    handleInsertCollections(formData, storeId as UUID);
     setFormData({
       name: "",
       description: "",
@@ -86,20 +88,21 @@ export default function Add_collections_Form() {
           </div>
         )}
         {!add ? (
-          <button
+          <Button
             type="button"
-            className="my-6 px-6 border border-gray-500 rounded-lg py-4 self-start"
-            onClick={() => setAdd(true)}>
+            className="my-6 px-6 rounded-lg py-4 self-start bg-transparent border-primary"
+            onClick={() => setAdd(true)}
+            variant="outline">
             add one more
-          </button>
+          </Button>
         ) : (
           <></>
         )}
-        <button
-          className="border border-emerald-300 rounded-lg px-6 py-4 my-6"
+        <Button
+          className="border max-w-[200px] self-end rounded-lg px-6 py-4 my-6"
           type="submit">
           submit
-        </button>
+        </Button>
       </form>
     </div>
   );
