@@ -2,10 +2,10 @@ import React from "react";
 import { handleInsertProduct } from "@/lib/insertsupabase";
 import { Input } from "@/components/ui/input";
 
-export default function Add_products_form() {
+export default function AddProductsForm() {
   return (
     <div className="w-1/2 max-w-[500px]">
-      <form action={handleInsertProduct}>
+      <form action={handleInsertProduct} className="flex flex-col">
         <div className="text-2xl">
           <label htmlFor="productName">Name</label>
           <Input
@@ -42,7 +42,7 @@ export default function Add_products_form() {
         </div>
         <button
           type="submit"
-          className="border border-emerald-300 rounded-lg px-6 py-4 my-6">
+          className="border border-emerald-300 rounded-lg px-6 py-4 my-6 self-end">
           submit
         </button>
       </form>

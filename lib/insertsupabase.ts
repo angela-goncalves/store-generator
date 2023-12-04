@@ -51,7 +51,10 @@ interface FormDataData {
   additionalName: string;
   additionalDescription: string;
 }
-export const handleInsertCollections = async (formData: FormDataData) => {
+export const handleInsertCollections = async (
+  formData: FormDataData,
+  storeId: UUID
+) => {
   // user data
   // const {
   //   data: { user },
@@ -71,13 +74,13 @@ export const handleInsertCollections = async (formData: FormDataData) => {
         name: collectionName,
         description: collectionDescription,
         // user_id: ,
-        store_id: store_id,
+        store_id: storeId,
       },
       {
         name: secondNameCollection,
         description: secondDescription,
         // user_id: ,
-        store_id: store_id,
+        store_id: storeId,
       },
     ])
     .select();
