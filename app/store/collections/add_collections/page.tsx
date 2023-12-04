@@ -1,12 +1,16 @@
-import Add_collections_Form from "@/components/forms/Add_collections_Form";
+import AddCollectionsForm from "@/components/forms/addCollectionsForm";
 
-export default function AddCollections() {
+export default function AddCollections({
+  searchParams,
+}: {
+  searchParams: { id: string };
+}) {
   return (
     <div className="w-full flex flex-col items-center mt-10">
       <h3 className="">
         Now, let's add some categories or collections to your store
       </h3>
-      <Add_collections_Form />
+      <AddCollectionsForm storeId={searchParams.id} />
     </div>
   );
 }
