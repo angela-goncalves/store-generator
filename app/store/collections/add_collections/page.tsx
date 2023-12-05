@@ -1,4 +1,5 @@
 import AddCollectionsForm from "@/components/forms/addCollectionsForm";
+import { UUID } from "crypto";
 
 export default function AddCollections({
   searchParams,
@@ -8,9 +9,9 @@ export default function AddCollections({
   return (
     <div className="w-full flex flex-col items-center mt-10">
       <h3 className="">
-        Now, let's add some categories or collections to your store
+        Let's add some categories or collections to your store
       </h3>
-      <AddCollectionsForm storeId={searchParams.id} />
+      <AddCollectionsForm storeId={searchParams.id as UUID} />
     </div>
   );
 }

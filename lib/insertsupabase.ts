@@ -7,9 +7,8 @@ import { redirect } from "next/navigation";
 const cookieStore = cookies();
 const supabase = createClient(cookieStore);
 
-let store_id: UUID;
 let collection_id: UUID;
-
+const user_id = "34fd397d-fd61-4653-8b6b-309d381aa8e2";
 export const handleInsertStore = async (formData: FormData) => {
   // user data
   // const {
@@ -32,9 +31,6 @@ export const handleInsertStore = async (formData: FormData) => {
     ])
     .select();
 
-  if (data !== null) {
-    store_id = data[0].id;
-  }
   if (pageErrors !== null) {
     redirect("/add_store?message=store error");
   }
@@ -48,41 +44,32 @@ export const handleInsertStore = async (formData: FormData) => {
 interface FormDataData {
   name: string;
   description: string;
-  additionalName: string;
-  additionalDescription: string;
+  id: UUID;
 }
 export const handleInsertCollections = async (
-  formData: FormDataData,
+  formData: FormDataData[],
   storeId: UUID
 ) => {
+  console.log("formData", formData);
   // user data
   // const {
   //   data: { user },
   // } = await supabase.auth.getUser();
+  const collections = formData.map((item) => {
+    return {
+      id: item.id,
+      name: item.name,
+      description: item.description,
+      store_id: storeId,
+      user_id: user_id,
+    };
+  });
 
+  console.log("collections", collections);
   // if (user) {
-  // probbly not using this get
-  const collectionName = formData.name;
-  const collectionDescription = formData.description;
-  const secondNameCollection = formData.additionalName;
-  const secondDescription = formData.additionalDescription;
-
   const { data, error: collectionsErrors } = await supabase
     .from("collections")
-    .insert([
-      {
-        name: collectionName,
-        description: collectionDescription,
-        // user_id: ,
-        store_id: storeId,
-      },
-      {
-        name: secondNameCollection,
-        description: secondDescription,
-        // user_id: ,
-        store_id: storeId,
-      },
-    ])
+    .insert(collections)
     .select();
 
   if (data !== null) {
@@ -90,10 +77,10 @@ export const handleInsertCollections = async (
   }
 
   if (collectionsErrors !== null) {
-    redirect("add_collections&message=collections errors");
+    redirect("store/collections/add_collections&message=collections errors");
   }
 
-  redirect("/collections");
+  redirect(`/store?id=${storeId}`);
   // } else {
   //   redirect("/add_collections&message=You need to be authenticated");
   // }

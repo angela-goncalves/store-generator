@@ -3,6 +3,9 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import React from "react";
 import Link from "next/link";
+import { PencilLineIcon, XIcon } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { capitalizeFirstLetter } from "@/lib/uppercase";
 
 export default async function Collections({
   searchParams,
@@ -20,34 +23,42 @@ export default async function Collections({
 
   if (dataCollections === null || error !== null) {
     redirect(
-      `/store?id=${searchParams.id}/collections&message=collections errors`
+      `/store/collections?id=${searchParams.id}&message=collections errors`
     );
   }
-  // console.log("id in collections", searchParams.id);
-  // console.log("searchParams.id", searchParams.id);
   return (
-    <div className="w-full flex flex-col items-center justify-center">
-      {dataCollections.length > 0 ? (
-        <div>
-          <ul>
+    <div className="w-full flex flex-col items-center mt-10 text-secondary">
+      <div className="w-full max-w-[800px] flex flex-col">
+        <Link
+          href={{
+            pathname: "/store/collections/add_collections",
+            query: { id: searchParams.id },
+          }}
+          className="text-blue-400 self-end">
+          Add collections
+        </Link>
+        {dataCollections.length > 0 ? (
+          <ul className="flex flex-col gap-4">
+            <h3 className="text-2xl">Title</h3>
             {dataCollections.map((item) => (
-              <li key={item.id}>{item.name}</li>
+              <div key={item.id}>
+                <li className="flex justify-between gap-4">
+                  <h3>{capitalizeFirstLetter(item.name)}</h3>
+                  <div className="flex gap-2">
+                    <PencilLineIcon className="mr-2 h-4 w-4" />
+                    <XIcon className="mr-2 h-4 w-4 text-destructive" />
+                  </div>
+                </li>
+                <Separator className="bg-neutral-dark" />
+              </div>
             ))}
           </ul>
-        </div>
-      ) : (
-        <div className="">
-          <h3>Don't have collection yet</h3>
-        </div>
-      )}
-      <Link
-        href={{
-          pathname: "/store/collections/add_collections",
-          query: { id: searchParams.id },
-        }}
-        className="text-blue-400">
-        Add collections
-      </Link>
+        ) : (
+          <div className="">
+            <h3>Don't have collection yet</h3>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
