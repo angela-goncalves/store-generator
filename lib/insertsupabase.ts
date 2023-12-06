@@ -6,10 +6,7 @@ import { redirect } from "next/navigation";
 
 const cookieStore = cookies();
 const supabase = createClient(cookieStore);
-
-let store_id: UUID;
-let collection_id: UUID;
-
+const user_id = "34fd397d-fd61-4653-8b6b-309d381aa8e2";
 export const handleInsertStore = async (formData: FormData) => {
   // user data
   // const {
@@ -32,9 +29,6 @@ export const handleInsertStore = async (formData: FormData) => {
     ])
     .select();
 
-  if (data !== null) {
-    store_id = data[0].id;
-  }
   if (pageErrors !== null) {
     redirect("/add_store?message=store error");
   }
@@ -85,10 +79,6 @@ export const handleInsertCollections = async (
     ])
     .select();
 
-  if (data !== null) {
-    collection_id = data[0].id;
-  }
-
   if (collectionsErrors !== null) {
     redirect("add_collections&message=collections errors");
   }
@@ -99,27 +89,32 @@ export const handleInsertCollections = async (
   // }
 };
 
-export const handleInsertProduct = async (formData: FormData) => {
-  const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
-  const name = formData.get("name") as string;
-  const description = formData.get("description") as string;
-  const price = formData.get("price");
+export const handleInsertProduct = async (formData: any, storeid: string) => {
+  const name = formData.name as string;
+  const description = formData.description as string;
+  const price = formData.price as string;
+  const image = formData.image as string;
+  const collection_id = formData.collection_id as string;
+  const productAdded = [
+    {
+      name,
+      description,
+      price: Number(price),
+      image,
+      collection_id,
+    },
+  ];
 
   const { data, error } = await supabase
     .from("products")
-    .insert([
-      {
-        name,
-        description,
-        price,
-        // collection_id: searchParams.id,
-        // user_id: ,
-      },
-    ])
+    .insert(productAdded)
     .select();
-  if (error !== null) {
-    redirect("add_products&message=products-error");
+
+  if (data === null || error !== null) {
+    redirect(
+      "/store/products/add_products?id=${storeid}&message=products-error"
+    );
   }
-  redirect("/products");
+
+  redirect(`/store/products?id=${storeid}`);
 };
