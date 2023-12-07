@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { handleInsertCollections } from "@/lib/insertsupabase";
+import { handleInsertCollections } from "@/lib/insertSupabase";
 import { Button } from "../ui/button";
 import { v4 as uuidv4 } from "uuid";
 
