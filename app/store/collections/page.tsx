@@ -16,10 +16,12 @@ export default async function Collections({
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
+  const storeId = searchParams.id;
+
   const { data: dataCollections, error } = await supabase
     .from("collections")
-    .select();
-  const storeId = searchParams.id;
+    .select()
+    .eq("store_id", storeId);
 
   if (dataCollections === null || error !== null) {
     redirect(`/store/collections?id=${storeId}&message=collections errors`);
@@ -27,6 +29,14 @@ export default async function Collections({
 
   return (
     <div className="w-full flex flex-col items-center mt-10 text-secondary">
+      <Link
+        href={{
+          pathname: "/store",
+          query: { id: searchParams.id },
+        }}
+        className="self-start">
+        Back
+      </Link>
       <div className="w-full max-w-[800px] flex flex-col">
         <Link
           href={{

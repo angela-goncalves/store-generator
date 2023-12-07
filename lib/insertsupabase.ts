@@ -101,6 +101,7 @@ export const handleInsertProduct = async (
       price: Number(price),
       image,
       collection_id,
+      store_id: storeid,
     },
   ];
 
@@ -111,7 +112,7 @@ export const handleInsertProduct = async (
 
   if (data === null || error !== null) {
     redirect(
-      "/store/products/add_products?id=${storeid}&message=products-error"
+      `/store/products/add-products?id=${storeid}&message=products-error`
     );
   }
 

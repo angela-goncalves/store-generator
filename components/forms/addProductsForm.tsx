@@ -1,7 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import { handleInsertProduct } from "@/lib/insertSupabase";
-import { updateProduct } from "@/lib/updateSupabase";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -11,6 +9,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { updateProduct } from "@/lib/updateSupabase";
+import { handleInsertProduct } from "@/lib/insertSupabase";
 
 interface ICollections {
   created_at: string;
@@ -62,9 +62,11 @@ export default function AddProductsForm({
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
   };
+
   const handleSelectChange = (event: string) => {
     setFormData({ ...formData, collectionId: event });
   };
+
   return (
     <div className="w-1/2 max-w-[500px]">
       <form
@@ -80,10 +82,10 @@ export default function AddProductsForm({
             name="collectionId"
             defaultValue={formData.collectionId}
             onValueChange={handleSelectChange}>
-            <SelectTrigger className="max-w-xs">
+            <SelectTrigger className="w-[300px]">
               <SelectValue placeholder="Select a collection" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="w-[300px]">
               <SelectGroup>
                 {dataCollections?.map((item) => {
                   return (
