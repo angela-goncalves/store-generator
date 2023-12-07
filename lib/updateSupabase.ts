@@ -38,3 +38,25 @@ export const updateProduct = async (
   }
   redirect(`/store/products?id=${storeid}`);
 };
+
+type FormDataType = {
+  collectionID: string;
+  nameCollection: string;
+  descriptionCollection: string;
+};
+export const updateCollections = async (formData: FormDataType) => {
+  const descriptionCollection = formData.descriptionCollection;
+  const nameCollection = formData.nameCollection;
+  const collectionid = formData.collectionID;
+
+  const { data, error } = await supabase
+    .from("collections")
+    .update({ name: nameCollection, description: descriptionCollection })
+    .eq("id", collectionid)
+    .select();
+  if (data === null || error !== null) {
+    redirect(
+      "/store/collections/edit-collection&message=something-went-wrong-when-try-to-update"
+    );
+  }
+};

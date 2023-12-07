@@ -7,8 +7,6 @@ const cookieStore = cookies();
 const supabase = createClient(cookieStore);
 
 export const signIn = async (formData: FormData) => {
-  console.log("formaData in signin", formData);
-
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
   const cookieStore = cookies();
@@ -27,8 +25,6 @@ export const signIn = async (formData: FormData) => {
 };
 
 export const signUp = async (formData: FormData) => {
-  console.log("formaData in signup", formData);
-
   const origin = headers().get("origin");
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
