@@ -8,7 +8,7 @@ export default function AddCollections({
   return (
     <div className="w-full flex flex-col items-center mt-10">
       <h3 className="">
-        Now, let's add some categories or collections to your store
+        Let's add some categories or collections to your store
       </h3>
       <AddCollectionsForm storeId={searchParams.id} />
     </div>

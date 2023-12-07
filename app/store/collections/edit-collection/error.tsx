@@ -1,18 +1,24 @@
-"use client"; // Error components must be Client Components
+"use client";
+import { useSearchParams } from "next/navigation";
 
-import { useEffect } from "react";
+// Error components must be Client Components
 
-export default function ErrorAddCollectionsForm({
+export default function ErrorCollectionsPage({
   error,
   reset,
 }: {
+  searchparams: { message: string };
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const searchParams = useSearchParams();
+  const errorMessage = searchParams.get("message");
   return (
     <div className="flex flex-col justify-center items-center">
-      <h2>Something went wrong!</h2>
-      {error.message}
+      <h1>Something went wrong!</h1>
+      <h2>{errorMessage}</h2>
+      <h3>{error.message}</h3>
+
       <button
         className="m-4 p-4 border rounded-lg border-gray-300"
         onClick={

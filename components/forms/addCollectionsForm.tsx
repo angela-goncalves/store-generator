@@ -1,103 +1,80 @@
 "use client";
 
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { handleInsertCollections } from "@/lib/insertsupabase";
 import { Button } from "../ui/button";
-import { UUID } from "crypto";
+import { v4 as uuidv4 } from "uuid";
+
+type FormDataType = {
+  name: string;
+  description: string;
+  id: string;
+};
 
 export default function AddCollectionsForm({ storeId }: { storeId: string }) {
-  const [add, setAdd] = useState<boolean>(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    additionalName: "",
-    additionalDescription: "",
-  });
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prevState) => ({ ...prevState, [name]: value }));
+  const myUUID = uuidv4();
+  const [inputs, setInputs] = useState<FormDataType[]>([
+    { name: "", description: "", id: myUUID },
+  ]);
+
+  const handleInputChange = (
+    index: number,
+    field: "name" | "description",
+    value: string
+  ) => {
+    const updatedPairs = [...inputs];
+    updatedPairs[index][field] = value;
+    setInputs(updatedPairs);
   };
-  const handleSubmit = () => {
-    handleInsertCollections(formData, storeId as UUID);
-    setFormData({
-      name: "",
-      description: "",
-      additionalName: "",
-      additionalDescription: "",
-    });
+
+  const addInputs = () => {
+    setInputs([...inputs, { name: "", description: "", id: myUUID }]);
   };
+
   return (
     <div className="w-1/2 max-w-[500px]">
-      <form action={handleSubmit} className="flex flex-col">
-        <div className="text-2xl mt-6">
-          <label htmlFor="collectionName">Name</label>
-          <Input
-            type="text"
-            name="name"
-            className="mt-2"
-            id="collectionName"
-            value={formData.name}
-            onChange={(e) => handleChange(e)}
-            placeholder="Name of the collection"
-            required
-          />
-        </div>
-        <div className="text-2xl mt-6">
-          <label htmlFor="collectionDescription">Description</label>
-          <Input
-            type="text"
-            name="description"
-            className="mt-2"
-            id="collectionDescription"
-            required
-            value={formData.description}
-            onChange={(e) => handleChange(e)}
-            placeholder="Description of the collection"
-          />
-        </div>
-        {add && (
-          <div>
+      <form
+        action={() => handleInsertCollections(inputs, storeId)}
+        className="flex flex-col">
+        {inputs.map((item, index) => (
+          <div key={item.id}>
             <div className="text-2xl mt-6">
-              <label htmlFor="additionalName">Aditional Name</label>
+              <label htmlFor={item.name}>Name</label>
               <Input
                 type="text"
-                name="additionalName"
-                id="additionalName"
+                name={item.name}
                 className="mt-2"
-                value={formData.additionalName}
-                onChange={(e) => handleChange(e)}
+                value={item.name}
+                onChange={(e) =>
+                  handleInputChange(index, "name", e.target.value)
+                }
                 placeholder="Name of the collection"
                 required
               />
             </div>
             <div className="text-2xl mt-6">
-              <label htmlFor="additionalDescription">
-                Aditional Description
-              </label>
+              <label htmlFor={item.description}>Description</label>
               <Input
                 type="text"
-                name="additionalDescription"
-                id="additionalDescription"
+                name={item.description}
                 className="mt-2"
-                value={formData.additionalDescription}
-                onChange={(e) => handleChange(e)}
-                placeholder="Description of the collection"
+                value={item.description}
+                onChange={(e) =>
+                  handleInputChange(index, "description", e.target.value)
+                }
+                placeholder="Name of the collection"
               />
             </div>
           </div>
-        )}
-        {!add ? (
-          <Button
-            type="button"
-            className="my-6 px-6 rounded-lg py-4 self-start bg-transparent border-primary"
-            onClick={() => setAdd(true)}
-            variant="outline">
-            add one more
-          </Button>
-        ) : (
-          <></>
-        )}
+        ))}
+        <Button
+          type="button"
+          className="my-6 px-6 rounded-lg py-4 self-start bg-transparent border-primary"
+          onClick={addInputs}
+          variant="outline">
+          add one more
+        </Button>
         <Button
           className="border max-w-[200px] self-end rounded-lg px-6 py-4 my-6"
           type="submit">
