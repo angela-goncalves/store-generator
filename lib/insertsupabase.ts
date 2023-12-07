@@ -5,7 +5,6 @@ import { redirect } from "next/navigation";
 
 const cookieStore = cookies();
 const supabase = createClient(cookieStore);
-
 const user_id = "34fd397d-fd61-4653-8b6b-309d381aa8e2";
 export const handleInsertStore = async (formData: FormData) => {
   // user data
@@ -78,27 +77,43 @@ export const handleInsertCollections = async (
   // }
 };
 
-export const handleInsertProduct = async (formData: FormData) => {
-  const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
-  const name = formData.get("name") as string;
-  const description = formData.get("description") as string;
-  const price = formData.get("price");
+interface IFormDataInsertProduct {
+  name: string;
+  description: string;
+  price: string;
+  image: string;
+  collectionId: string;
+}
+
+export const handleInsertProduct = async (
+  formData: IFormDataInsertProduct,
+  storeid: string
+) => {
+  const name = formData.name;
+  const description = formData.description;
+  const price = formData.price;
+  const image = formData.image;
+  const collection_id = formData.collectionId;
+  const productAdded = [
+    {
+      name,
+      description,
+      price: Number(price),
+      image,
+      collection_id,
+    },
+  ];
 
   const { data, error } = await supabase
     .from("products")
-    .insert([
-      {
-        name,
-        description,
-        price,
-        // collection_id: searchParams.id,
-        // user_id: ,
-      },
-    ])
+    .insert(productAdded)
     .select();
-  if (error !== null) {
-    redirect("add_products&message=products-error");
+
+  if (data === null || error !== null) {
+    redirect(
+      "/store/products/add_products?id=${storeid}&message=products-error"
+    );
   }
-  redirect("/products");
+
+  redirect(`/store/products?id=${storeid}`);
 };
