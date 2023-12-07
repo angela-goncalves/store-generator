@@ -89,12 +89,23 @@ export const handleInsertCollections = async (
   // }
 };
 
-export const handleInsertProduct = async (formData: any, storeid: string) => {
-  const name = formData.name as string;
-  const description = formData.description as string;
-  const price = formData.price as string;
-  const image = formData.image as string;
-  const collection_id = formData.collection_id as string;
+interface IFormDataInsertProduct {
+  name: string;
+  description: string;
+  price: string;
+  image: string;
+  collectionId: string;
+}
+
+export const handleInsertProduct = async (
+  formData: IFormDataInsertProduct,
+  storeid: string
+) => {
+  const name = formData.name;
+  const description = formData.description;
+  const price = formData.price;
+  const image = formData.image;
+  const collection_id = formData.collectionId;
   const productAdded = [
     {
       name,

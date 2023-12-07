@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { handleInsertStore } from "@/lib/insertsupabase";
+import { handleInsertStore } from "@/lib/insertSupabase";
 
 export default function AddStoreForm() {
   const [addComment, setAddComment] = useState(false);

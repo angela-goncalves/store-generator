@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { getStore, getCollections } from "@/lib/getsupabase";
 import { UUID } from "crypto";
+import { getCollections, getStore } from "@/lib/getSupabase";
 
 export default function SideBar() {
   const [dataStore, setDataStore] = useState<any[]>([]);

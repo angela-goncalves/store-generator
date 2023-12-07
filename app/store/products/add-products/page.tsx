@@ -23,7 +23,7 @@ export default async function FormAddProducts({
     productDescription: string;
     productPrice: string;
     productImage: string;
-    collection_id: string;
+    collectionId: string;
   };
 }) {
   const cookieStore = cookies();
@@ -42,13 +42,7 @@ export default async function FormAddProducts({
       </h2>
       <AddProductsForm
         dataCollections={dataCollections}
-        storeid={searchParams.id}
-        productId={searchParams.productId}
-        productName={searchParams.productName}
-        productDescription={searchParams.productDescription}
-        productPrice={searchParams.productPrice}
-        productImage={searchParams.productImage}
-        collection_id={searchParams.collection_id}
+        searchParams={searchParams}
       />
     </div>
   );

@@ -2,7 +2,7 @@
 
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { handleInsertCollections } from "@/lib/insertsupabase";
+import { handleInsertCollections } from "@/lib/insertSupabase";
 import { Button } from "../ui/button";
 import { UUID } from "crypto";
 

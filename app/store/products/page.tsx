@@ -53,7 +53,7 @@ export default async function Products({
                       productDescription: item.description,
                       productPrice: item.price,
                       image: item.image,
-                      collection_id: item.collection_id,
+                      collectionId: item.collectionId,
                     },
                   }}>
                   <PencilLineIcon className="mr-2 h-4 w-4" />

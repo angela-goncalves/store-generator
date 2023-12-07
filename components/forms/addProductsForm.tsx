@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { handleInsertProduct } from "@/lib/insertsupabase";
+import { handleInsertProduct } from "@/lib/insertSupabase";
 import { updateProduct } from "@/lib/updateSupabase";
 import { Input } from "@/components/ui/input";
 import {
@@ -21,57 +21,64 @@ interface ICollections {
   store_id: string | null;
 }
 [];
-interface IDataCollection {
-  dataCollections: ICollections[] | null;
-  storeid: string;
+interface ISearchParams {
+  id: string;
   productId: string;
   productName: string;
   productDescription: string;
   productPrice: string;
   productImage: string;
-  collection_id: string;
+  collectionId: string;
+}
+interface IDataCollection {
+  dataCollections: ICollections[] | null;
+  searchParams: ISearchParams;
 }
 
 export default function AddProductsForm({
   dataCollections,
-  storeid,
-  productId,
-  productDescription,
-  productName,
-  productPrice,
-  productImage,
-  collection_id,
+  searchParams,
 }: IDataCollection) {
-  const [inputs, setInputs] = useState({
+  const {
+    id, // store's id
+    productId,
+    productDescription,
+    productName,
+    productPrice,
+    productImage,
+    collectionId,
+  } = searchParams;
+
+  const [formData, setFormData] = useState({
     id: productId ? productId : "",
     name: productName ? productName : "",
     description: productDescription ? productDescription : "",
     price: productPrice ? productPrice : "",
-    collection_id: collection_id ? collection_id : "",
     image: productImage ? productImage : "",
+    collectionId: collectionId ? collectionId : "",
   });
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    setInputs({ ...inputs, [name]: value });
+    setFormData({ ...formData, [name]: value });
   };
   const handleSelectChange = (event: string) => {
-    setInputs({ ...inputs, collection_id: event });
+    setFormData({ ...formData, collectionId: event });
   };
   return (
     <div className="w-1/2 max-w-[500px]">
       <form
         action={() =>
           productId
-            ? updateProduct(inputs, storeid)
-            : handleInsertProduct(inputs, storeid)
+            ? updateProduct(formData, id)
+            : handleInsertProduct(formData, id)
         }
         className="flex flex-col">
         <div className="self-center">
           <Select
             required
-            name="collection_id"
-            defaultValue={inputs.collection_id}
+            name="collectionId"
+            defaultValue={formData.collectionId}
             onValueChange={handleSelectChange}>
             <SelectTrigger className="max-w-xs">
               <SelectValue placeholder="Select a collection" />
@@ -98,7 +105,7 @@ export default function AddProductsForm({
             type="text"
             name="name"
             className="mt-2"
-            value={inputs.name}
+            value={formData.name}
             onChange={handleInputChange}
             placeholder="Name of the product"
           />
@@ -109,7 +116,7 @@ export default function AddProductsForm({
             type="text"
             name="description"
             className="mt-2"
-            value={inputs.description}
+            value={formData.description}
             onChange={handleInputChange}
             placeholder="Description of the product"
           />
@@ -119,7 +126,7 @@ export default function AddProductsForm({
           <Input
             type="number"
             name="price"
-            value={inputs.price}
+            value={formData.price}
             className="mt-2"
             onChange={handleInputChange}
             placeholder="Price"
@@ -130,7 +137,7 @@ export default function AddProductsForm({
           <Input
             type="file"
             name="image"
-            value={inputs.image}
+            value={formData.image}
             className="mt-2"
             onChange={handleInputChange}
           />
