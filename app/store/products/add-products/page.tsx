@@ -3,6 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import AddProductsForm from "@/components/forms/addProductsForm";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
 interface IProducts {
   created_at: string;
@@ -28,22 +29,30 @@ export default async function FormAddProducts({
 }) {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
-  const { data, error } = await supabase.from("collections").select();
+  const { data, error } = await supabase
+    .from("collections")
+    .select()
+    .eq("store_id", searchParams.id);
 
-  const dataCollections: IProducts[] | null = data;
-  if (dataCollections === null || error !== null) {
-    redirect(`/store/products/add_products?id=${searchParams.id}`);
+  if (data === null || error !== null) {
+    redirect(`/store/products/add-products?id=${searchParams.id}`);
   }
+
   return (
     <div className="my-10 mx-2 w-full flex flex-col items-center gap-6">
+      <Link
+        href={{
+          pathname: "/store/products",
+          query: { id: searchParams.id },
+        }}
+        className="self-start">
+        Back
+      </Link>
       <h1 className="text-xl">Add or edit your products</h1>
       <h2>
         But first, select the collection you want to be related to your products
       </h2>
-      <AddProductsForm
-        dataCollections={dataCollections}
-        searchParams={searchParams}
-      />
+      <AddProductsForm dataCollections={data} searchParams={searchParams} />
     </div>
   );
 }

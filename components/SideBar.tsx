@@ -2,14 +2,14 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { getStore } from "@/lib/getsupabase";
+
 import { UUID } from "crypto";
+import { getStore } from "@/lib/getSupabase";
 
 export default function SideBar() {
   const [dataStore, setDataStore] = useState<any[]>([]);
   const searchParams = useSearchParams();
   const storeID = searchParams.get("id");
-
   const fetch = async () => {
     const response = await getStore(storeID as UUID);
     setDataStore(response);

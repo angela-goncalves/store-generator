@@ -23,7 +23,6 @@ export default async function TheStore({
       `/${params.name}?message=Something-went-wrong-with-${params.name}`
     );
   }
-  // console.log("data", data[0].id);
   return (
     <div className="flex-1 flex flex-col justify-between">
       <TemplateComponent storeId={data[0].id as string} />
