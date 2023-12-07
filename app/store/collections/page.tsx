@@ -6,7 +6,6 @@ import Link from "next/link";
 import { PencilLineIcon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { capitalizeFirstLetter } from "@/lib/uppercase";
-import { UUID } from "crypto";
 import DeleteCollection from "@/components/forms/deleteCollection";
 
 export default async function Collections({
@@ -31,7 +30,7 @@ export default async function Collections({
       <div className="w-full max-w-[800px] flex flex-col">
         <Link
           href={{
-            pathname: "/store/collections/add_collections",
+            pathname: "/store/collections/add-collections",
             query: { id: storeId },
           }}
           className="text-blue-400 self-end">
@@ -50,16 +49,16 @@ export default async function Collections({
                         pathname: `/store/collections/edit-collection`,
                         query: {
                           id: storeId,
-                          collectionid: `${item.id}`,
-                          collectiontitle: `${item.name}`,
-                          collectiondescription: `${item.description}`,
+                          collectionId: `${item.id}`,
+                          collectionTitle: `${item.name}`,
+                          collectionDescription: `${item.description}`,
                         },
                       }}>
                       <PencilLineIcon className="mr-2 h-4 w-4" />
                     </Link>
                     <DeleteCollection
                       collectionId={item.id}
-                      storeId={storeId as UUID}
+                      storeId={storeId}
                     />
                   </div>
                 </li>

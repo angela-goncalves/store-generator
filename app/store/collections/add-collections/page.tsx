@@ -1,5 +1,4 @@
 import AddCollectionsForm from "@/components/forms/addCollectionsForm";
-import { UUID } from "crypto";
 
 export default function AddCollections({
   searchParams,
@@ -11,7 +10,7 @@ export default function AddCollections({
       <h3 className="">
         Let's add some categories or collections to your store
       </h3>
-      <AddCollectionsForm storeId={searchParams.id as UUID} />
+      <AddCollectionsForm storeId={searchParams.id} />
     </div>
   );
 }

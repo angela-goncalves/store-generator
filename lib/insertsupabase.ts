@@ -1,13 +1,11 @@
 "use server";
 import { createClient } from "@/utils/supabase/server";
-import { UUID } from "crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 const cookieStore = cookies();
 const supabase = createClient(cookieStore);
 
-let collection_id: UUID;
 const user_id = "34fd397d-fd61-4653-8b6b-309d381aa8e2";
 export const handleInsertStore = async (formData: FormData) => {
   // user data
@@ -44,13 +42,12 @@ export const handleInsertStore = async (formData: FormData) => {
 interface FormDataData {
   name: string;
   description: string;
-  id: UUID;
+  id: string;
 }
 export const handleInsertCollections = async (
   formData: FormDataData[],
-  storeId: UUID
+  storeId: string
 ) => {
-  console.log("formData", formData);
   // user data
   // const {
   //   data: { user },
@@ -65,24 +62,19 @@ export const handleInsertCollections = async (
     };
   });
 
-  console.log("collections", collections);
   // if (user) {
   const { data, error: collectionsErrors } = await supabase
     .from("collections")
     .insert(collections)
     .select();
 
-  if (data !== null) {
-    collection_id = data[0].id;
-  }
-
   if (collectionsErrors !== null) {
-    redirect("store/collections/add_collections&message=collections errors");
+    redirect("store/collections/add-collections&message=collections errors");
   }
 
   redirect(`/store?id=${storeId}`);
   // } else {
-  //   redirect("/add_collections&message=You need to be authenticated");
+  //   redirect("/add-collections&message=You need to be authenticated");
   // }
 };
 

@@ -2,28 +2,27 @@
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
-import { UUID } from "crypto";
 import { updateCollections } from "@/lib/updateSupabase";
 
 interface IUpdateCollections {
-  collectionid: UUID;
-  collectiontitle: string;
-  collectiondescription: string;
+  collectionId: string;
+  collectionTitle: string;
+  collectionDescription: string;
 }
 type FormDataType = {
-  collectionID: UUID;
+  collectionID: string;
   nameCollection: string;
   descriptionCollection: string;
 };
 export default function UpdateCollections({
-  collectionid,
-  collectiontitle,
-  collectiondescription,
+  collectionId,
+  collectionTitle,
+  collectionDescription,
 }: IUpdateCollections) {
   const [newInputs, setNewInputs] = useState<FormDataType>({
-    nameCollection: collectiontitle,
-    descriptionCollection: collectiondescription,
-    collectionID: collectionid as UUID,
+    nameCollection: collectionTitle,
+    descriptionCollection: collectionDescription,
+    collectionID: collectionId,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

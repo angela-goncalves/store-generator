@@ -8,7 +8,7 @@ const cookieStore = cookies();
 const supabase = createClient(cookieStore);
 
 type FormDataType = {
-  collectionID: UUID;
+  collectionID: string;
   nameCollection: string;
   descriptionCollection: string;
 };

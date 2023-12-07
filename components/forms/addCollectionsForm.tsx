@@ -1,22 +1,21 @@
 "use client";
 
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { handleInsertCollections } from "@/lib/insertsupabase";
 import { Button } from "../ui/button";
-import { UUID } from "crypto";
 import { v4 as uuidv4 } from "uuid";
 
 type FormDataType = {
   name: string;
   description: string;
-  id: UUID;
+  id: string;
 };
 
-export default function AddCollectionsForm({ storeId }: { storeId: UUID }) {
+export default function AddCollectionsForm({ storeId }: { storeId: string }) {
   const myUUID = uuidv4();
   const [inputs, setInputs] = useState<FormDataType[]>([
-    { name: "", description: "", id: myUUID as UUID },
+    { name: "", description: "", id: myUUID },
   ]);
 
   const handleInputChange = (
@@ -30,7 +29,7 @@ export default function AddCollectionsForm({ storeId }: { storeId: UUID }) {
   };
 
   const addInputs = () => {
-    setInputs([...inputs, { name: "", description: "", id: myUUID as UUID }]);
+    setInputs([...inputs, { name: "", description: "", id: myUUID }]);
   };
 
   return (
