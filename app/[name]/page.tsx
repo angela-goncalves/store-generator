@@ -23,9 +23,13 @@ export default async function TheStore({
       `/${params.name}?message=Something-went-wrong-with-${params.name}`
     );
   }
+
+  if (data.length === 0) {
+    return <div>Sorry your page is not found</div>;
+  }
   return (
     <div className="flex-1 flex flex-col justify-between">
-      <TemplateComponent storeId={data[0].id as string} />
+      <TemplateComponent storeId={data ? data[0].id : ""} />
       <footer className="w-full py-4 bg-white flex flex-col">
         <div className="self-end text-neutral-medium p-4 ">
           <p>Built with Next.js, Tailwind and Vercel</p>

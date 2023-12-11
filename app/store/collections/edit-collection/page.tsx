@@ -1,3 +1,4 @@
+import BackButton from "@/components/BackButton";
 import UpdateCollections from "@/components/forms/updateCollectionForm";
 
 export default function EditCollection({
@@ -12,6 +13,12 @@ export default function EditCollection({
 }) {
   return (
     <div className="w-full flex flex-col items-center mt-10">
+      <BackButton
+        query={{
+          pathname: "/store/collections",
+          query: { id: searchParams.id },
+        }}
+      />
       <h3>{`Edit and update ${searchParams.collectionTitle}`}</h3>
       <UpdateCollections
         collectionId={searchParams.collectionId}

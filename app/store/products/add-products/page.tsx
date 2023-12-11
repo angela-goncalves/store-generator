@@ -3,7 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import AddProductsForm from "@/components/forms/addProductsForm";
 import { redirect } from "next/navigation";
-import Link from "next/link";
+import BackButton from "@/components/BackButton";
 
 interface IProducts {
   created_at: string;
@@ -40,14 +40,12 @@ export default async function FormAddProducts({
 
   return (
     <div className="my-10 mx-2 w-full flex flex-col items-center gap-6">
-      <Link
-        href={{
+      <BackButton
+        query={{
           pathname: "/store/products",
           query: { id: searchParams.id },
         }}
-        className="self-start">
-        Back
-      </Link>
+      />
       <h1 className="text-xl">Add or edit your products</h1>
       <h2>
         But first, select the collection you want to be related to your products

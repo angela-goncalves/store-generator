@@ -2,8 +2,6 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-
-import { UUID } from "crypto";
 import { getStore } from "@/lib/getSupabase";
 
 export default function SideBar() {
@@ -11,7 +9,7 @@ export default function SideBar() {
   const searchParams = useSearchParams();
   const storeID = searchParams.get("id");
   const fetch = async () => {
-    const response = await getStore(storeID as UUID);
+    const response = await getStore(storeID as string);
     setDataStore(response);
   };
 

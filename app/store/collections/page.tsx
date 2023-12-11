@@ -7,6 +7,7 @@ import { PencilLineIcon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { capitalizeFirstLetter } from "@/lib/uppercase";
 import DeleteCollection from "@/components/forms/deleteCollection";
+import BackButton from "@/components/BackButton";
 
 export default async function Collections({
   searchParams,
@@ -29,14 +30,12 @@ export default async function Collections({
 
   return (
     <div className="w-full flex flex-col items-center mt-10 text-secondary">
-      <Link
-        href={{
+      <BackButton
+        query={{
           pathname: "/store",
           query: { id: searchParams.id },
         }}
-        className="self-start">
-        Back
-      </Link>
+      />
       <div className="w-full max-w-[800px] flex flex-col">
         <Link
           href={{

@@ -5,6 +5,7 @@ import React from "react";
 import Link from "next/link";
 import { PencilLineIcon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import BackButton from "@/components/BackButton";
 
 export default async function Products({
   searchParams,
@@ -25,14 +26,12 @@ export default async function Products({
 
   return (
     <div className="w-full flex flex-col items-center mt-10">
-      <Link
-        href={{
+      <BackButton
+        query={{
           pathname: "/store",
           query: { id: searchParams.id },
         }}
-        className="self-start">
-        Back
-      </Link>
+      />
       <div className=" w-full max-w-[800px] flex flex-col gap-6">
         <Link
           href={{
