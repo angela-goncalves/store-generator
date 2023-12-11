@@ -1,16 +1,20 @@
 import "./globals.css";
-import { ThemeProvider } from "@/components/Theme-provider";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { Metadata } from "next";
+import vector from "./public/vector.png";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : "http://localhost:3000";
 
-export const metadata = {
-  metadataBase: new URL(defaultUrl),
-  title: "store builder",
-  description: "build your own store",
-};
+let title = "Store Generator";
+let description = "Build your own store";
 
+export const metadata: Metadata = {
+  title,
+  description,
+  metadataBase: new URL(defaultUrl),
+};
 export default function RootLayout({
   children,
 }: {
