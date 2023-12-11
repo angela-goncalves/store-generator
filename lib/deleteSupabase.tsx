@@ -4,13 +4,13 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 
-const cookieStore = cookies();
-const supabase = createClient(cookieStore);
-
 export const handleDeleteCollection = async (
   idcollection: string,
   storeId: string
 ) => {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+
   const { error } = await supabase
     .from("collections")
     .delete()

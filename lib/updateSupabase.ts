@@ -1,10 +1,8 @@
 "use server";
+
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-
-const cookieStore = cookies();
-const supabase = createClient(cookieStore);
 
 type IFormDataUpdateProduct = {
   id: string;
@@ -14,10 +12,14 @@ type IFormDataUpdateProduct = {
   image: string;
   collectionId: string;
 };
+
 export const updateProduct = async (
   formData: IFormDataUpdateProduct,
   storeid: string
 ) => {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+
   const idProduct = formData.id;
   const name = formData.name;
   const description = formData.description;
@@ -44,7 +46,11 @@ type FormDataType = {
   nameCollection: string;
   descriptionCollection: string;
 };
+
 export const updateCollections = async (formData: FormDataType) => {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+
   const descriptionCollection = formData.descriptionCollection;
   const nameCollection = formData.nameCollection;
   const collectionid = formData.collectionID;

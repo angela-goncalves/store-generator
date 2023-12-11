@@ -3,9 +3,6 @@ import { headers, cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
-const cookieStore = cookies();
-const supabase = createClient(cookieStore);
-
 export const signIn = async (formData: FormData) => {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
@@ -47,7 +44,8 @@ export const signUp = async (formData: FormData) => {
 };
 
 export const signOut = async () => {
-  "use server";
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
 
   await supabase.auth.signOut();
   return redirect("/");
