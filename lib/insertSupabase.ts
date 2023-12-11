@@ -3,10 +3,11 @@ import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-const cookieStore = cookies();
-const supabase = createClient(cookieStore);
 const user_id = "34fd397d-fd61-4653-8b6b-309d381aa8e2";
+
 export const handleInsertStore = async (formData: FormData) => {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
   // user data
   // const {
   //   data: { user },
@@ -47,6 +48,8 @@ export const handleInsertCollections = async (
   formData: FormDataData[],
   storeId: string
 ) => {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
   // user data
   // const {
   //   data: { user },
@@ -89,6 +92,9 @@ export const handleInsertProduct = async (
   formData: IFormDataInsertProduct,
   storeid: string
 ) => {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+
   const name = formData.name;
   const description = formData.description;
   const price = formData.price;
