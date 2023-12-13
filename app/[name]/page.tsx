@@ -30,12 +30,6 @@ export default async function TheStore({
   return (
     <div className="flex-1 flex flex-col justify-between">
       <TemplateComponent storeId={data ? data[0].id : ""} />
-      <footer className="w-full py-4 bg-white flex flex-col">
-        <div className="self-end text-neutral-medium p-4 ">
-          <p>Built with Next.js, Tailwind and Vercel</p>
-          <Link href="https://github.com/angela-goncalves">by Angela</Link>
-        </div>
-      </footer>
     </div>
   );
 }

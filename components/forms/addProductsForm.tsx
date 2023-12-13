@@ -137,10 +137,11 @@ export default function AddProductsForm({
         <div className="text-2xl mt-6">
           <label htmlFor="image">URL of the image</label>
           <Input
-            type="file"
+            type="text"
             name="image"
             value={formData.image}
             className="mt-2"
+            placeholder="Image url"
             onChange={handleInputChange}
           />
         </div>
