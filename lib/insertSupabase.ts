@@ -3,16 +3,18 @@ import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-const user_id = "34fd397d-fd61-4653-8b6b-309d381aa8e2";
-
 export const handleInsertStore = async (formData: FormData) => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
-  // user data
-  // const {
-  //   data: { user },
-  // } = await supabase.auth.getUser();
-  // if (user) {
+
+  const { data: sessionData, error: sessionError } =
+    await supabase.auth.getSession();
+  const { session } = sessionData;
+
+  if (session === null || sessionError !== null) {
+    redirect(`/login?signin=true`);
+  }
+
   const siteName = formData.get("siteName") as string;
   const siteDescription = formData.get("siteDescription") as string;
   const siteLocation = formData.get("siteLocation") as string;
@@ -24,13 +26,12 @@ export const handleInsertStore = async (formData: FormData) => {
         name: siteName,
         description: siteDescription,
         location: siteLocation,
-        // user_id: user.id,
+        user_id: session.user.id,
       },
     ])
     .select();
-
   if (pageErrors !== null) {
-    redirect("/add_store?message=store error");
+    redirect("/add_store?message=store-error");
   }
 
   redirect(`/store?id=${data[0].id}`);
@@ -41,7 +42,6 @@ export const handleInsertStore = async (formData: FormData) => {
 
 interface FormDataData {
   name: string;
-  description: string;
   id: string;
 }
 export const handleInsertCollections = async (
@@ -50,22 +50,25 @@ export const handleInsertCollections = async (
 ) => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
-  // user data
-  // const {
-  //   data: { user },
-  // } = await supabase.auth.getUser();
+
+  const { data: sessionData, error: sessionError } =
+    await supabase.auth.getSession();
+  const { session } = sessionData;
+
+  if (session === null || sessionError !== null) {
+    redirect(`/login?signin=true`);
+  }
+
   const collections = formData.map((item) => {
     return {
       id: item.id,
       name: item.name,
-      description: item.description,
       store_id: storeId,
-      user_id: user_id,
+      user_id: session.user.id,
     };
   });
 
-  // if (user) {
-  const { data, error: collectionsErrors } = await supabase
+  const { error: collectionsErrors } = await supabase
     .from("collections")
     .insert(collections)
     .select();
@@ -75,9 +78,6 @@ export const handleInsertCollections = async (
   }
 
   redirect(`/store?id=${storeId}`);
-  // } else {
-  //   redirect("/add-collections&message=You need to be authenticated");
-  // }
 };
 
 interface IFormDataInsertProduct {
@@ -95,6 +95,14 @@ export const handleInsertProduct = async (
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
+  const { data: sessionData, error: sessionError } =
+    await supabase.auth.getSession();
+  const { session } = sessionData;
+
+  if (session === null || sessionError !== null) {
+    redirect(`/login?signin=true`);
+  }
+
   const name = formData.name;
   const description = formData.description;
   const price = formData.price;
@@ -108,6 +116,7 @@ export const handleInsertProduct = async (
       image,
       collection_id,
       store_id: storeid,
+      user_id: session.user.id,
     },
   ];
 
