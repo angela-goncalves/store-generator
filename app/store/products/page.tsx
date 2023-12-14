@@ -3,9 +3,11 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import React from "react";
 import Link from "next/link";
-import { PencilLineIcon } from "lucide-react";
+import { PencilLineIcon, Plus } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import BackButton from "@/components/BackButton";
+import Image from "next/image";
+import productImage from "@/app/public/product.png";
 
 export default async function Products({
   searchParams,
@@ -24,6 +26,7 @@ export default async function Products({
     redirect(`store/products?id=${searchParams.id}&message=products-errors`);
   }
 
+  const collections = true;
   return (
     <div className="w-full flex flex-col items-center mt-10">
       <BackButton
@@ -32,28 +35,33 @@ export default async function Products({
           query: { id: searchParams.id },
         }}
       />
-      <div className=" w-full max-w-[800px] flex flex-col gap-6">
-        <Link
-          href={{
-            pathname: `/store/products/add-products`,
-            query: { id: `${searchParams.id}` },
-          }}
-          className="text-blue-400 self-end">
-          Add Products
-        </Link>
+      <div className="w-full max-w-[800px] flex flex-col gap-6 h-full">
+        <div className="flex justify-between">
+          <h1 className="text-secondary font-bold text-3xl">Products</h1>
+          <Link
+            href={{
+              pathname: `/store/products/add-products`,
+              query: { id: `${searchParams.id}` },
+            }}
+            className="flex border items-center border-secondary rounded-lg text-sm p-2 my-4 text-center gap-2">
+            <Plus className="w-4 " />
+            <p className="text-primary-foreground ">Add new product</p>
+          </Link>
+        </div>
         {dataProducts.length > 0 ? (
           <ul className="flex flex-col justify-center w-full gap-6">
-            <div className="flex justify-between text-xl">
-              <li className="w-[100px]">Title</li>
-              <li className="w-[200px]">Description</li>
+            <div className="flex justify-between text-2xl mt-8">
+              <li className="w-[250px]">Title</li>
+              {/* <li className="w-[200px]">Collection</li> */}
               <li className="w-[80px]">Price</li>
               <li></li>
             </div>
+            <Separator className="bg-neutral-dark" />
             {dataProducts.map((item) => (
               <li key={item.id} className="flex flex-col gap-2">
                 <div className="flex justify-between">
-                  <p className="w-[100px]">{item.name}</p>
-                  <p className="w-[200px]">{item.description}</p>
+                  <p className="w-[250px]">{item.name}</p>
+                  {/* <p className="w-[200px]">{item.description}</p> */}
                   <p className="w-[50px]">${item.price}</p>
                   <Link
                     href={{
@@ -76,7 +84,47 @@ export default async function Products({
             ))}
           </ul>
         ) : (
-          <h3>Don't have products yet</h3>
+          <div className="flex mt-20 justify-center">
+            <div className="flex justify-center self-center bg-white p-6 rounded-lg gap-10">
+              <Image
+                src={productImage}
+                width={400}
+                height={400}
+                alt="image relate to edit products"
+              />
+              {collections ? (
+                <div className="flex flex-col gap-2">
+                  <h3 className="font-bold text-lg">Your Showcase Awaits!"</h3>
+                  <h3 className="text-sm">
+                    You haven't added any products yet. Get started and show the
+                    world what you've got!
+                  </h3>
+                  <Link
+                    href={{
+                      pathname: `/store/products/add-products`,
+                      query: { id: `${searchParams.id}` },
+                    }}>
+                    <p className="bg-primary text-primary-foreground rounded-lg font-semibold p-4 my-4 w-40 text-center">
+                      Add Products
+                    </p>
+                  </Link>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center">
+                  <h3>Need to add some collections first</h3>
+                  <Link
+                    href={{
+                      pathname: `/store/collections/add-collections`,
+                      query: { id: `${searchParams.id}` },
+                    }}>
+                    <p className="bg-primary text-primary-foreground rounded-lg font-semibold p-4 my-4 w-40 text-center">
+                      Add Collections
+                    </p>
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
         )}
       </div>
     </div>

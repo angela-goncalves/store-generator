@@ -54,5 +54,3 @@ export default async function FormAddProducts({
     </div>
   );
 }
-
-// export default FormAddProducts;
