@@ -8,28 +8,23 @@ import { v4 as uuidv4 } from "uuid";
 
 type FormDataType = {
   name: string;
-  description: string;
   id: string;
 };
 
 export default function AddCollectionsForm({ storeId }: { storeId: string }) {
   const myUUID = uuidv4();
   const [inputs, setInputs] = useState<FormDataType[]>([
-    { name: "", description: "", id: myUUID },
+    { name: "", id: myUUID },
   ]);
 
-  const handleInputChange = (
-    index: number,
-    field: "name" | "description",
-    value: string
-  ) => {
+  const handleInputChange = (index: number, field: "name", value: string) => {
     const updatedPairs = [...inputs];
     updatedPairs[index][field] = value;
     setInputs(updatedPairs);
   };
 
   const addInputs = () => {
-    setInputs([...inputs, { name: "", description: "", id: myUUID }]);
+    setInputs([...inputs, { name: "", id: myUUID }]);
   };
 
   return (
@@ -51,19 +46,6 @@ export default function AddCollectionsForm({ storeId }: { storeId: string }) {
                 }
                 placeholder="Name of the collection"
                 required
-              />
-            </div>
-            <div className="text-2xl mt-6">
-              <label htmlFor={item.description}>Description</label>
-              <Input
-                type="text"
-                name={item.description}
-                className="mt-2"
-                value={item.description}
-                onChange={(e) =>
-                  handleInputChange(index, "description", e.target.value)
-                }
-                placeholder="Name of the collection"
               />
             </div>
           </div>

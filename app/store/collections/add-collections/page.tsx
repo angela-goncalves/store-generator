@@ -20,7 +20,7 @@ export default function AddCollections({
       <h3 className="">
         Let's add some categories or collections to your store
       </h3>
-      {/* <AddCollectionsForm storeId={searchParams.id} /> */}
+      <AddCollectionsForm storeId={searchParams.id} />
     </div>
   );
 }
