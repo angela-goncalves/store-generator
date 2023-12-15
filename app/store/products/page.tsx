@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import BackButton from "@/components/BackButton";
 import Image from "next/image";
 import productImage from "@/app/public/product.png";
+import DeleteProduct from "@/components/DeleteProduct";
 
 export default async function Products({
   searchParams,
@@ -51,36 +52,39 @@ export default async function Products({
         {dataProducts.length > 0 ? (
           <ul className="flex flex-col justify-center w-full gap-6">
             <div className="flex justify-between text-2xl mt-8">
-              <li className="w-[250px]">Title</li>
-              {/* <li className="w-[200px]">Collection</li> */}
+              <li className="w-[200px]">Title</li>
               <li className="w-[80px]">Price</li>
               <li></li>
             </div>
-            <Separator className="bg-neutral-dark" />
             {dataProducts.map((item) => (
-              <li key={item.id} className="flex flex-col gap-2">
-                <div className="flex justify-between">
+              <div key={item.id}>
+                <li className="flex justify-between gap-4 items-center">
                   <p className="w-[250px]">{item.name}</p>
-                  {/* <p className="w-[200px]">{item.description}</p> */}
                   <p className="w-[50px]">${item.price}</p>
-                  <Link
-                    href={{
-                      pathname: "/store/products/add-products",
-                      query: {
-                        id: searchParams.id,
-                        productId: item.id,
-                        productName: item.name,
-                        productDescription: item.description,
-                        productPrice: item.price,
-                        image: item.image,
-                        collectionId: item.collection_id,
-                      },
-                    }}>
-                    <PencilLineIcon className="mr-2 h-4 w-4" />
-                  </Link>
-                </div>
+                  <div className="flex gap-2 items-center">
+                    <Link
+                      href={{
+                        pathname: "/store/products/add-products",
+                        query: {
+                          id: searchParams.id,
+                          productId: item.id,
+                          productName: item.name,
+                          productDescription: item.description,
+                          productPrice: item.price,
+                          image: item.image,
+                          collectionId: item.collection_id,
+                        },
+                      }}>
+                      <PencilLineIcon className="mr-2 h-4 w-4" />
+                    </Link>
+                    <DeleteProduct
+                      productId={item.id}
+                      storeId={searchParams.id}
+                    />
+                  </div>
+                </li>
                 <Separator className="bg-neutral-dark" />
-              </li>
+              </div>
             ))}
           </ul>
         ) : (

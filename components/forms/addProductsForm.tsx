@@ -78,7 +78,6 @@ export default function AddProductsForm({
         className="flex flex-col">
         <div className="self-center">
           <Select
-            required
             name="collectionId"
             defaultValue={formData.collectionId}
             onValueChange={handleSelectChange}>
