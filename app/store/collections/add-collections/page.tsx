@@ -2,7 +2,6 @@
 
 import BackButton from "@/components/BackButton";
 import AddCollectionsForm from "@/components/forms/addCollectionsForm";
-import Link from "next/link";
 
 export default function AddCollections({
   searchParams,
@@ -17,9 +16,7 @@ export default function AddCollections({
           query: { id: searchParams.id },
         }}
       />
-      <h3 className="">
-        Let's add some categories or collections to your store
-      </h3>
+      <h3 className="">Create and curate your unique collections here.</h3>
       <AddCollectionsForm storeId={searchParams.id} />
     </div>
   );

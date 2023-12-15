@@ -13,47 +13,66 @@ type FormDataType = {
 
 export default function AddCollectionsForm({ storeId }: { storeId: string }) {
   const myUUID = uuidv4();
-  const [inputs, setInputs] = useState<FormDataType[]>([
+  const [collectionslist, setCollectionslist] = useState<FormDataType[]>([
     { name: "", id: myUUID },
   ]);
 
   const handleInputChange = (index: number, field: "name", value: string) => {
-    const updatedPairs = [...inputs];
-    updatedPairs[index][field] = value;
-    setInputs(updatedPairs);
+    const updatedCollection = [...collectionslist];
+    updatedCollection[index][field] = value;
+    setCollectionslist(updatedCollection);
   };
 
-  const addInputs = () => {
-    setInputs([...inputs, { name: "", id: myUUID }]);
+  const addNewCollection = () => {
+    setCollectionslist([...collectionslist, { name: "", id: myUUID }]);
   };
-
+  const deleteCollectionAdded = (idcollectionAdded: string) => {
+    const collectionslistCopy = [...collectionslist];
+    const deletedCollections = collectionslistCopy.filter(
+      (item) => item.id === idcollectionAdded
+    );
+    setCollectionslist(deletedCollections);
+  };
   return (
     <div className="w-1/2 max-w-[500px]">
       <form
-        action={() => handleInsertCollections(inputs, storeId)}
-        className="flex flex-col">
-        {inputs.map((item, index) => (
-          <div key={item.id}>
-            <div className="text-2xl mt-6">
-              <label htmlFor={item.name}>Name</label>
-              <Input
-                type="text"
-                name={item.name}
-                className="mt-2"
-                value={item.name}
-                onChange={(e) =>
-                  handleInputChange(index, "name", e.target.value)
-                }
-                placeholder="Name of the collection"
-                required
-              />
-            </div>
+        action={() => handleInsertCollections(collectionslist, storeId)}
+        className="flex flex-col"
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+          }
+        }}>
+        {collectionslist.map((item, index) => (
+          <div
+            key={item.id}
+            className="flex justify-between mt-6 items-center gap-4">
+            <Input
+              type="text"
+              name={item.name}
+              className=" w-full"
+              value={item.name}
+              onChange={(e) => handleInputChange(index, "name", e.target.value)}
+              onKeyDown={(e) => {
+                if (e.code === "Enter") return addNewCollection();
+              }}
+              placeholder="Name of the collection"
+            />
+            {collectionslist.length > 1 && (
+              <Button
+                variant="outline"
+                type="button"
+                className="w-max px-6 rounded-lg py-4 self-start bg-transparent border-primary"
+                onClick={() => deleteCollectionAdded(item.id)}>
+                x
+              </Button>
+            )}
           </div>
         ))}
         <Button
           type="button"
           className="my-6 px-6 rounded-lg py-4 self-start bg-transparent border-primary"
-          onClick={addInputs}
+          onClick={addNewCollection}
           variant="outline">
           add one more
         </Button>

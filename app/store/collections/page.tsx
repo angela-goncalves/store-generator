@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import React from "react";
 import Link from "next/link";
-import { PencilLineIcon } from "lucide-react";
+import { PencilLineIcon, Plus } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { capitalizeFirstLetter } from "@/lib/uppercase";
 import DeleteCollection from "@/components/forms/deleteCollection";
@@ -39,9 +39,20 @@ export default async function Collections({
         }}
       />
       <div className="w-full max-w-[800px] flex flex-col h-full gap-6">
-        <h1 className="text-secondary font-bold text-3xl">Collections</h1>
+        <div className="flex justify-between">
+          <h1 className="text-secondary font-bold text-3xl">Collections</h1>
+          <Link
+            href={{
+              pathname: "/store/collections/add-collections",
+              query: { id: storeId },
+            }}
+            className="flex border items-center border-secondary rounded-lg text-sm p-2 my-4 text-center gap-2">
+            <Plus className="w-4 " />
+            <p className="text-primary-foreground ">Add new collection</p>
+          </Link>
+        </div>
         {dataCollections.length > 0 ? (
-          <ul className="flex flex-col gap-4 mt-14">
+          <ul className="flex flex-col gap-4 mt-">
             <h3 className="text-2xl">Title</h3>
             {dataCollections.map((item) => (
               <div key={item.id}>
