@@ -42,10 +42,12 @@ module.exports = {
         btn: {
           successBg: "hsl(var(--btn-successBg))",
           foreground: "hsl(var(--btn-successBg-foreground))",
+          successBorder: "hsl(var(--btn-successBorder))",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
+          foregroundLight: "hsl(var(--destructive-foregroundLight))",
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",

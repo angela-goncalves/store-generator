@@ -10,11 +10,9 @@
     --card: 0 0% 100%;
     --card-foreground: 0 0% 3.9%;
 
-    --btn-background: 200 10% 91%;
-    --btn-background-hover: 188, 69%, 55%;
-
-    --btn-successBg: 151, 68%, 7%;
-    --btn-successBg-foreground: 150, 64% 53%;
+    --btn-successBg: 157 50% 93%;
+    --btn-successBorder: 84 66% 72%;
+    --btn-successBo-foreground: 169, 57%, 9%;
 
     --popover: 188, 69%, 55%;
     --popover-foreground: 187, 29%, 11%;
@@ -22,8 +20,8 @@
     --primary: 188, 69%, 55%;
     --primary-foreground: 187, 57%, 11%;
 
-    --secondary: 187, 57%, 11%;
-    --secondary-foreground: 0 0% 9%;
+    --secondary: 169, 57%, 9%;
+    --secondary-foreground: 180 100% 97%;
 
     --neutral-light: 220, 12%, 95%;
     --neutral-medium: 218, 13%, 88%;
@@ -36,8 +34,9 @@
     --accent: 170, 67%, 93%;
     --accent-foreground: 169, 74%, 10%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 5 75% 43%;
+    --destructive-foreground: 4 100% 97%;
+    --destructive-foregroundLight: 0 0% 100%;
 
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
