@@ -3,7 +3,6 @@ import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Hero from "./hero";
-import Products from "./product";
 import Collections from "./collections";
 
 export default async function TemplateComponent({

@@ -50,7 +50,7 @@ export default function Login({
             type="email"
             required
             name="email"
-            className="mt-2 bg-secondary"
+            className="mt-2 bg-secondary text-secondary-foreground"
             placeholder="you@example.com"
           />
         </div>
@@ -73,7 +73,7 @@ export default function Login({
             name="password"
             required
             value={valueEmail}
-            className="mt-2 bg-secondary"
+            className="mt-2 bg-secondary text-secondary-foreground"
             placeholder="••••••••"
             onChange={(e) => setValueEmail(e.target.value)}
           />

@@ -4,14 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { ConfigMenu } from "./ConfigMenu";
 
-export default async function AuthButton() {
-  // const cookieStore = cookies();
-  // const supabase = createClient(cookieStore);
-  // const {
-  //   data: { user },
-  // } = await supabase.auth.getUser();
-  const user = true;
-
+export default async function AuthButton({ user }: { user: string }) {
   return user ? (
     <div className="flex items-center gap-4">
       {/* Welcome back, {user.email}! */}
