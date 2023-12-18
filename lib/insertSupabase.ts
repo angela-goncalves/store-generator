@@ -33,14 +33,12 @@ export const handleInsertStore = async (formData: FormData) => {
       },
     ])
     .select();
+
   if (pageErrors !== null) {
     redirect("/add_store?message=store-error");
   }
 
   redirect(`/store?id=${data[0].id}`);
-  // } else {
-  //   redirect("/add_store?message=You-need-to-be-authenticated");
-  // }
 };
 
 interface FormDataData {
@@ -72,16 +70,16 @@ export const handleInsertCollections = async (
     };
   });
 
-  const { error: collectionsErrors } = await supabase
+  const { data, error: collectionsError } = await supabase
     .from("collections")
     .insert(collections)
     .select();
 
-  if (collectionsErrors !== null) {
-    redirect("/store/collections/add-collections&message=collections-errors");
+  if (collectionsError !== null) {
+    redirect(`/store/collections?id=${storeId}&message=collections-errors`);
   }
 
-  revalidatePath(`/store/products?id=${storeId}`);
+  redirect(`/store/collections?id=${storeId}`);
 };
 
 interface IFormDataInsertProduct {

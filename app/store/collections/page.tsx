@@ -2,12 +2,8 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import React from "react";
-import Link from "next/link";
-import { PencilLineIcon } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
-import { capitalizeFirstLetter } from "@/lib/uppercase";
-import DeleteCollection from "@/components/forms/deleteCollection";
 import BackButton from "@/components/BackButton";
+import AddCollections from "@/components/AddCollections";
 
 export default async function Collections({
   searchParams,
@@ -36,50 +32,16 @@ export default async function Collections({
           query: { id: searchParams.id },
         }}
       />
-      <div className="w-full max-w-[800px] flex flex-col">
-        <Link
-          href={{
-            pathname: "/store/collections/add-collections",
-            query: { id: storeId },
-          }}
-          className="text-blue-400 self-end">
-          Add collections
-        </Link>
-        {dataCollections.length > 0 ? (
-          <ul className="flex flex-col gap-4">
-            <h3 className="text-2xl">Title</h3>
-            {dataCollections.map((item) => (
-              <div key={item.id}>
-                <li className="flex justify-between gap-4">
-                  <h3>{capitalizeFirstLetter(item.name)}</h3>
-                  <div className="flex gap-2 items-center">
-                    <Link
-                      href={{
-                        pathname: `/store/collections/edit-collection`,
-                        query: {
-                          id: storeId,
-                          collectionId: `${item.id}`,
-                          collectionTitle: `${item.name}`,
-                          collectionDescription: `${item.description}`,
-                        },
-                      }}>
-                      <PencilLineIcon className="mr-2 h-4 w-4" />
-                    </Link>
-                    <DeleteCollection
-                      collectionId={item.id}
-                      storeId={storeId}
-                    />
-                  </div>
-                </li>
-                <Separator className="bg-neutral-dark" />
-              </div>
-            ))}
-          </ul>
-        ) : (
-          <div className="">
-            <h3>Don't have collection yet</h3>
-          </div>
-        )}
+      <div className="w-full max-w-[800px] flex flex-col h-full">
+        <div className="flex justify-between">
+          <h1 className="text-secondary font-bold text-3xl mt-10">
+            Collections
+          </h1>
+        </div>
+        <AddCollections
+          dataCollections={dataCollections}
+          storeId={searchParams.id}
+        />
       </div>
     </div>
   );
