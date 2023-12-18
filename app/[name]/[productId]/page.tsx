@@ -4,6 +4,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { capitalizeFirstLetter } from "@/lib/uppercase";
 import Link from "next/link";
+import Image from "next/image";
+import BackButton from "@/components/BackButton";
 
 export default async function pageProduct({
   params,
@@ -21,23 +23,54 @@ export default async function pageProduct({
   }
 
   return (
-    <div className="w-full flex flex-col justify-center items-center h-screen">
-      <div className="w-full max-w-[800px]">
-        <Link href={`/${params.name}`} className="self-start">
-          Back
-        </Link>
-        <div className="flex flex-col gap-6 bg-secondary p-4 text-neutral-light rounded-lg w-full mt-4">
-          <h2 className="text-2xl">
-            {capitalizeFirstLetter(dataProducts[0].name)}
-          </h2>
-          <div className=" border border-neutral-dark rounded-xl p-8">
-            <p>{capitalizeFirstLetter(dataProducts[0].description)}</p>
-            <p>${dataProducts[0].price}</p>
+    <div className="w-full flex flex-col p-20 max-h-[800px]">
+      <BackButton href={`/${params.name}`} />
+      <div className="flex w-full justify-around ">
+        <div className="max-w-xs flex">
+          <div className="flex flex-col self-end">
+            <h3>Composition</h3>
+            <p className="text-sm mt-3">
+              We work with monitoring programs to guarantee compliance with the
+              social, environmental, and health and safety standards of our
+              products. To assess its compliance, we have developed an audit
+              program and plans for continual improvement.
+            </p>
           </div>
         </div>
-        {/* <Link href={`${params.name}/${params.productId}`}>
-          Add to shopping bag
-        </Link> */}
+        <div className="flex flex-col mt-10">
+          <h2 className="text-3xl">
+            {capitalizeFirstLetter(dataProducts[0].name)}
+          </h2>
+          <div className="flex gap-4 mt-14 bg-secondary p-4">
+            <img
+              className="max-w-[300px]"
+              src={dataProducts[0].image}
+              // width={200}
+              // height={300}
+              alt={`${dataProducts[0].name} image`}
+            />
+            <img
+              className="max-w-[300px]"
+              src={dataProducts[0].image}
+              // width={200}
+              // height={300}
+              alt={`${dataProducts[0].name} image`}
+            />
+          </div>
+        </div>
+        <div className="flex flex-col justify-center gap-14">
+          <div className="p-2 max-w-xs h-min">
+            <p className="text-sm">
+              {capitalizeFirstLetter(dataProducts[0].description)}
+            </p>
+          </div>
+          <p className="text-2xl">${dataProducts[0].price}</p>
+          <div className="border border-secondary mt-6">
+            <Link href="#">
+              <p className="p-4 text-center text-md">Add to shopping bag</p>
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -39,20 +39,16 @@ export default async function FormAddProducts({
   }
 
   return (
-    <div className="my-10 mx-2 w-full flex flex-col items-center gap-6">
+    <div className="my-10 mx-2 w-full flex flex-col items-center ">
       <BackButton
         query={{
           pathname: "/store/products",
           query: { id: searchParams.id },
         }}
       />
-      <h1 className="text-xl">Add or edit your products</h1>
-      <h2>
-        But first, select the collection you want to be related to your products
-      </h2>
+      <h1 className="text-2xl mb-12">Add or edit your products</h1>
+      <h2>Select the collection you want to be related to your products</h2>
       <AddProductsForm dataCollections={data} searchParams={searchParams} />
     </div>
   );
 }
-
-// export default FormAddProducts;

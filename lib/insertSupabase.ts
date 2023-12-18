@@ -2,31 +2,21 @@
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 export const handleInsertStore = async (formData: FormData) => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
-  const { data: sessionData, error: sessionError } =
-    await supabase.auth.getSession();
-  const { session } = sessionData;
+  // const { data: sessionData, error: sessionError } =
+  //   await supabase.auth.getSession();
+  // const { session } = sessionData;
 
-  if (session === null || sessionError !== null) {
-    redirect(`/login?signin=true`);
-  }
-  // const session = {
-  //   user: {
-  //     id: "41b622a8-0c84-468e-a9e0-8e05b3a667a1",
-  //     email: "angelakgo20@gmail.com",
-  //   },
-  // };
-  // const {
-  //   data: { user },
-  //   error: errorUser,
-  // } = await supabase.auth.getUser();
-  // if (user === null || errorUser !== null) {
+  // if (session === null || sessionError !== null) {
   //   redirect(`/login?signin=true`);
   // }
+
+  const session = { user: { id: "41b622a8-0c84-468e-a9e0-8e05b3a667a1" } };
 
   const siteName = formData.get("siteName") as string;
   const siteDescription = formData.get("siteDescription") as string;
@@ -62,13 +52,14 @@ export const handleInsertCollections = async (
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
-  const { data: sessionData, error: sessionError } =
-    await supabase.auth.getSession();
-  const { session } = sessionData;
+  // const { data: sessionData, error: sessionError } =
+  //   await supabase.auth.getSession();
+  // const { session } = sessionData;
 
-  if (session === null || sessionError !== null) {
-    redirect(`/login?signin=true`);
-  }
+  // if (session === null || sessionError !== null) {
+  //   redirect(`/login?signin=true`);
+  // }
+  const session = { user: { id: "41b622a8-0c84-468e-a9e0-8e05b3a667a1" } };
 
   const collections = formData.map((item) => {
     return {
@@ -106,19 +97,21 @@ export const handleInsertProduct = async (
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
-  const { data: sessionData, error: sessionError } =
-    await supabase.auth.getSession();
-  const { session } = sessionData;
+  // const { data: sessionData, error: sessionError } =
+  //   await supabase.auth.getSession();
+  // const { session } = sessionData;
 
-  if (session === null || sessionError !== null) {
-    redirect(`/login?signin=true`);
-  }
+  // if (session === null || sessionError !== null) {
+  //   redirect(`/login?signin=true`);
+  // }
+  const session = { user: { id: "41b622a8-0c84-468e-a9e0-8e05b3a667a1" } };
 
   const name = formData.name;
   const description = formData.description;
   const price = formData.price;
   const image = formData.image;
-  const collection_id = formData.collectionId;
+  const collection_id =
+    formData.collectionId === "" ? null : formData.collectionId;
   const productAdded = [
     {
       name,
@@ -141,6 +134,5 @@ export const handleInsertProduct = async (
       `/store/products/add-products?id=${storeid}&message=products-error`
     );
   }
-
   redirect(`/store/products?id=${storeid}`);
 };

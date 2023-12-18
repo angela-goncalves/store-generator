@@ -36,11 +36,11 @@ export default async function Collections({
         <p className="h-7">{""}</p>
       )}
       {dataProducts.length > 0 ? (
-        <div className="flex gap-8">
+        <div className="flex flex-col gap-8">
           {dataProducts.map((item) => (
             <div
               key={item.id}
-              className="bg-secondary text-neutral-light rounded-lg p-6 hover:shadow-lg hover:shadow-neutral-dark w-[200px] h-[100px]">
+              className="bg-secondary text-neutral-light rounded-lg p-6 hover:shadow-lg hover:shadow-neutral-dark max-w-xs">
               <Product
                 id={item.id}
                 name={item.name}
@@ -53,7 +53,7 @@ export default async function Collections({
           ))}
         </div>
       ) : (
-        <h3>temporary list of prducts</h3>
+        <h3>your product</h3>
       )}
     </div>
   );
