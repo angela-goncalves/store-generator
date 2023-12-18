@@ -75,8 +75,8 @@ export default function AddProductsForm({
             ? updateProduct(formData, id)
             : handleInsertProduct(formData, id)
         }
-        className="flex flex-col">
-        <div className="self-center">
+        className="flex flex-col gap-2">
+        <div className="self-center mb-10">
           <Select
             name="collectionId"
             defaultValue={formData.collectionId}
@@ -100,7 +100,7 @@ export default function AddProductsForm({
             </SelectContent>
           </Select>
         </div>
-        <div className="text-2xl">
+        <div className="">
           <label htmlFor="name">Name</label>
           <Input
             type="text"
@@ -111,7 +111,7 @@ export default function AddProductsForm({
             placeholder="Name of the product"
           />
         </div>
-        <div className="text-2xl mt-6">
+        <div className=" mt-6">
           <label htmlFor="description">Description</label>
           <Input
             type="text"
@@ -122,7 +122,7 @@ export default function AddProductsForm({
             placeholder="Description of the product"
           />
         </div>
-        <div className="text-2xl mt-6">
+        <div className="mt-6">
           <label htmlFor="price">Price</label>
           <Input
             type="number"
@@ -133,7 +133,7 @@ export default function AddProductsForm({
             placeholder="Price"
           />
         </div>
-        <div className="text-2xl mt-6">
+        <div className="mt-6">
           <label htmlFor="image">URL of the image</label>
           <Input
             type="text"
