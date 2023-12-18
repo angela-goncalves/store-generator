@@ -5,11 +5,12 @@ import { Input } from "@/components/ui/input";
 import { handleInsertCollections } from "@/lib/insertSupabase";
 import { Button } from "../ui/button";
 import { v4 as uuidv4 } from "uuid";
-import { PencilLineIcon, Plus } from "lucide-react";
+import { PencilLineIcon, Plus, XIcon } from "lucide-react";
 import { capitalizeFirstLetter } from "@/lib/uppercase";
 import Link from "next/link";
 import { Separator } from "../ui/separator";
 import DeleteDialog from "../DeleteDialog";
+import { handleDeleteCollection } from "../../lib/deleteSupabase";
 
 type FormDataType = {
   name: string;
@@ -31,9 +32,8 @@ export default function AddCollectionsForm({
   storeId: string;
   dataCollections: IDataCollections[];
 }) {
-  const myUUID = uuidv4();
   const [collectionslist, setCollectionslist] = useState<FormDataType[]>([
-    { name: "", id: myUUID },
+    { name: "", id: uuidv4() },
   ]);
 
   const [addCollection, setAddCollection] = useState(false);
@@ -45,7 +45,7 @@ export default function AddCollectionsForm({
   };
 
   const addNewCollection = () => {
-    setCollectionslist([...collectionslist, { name: "", id: myUUID }]);
+    setCollectionslist([...collectionslist, { name: "", id: uuidv4() }]);
   };
 
   const deleteCollectionAdded = (idcollectionAdded: string) => {
@@ -59,40 +59,55 @@ export default function AddCollectionsForm({
     <div className="w-full flex flex-col mb-10">
       <Button
         variant="ghost"
-        onClick={() => setAddCollection(!addCollection)}
+        onClick={() => {
+          setAddCollection(!addCollection);
+          if (collectionslist.length === 0) addNewCollection();
+        }}
         className="flex border self-end items-center border-secondary rounded-lg text-sm p-2 mb-4 text-center gap-2">
         <Plus className="w-4 " />
-        <p className="text-primary-foreground ">Add new collection</p>
+        <p className="text-primary-foreground">Add new collection</p>
       </Button>
-      <ul className="flex flex-col gap-4 mt-">
-        <h3 className="text-2xl">Title</h3>
-        {dataCollections.map((item) => (
-          <div key={item.id}>
-            <li className="flex justify-between gap-4">
-              <h3>{capitalizeFirstLetter(item.name)}</h3>
-              <div className="flex gap-2 items-center">
-                <Link
-                  href={{
-                    pathname: `/store/collections/edit-collection`,
-                    query: {
-                      id: storeId,
-                      collectionId: `${item.id}`,
-                      collectionTitle: `${item.name}`,
-                      collectionDescription: `${item.description}`,
-                    },
-                  }}>
-                  <PencilLineIcon className="mr-2 h-4 w-4" />
-                </Link>
-                <DeleteDialog collectionId={item.id} storeId={storeId} />
+      {dataCollections.length > 0 && (
+        <div>
+          <h3 className="text-2xl">Title</h3>
+          <ul className="flex flex-col gap-4 mt-">
+            {dataCollections.map((item) => (
+              <div key={item.id}>
+                <li className="flex justify-between gap-4">
+                  <h3>{capitalizeFirstLetter(item.name)}</h3>
+                  <div className="flex gap-2 items-center">
+                    <Link
+                      href={{
+                        pathname: `/store/collections/edit-collection`,
+                        query: {
+                          id: storeId,
+                          collectionId: `${item.id}`,
+                          collectionTitle: `${item.name}`,
+                          collectionDescription: `${item.description}`,
+                        },
+                      }}>
+                      <PencilLineIcon className="mr-2 h-4 w-4" />
+                    </Link>
+                    <DeleteDialog
+                      id={item.id}
+                      storeId={storeId}
+                      deleteFunction={handleDeleteCollection}
+                    />
+                  </div>
+                </li>
+                <Separator className="bg-neutral-dark" />
               </div>
-            </li>
-            <Separator className="bg-neutral-dark" />
-          </div>
-        ))}
-      </ul>
+            ))}
+          </ul>
+        </div>
+      )}
       {addCollection && (
         <form
-          action={() => handleInsertCollections(collectionslist, storeId)}
+          action={() => {
+            handleInsertCollections(collectionslist, storeId);
+            setCollectionslist([]);
+            setAddCollection(false);
+          }}
           className="flex flex-col mt-2"
           onKeyDown={(e) => {
             if (e.key === "Enter") {
@@ -117,15 +132,15 @@ export default function AddCollectionsForm({
                 placeholder="Name of the collection"
               />
               <Button
-                variant="outline"
+                variant="ghost"
                 type="button"
-                className="w-max px-6 rounded-lg py-4 self-start bg-transparent border-primary"
+                className="bg-transparent hover:bg-transparent"
                 onClick={() =>
                   collectionslist.length > 1
                     ? deleteCollectionAdded(item.id)
                     : setAddCollection(false)
                 }>
-                x
+                <XIcon className="mr-2 h-4 w-4" />
               </Button>
             </div>
           ))}

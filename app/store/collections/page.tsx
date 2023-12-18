@@ -2,11 +2,8 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import React from "react";
-import Link from "next/link";
 import BackButton from "@/components/BackButton";
-import Image from "next/image";
-import collectionImage from "@/app/public/categories.png";
-import AddCollectionsForm from "@/components/forms/addCollectionsForm";
+import AddCollections from "@/components/AddCollections";
 
 export default async function Collections({
   searchParams,
@@ -41,40 +38,10 @@ export default async function Collections({
             Collections
           </h1>
         </div>
-        {dataCollections.length > 0 ? (
-          <AddCollectionsForm
-            storeId={searchParams.id}
-            dataCollections={dataCollections}
-          />
-        ) : (
-          <div className="h-full mt-20">
-            <div className="flex justify-center self-center bg-white p-6 rounded-lg gap-10">
-              <Image
-                src={collectionImage}
-                width={400}
-                height={400}
-                alt="image relate to edit products"
-              />
-              <div className="flex flex-col gap-2">
-                <h3 className="font-bold text-lg">Start Your Collections!</h3>
-                <h3 className="text-sm">
-                  You haven't created any collections yet. Begin by crafting
-                  your first collection to categorize and showcase your products
-                  in a unique way.
-                </h3>
-                <Link
-                  href={{
-                    pathname: "/store/collections/add-collections",
-                    query: { id: storeId },
-                  }}>
-                  <p className="p-4 bg-primary text-primary-foreground rounded-lg font-semibold my-4 w-40 text-center">
-                    Add collections
-                  </p>
-                </Link>
-              </div>
-            </div>
-          </div>
-        )}
+        <AddCollections
+          dataCollections={dataCollections}
+          storeId={searchParams.id}
+        />
       </div>
     </div>
   );

@@ -14,6 +14,19 @@ export const handleInsertStore = async (formData: FormData) => {
   if (session === null || sessionError !== null) {
     redirect(`/login?signin=true`);
   }
+  // const session = {
+  //   user: {
+  //     id: "41b622a8-0c84-468e-a9e0-8e05b3a667a1",
+  //     email: "angelakgo20@gmail.com",
+  //   },
+  // };
+  // const {
+  //   data: { user },
+  //   error: errorUser,
+  // } = await supabase.auth.getUser();
+  // if (user === null || errorUser !== null) {
+  //   redirect(`/login?signin=true`);
+  // }
 
   const siteName = formData.get("siteName") as string;
   const siteDescription = formData.get("siteDescription") as string;
@@ -30,14 +43,12 @@ export const handleInsertStore = async (formData: FormData) => {
       },
     ])
     .select();
+
   if (pageErrors !== null) {
     redirect("/add_store?message=store-error");
   }
 
   redirect(`/store?id=${data[0].id}`);
-  // } else {
-  //   redirect("/add_store?message=You-need-to-be-authenticated");
-  // }
 };
 
 interface FormDataData {
@@ -68,16 +79,16 @@ export const handleInsertCollections = async (
     };
   });
 
-  const { error: collectionsErrors } = await supabase
+  const { data, error: collectionsError } = await supabase
     .from("collections")
     .insert(collections)
     .select();
 
-  if (collectionsErrors !== null) {
-    redirect("store/collections/add-collections&message=collections errors");
+  if (collectionsError !== null) {
+    redirect(`/store/collections?id=${storeId}&message=collections-errors`);
   }
 
-  redirect(`/store?id=${storeId}`);
+  redirect(`/store/collections?id=${storeId}`);
 };
 
 interface IFormDataInsertProduct {
