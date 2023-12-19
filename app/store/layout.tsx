@@ -13,19 +13,19 @@ export default async function LayoutEditStore({
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
-  const { data, error } = await supabase.from("store").select();
-
-  if (data === null || error !== null) {
-    redirect(`/store&message=something-went-wrong-with-stores-in-sidebar`);
-  }
-
   const { data: sessionData, error: sessionError } =
     await supabase.auth.getSession();
 
   const { session } = sessionData;
 
-  if (session === null || error !== null) {
+  if (session === null || sessionError !== null) {
     redirect("/");
+  }
+
+  const { data, error } = await supabase.from("store").select();
+
+  if (data === null || error !== null) {
+    redirect(`/store&message=something-went-wrong-with-layoutstore`);
   }
 
   return (

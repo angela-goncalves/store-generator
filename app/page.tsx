@@ -43,12 +43,6 @@ export default async function Index() {
       </div>
     );
   }
-  // const session = {
-  //   user: {
-  //     id: "41b622a8-0c84-468e-a9e0-8e05b3a667a1",
-  //     email: "angelakgo20@gmail.com",
-  //   },
-  // };
 
   const { data: dataStore, error: storeError } = await supabase
     .from("store")

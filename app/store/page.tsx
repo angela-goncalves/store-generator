@@ -6,7 +6,7 @@ export default function Store({
   searchParams: { id: string };
 }) {
   return (
-    <div>
+    <div className="w-[calc(100%-180px)]">
       <TemplateComponent storeId={searchParams.id} />
     </div>
   );
