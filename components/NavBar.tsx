@@ -1,24 +1,38 @@
 import React from "react";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import Link from "next/link";
-import AuthButton from "./AuthButton";
+import { ConfigMenu } from "./ConfigMenu";
 
-export default async function NavBar() {
-  // const cookieStore = cookies();
-  // const supabase = createClient(cookieStore);
+export default async function NavBar({ user }: { user: string }) {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
 
-  // const { data, error } = await supabase.auth.getSession();
+  const { data, error } = await supabase.auth.getSession();
 
-  // const { session } = data;
-  // if (session === null || error !== null) {
-  //   redirect(`/login?signin=true`);
-  // }
+  const { session } = data;
+
+  if (session === null || error !== null) {
+    return (
+      <div className="w-full bg-secondary self-center flex justify-between items-center p-5 text-sm text-secondary-foreground">
+        <Link href="/">store-generator</Link>
+        <Link
+          href="/login?signin=true"
+          className="py-2 px-3 flex rounded-md no-underline border hover:bg-neutral-light hover:text-secondary">
+          Log in
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full bg-white dark:bg-black self-center flex justify-between items-center p-3 text-sm">
       <Link href="/">store-generator</Link>
-      <AuthButton />
+      {session.user.id && (
+        <div className="flex items-center gap-4">
+          <ConfigMenu />
+        </div>
+      )}
     </div>
   );
 }

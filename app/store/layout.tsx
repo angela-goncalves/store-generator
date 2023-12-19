@@ -1,19 +1,40 @@
 import SideBar from "@/components/SideBar";
 import React, { ReactElement } from "react";
 import NavBar from "@/components/NavBar";
+import { cookies } from "next/headers";
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 
-export default function LayoutEditStore({
+export default async function LayoutEditStore({
   children,
 }: {
   children: ReactElement;
 }) {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+
+  const { data, error } = await supabase.from("store").select();
+
+  if (data === null || error !== null) {
+    redirect(`/store&message=something-went-wrong-with-stores-in-sidebar`);
+  }
+
+  const { data: sessionData, error: sessionError } =
+    await supabase.auth.getSession();
+
+  const { session } = sessionData;
+
+  if (session === null || error !== null) {
+    redirect("/");
+  }
+
   return (
-    <div className="flex flex-col w-full justify-center">
-      <NavBar />
+    <main className="flex flex-col w-full justify-center">
+      <NavBar user={session.user.id} />
       <div className="flex">
-        <SideBar />
+        <SideBar dataStore={data} />
         {children}
       </div>
-    </div>
+    </main>
   );
 }
