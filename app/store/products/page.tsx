@@ -27,8 +27,6 @@ export default async function Products({
   if (dataProducts === null || error !== null) {
     redirect(`store/products?id=${searchParams.id}&message=products-errors`);
   }
-
-  const collections = true;
   return (
     <div className="w-full flex flex-col items-center mt-10">
       <BackButton
@@ -73,7 +71,7 @@ export default async function Products({
                             productName: item.name,
                             productDescription: item.description,
                             productPrice: item.price,
-                            image: item.image,
+                            productImage: item.image,
                             collectionId: item.collection_id,
                           },
                         }}>
@@ -99,37 +97,22 @@ export default async function Products({
                 height={400}
                 alt="image relate to edit products"
               />
-              {collections ? (
-                <div className="flex flex-col gap-2">
-                  <h3 className="font-bold text-lg">Your Showcase Awaits!"</h3>
-                  <h3 className="text-sm">
-                    You haven't added any products yet. Get started and show the
-                    world what you've got!
-                  </h3>
-                  <Link
-                    href={{
-                      pathname: `/store/products/add-products`,
-                      query: { id: `${searchParams.id}` },
-                    }}>
-                    <p className="bg-primary text-primary-foreground rounded-lg font-semibold p-4 my-4 w-40 text-center">
-                      Add Products
-                    </p>
-                  </Link>
-                </div>
-              ) : (
-                <div className="flex flex-col items-center">
-                  <h3>Need to add some collections first</h3>
-                  <Link
-                    href={{
-                      pathname: `/store/collections/add-collections`,
-                      query: { id: `${searchParams.id}` },
-                    }}>
-                    <p className="bg-primary text-primary-foreground rounded-lg font-semibold p-4 my-4 w-40 text-center">
-                      Add Collections
-                    </p>
-                  </Link>
-                </div>
-              )}
+              <div className="flex flex-col gap-2">
+                <h3 className="font-bold text-lg">Your Showcase Awaits!"</h3>
+                <h3 className="text-sm">
+                  You haven't added any products yet. Get started and show the
+                  world what you've got!
+                </h3>
+                <Link
+                  href={{
+                    pathname: `/store/products/add-products`,
+                    query: { id: `${searchParams.id}` },
+                  }}>
+                  <p className="bg-primary text-primary-foreground rounded-lg font-semibold p-4 my-4 w-40 text-center">
+                    Add Products
+                  </p>
+                </Link>
+              </div>
             </div>
           </div>
         )}

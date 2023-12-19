@@ -33,7 +33,7 @@ export default async function TemplateComponent({
   }
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col">
       <Hero name={dataStore[0].name} description={dataStore[0].description} />
       {dataCollections.length > 0 ? (
         <div className="flex m-10 gap-8 items-center">
