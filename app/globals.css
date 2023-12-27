@@ -55,7 +55,11 @@
     --popover: 187, 29%, 11%;
     --popover-foreground: 206, 100%, 84%;
 
-    --primary: 188, 69%, 55%;
+    --btn-successBg: 157 50% 93%;
+    --btn-successBorder: 84 66% 72%;
+    --btn-successBo-foreground: 169, 57%, 9%;
+
+    --primary: 188, 83%, 60%;
     --primary-foreground: 187, 57%, 11%;
 
     --neutral-light: 210, 11%, 7%;
@@ -64,7 +68,7 @@
     --neutral-foreground: 210, 22%, 89%;
 
     --secondary: 167 25% 69%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary-foreground: 169, 57%, 9%;
 
     --btn-successBg: 150, 64% 53%;
     --btn-successBg-foreground: 151, 68%, 7%;
