@@ -13,17 +13,19 @@ interface IDialogVariants {
   title: string;
   description?: string;
   children: ReactElement;
+  onClick: () => void;
 }
 
 export function DialogVariants({
   title,
   description,
   children,
+  onClick,
 }: IDialogVariants) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="self-end">
+        <Button variant="outline" className="self-end" onClick={onClick}>
           New variant
         </Button>
       </DialogTrigger>

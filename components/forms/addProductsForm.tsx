@@ -81,40 +81,22 @@ export default function AddProductsForm({
     setFormData({ ...formData, [name]: value });
   };
 
-  const [variants, setVariants] = useState<IVariants[]>([]);
+  const [variants, setVariants] = useState<any>([]);
+  const [attributes, setAttributes] = useState<any[]>([]);
 
   const handleSelectChange = (event: string) => {
     setFormData({ ...formData, collectionId: event });
   };
 
-  function generateCombinations(variants: any[][]): any[][] {
-    if (variants.length === 0) return [[]];
-    const firstVariant = variants[0];
-    const restVariants = generateCombinations(variants.slice(1));
-    const combinations = [];
+  const handleVariantChange = (index: number, field: any, value: string) => {
+    const newVariants = [...variants];
+    newVariants[index][field] = field === "combination" ? value : Number(value);
+    setVariants(newVariants);
+  };
 
-    for (const item of firstVariant) {
-      for (const combination of restVariants) {
-        combinations.push([item, ...combination]);
-      }
-    }
-
-    return combinations;
-  }
-
-  const variantChildrenGroups = variants.map((item) => item.variantChildren);
-
-  const combinations = generateCombinations(variantChildrenGroups);
-
-  const variantsCombinations = combinations.map((combination) => {
-    const combinationsToShow = {
-      id: uuidv4(),
-      combination,
-      stock: 0,
-      price: 0,
-    };
-    return combinationsToShow;
-  });
+  const handleAddAttribute = () => {
+    setAttributes([...attributes, { name: "", values: [""] }]);
+  };
 
   return (
     <div className="w-full max-w-[800px]">
@@ -122,12 +104,7 @@ export default function AddProductsForm({
         action={() =>
           productId
             ? updateProduct(formData, storeId)
-            : handleInsertInventory(
-                variants,
-                formData,
-                storeId,
-                variantsCombinations
-              )
+            : handleInsertInventory(variants, formData, storeId, [])
         }
         className="flex flex-col gap-2">
         <div className="flex justify-center mb-10 w-full">
@@ -205,35 +182,43 @@ export default function AddProductsForm({
         <div className="bg-white p-6 w-full flex-col flex gap-4 rounded-lg">
           <h3 className="text-lg font-semibold">Variants</h3>
           <h3>Combine attibutes to have a price per item</h3>
-          <DialogVariants
-            title="Add variant"
-            description="Here you can add the variants for your product">
-            <AddInventoryForm setVariants={setVariants} variants={variants} />
-          </DialogVariants>
+          {productId && (
+            <DialogVariants
+              title="Add variant"
+              description="Here you can add the variants for your product"
+              onClick={handleAddAttribute}>
+              <AddInventoryForm
+                setVariants={setVariants}
+                variants={variants}
+                attributes={attributes}
+                setAttributes={setAttributes}
+              />
+            </DialogVariants>
+          )}
           {variants.length !== 0 && (
             <div>
               <div className="flex gap-6">
-                <p className="w-[60%]">Variant</p>
+                <p className="w-[40%]">Variant</p>
                 <p className="w-[20%]">Stock</p>
                 <p className="w-[20%]">Price</p>
               </div>
-              {variantsCombinations.map((variant, index) => (
-                <div key={variant.id} className="flex w-full">
-                  <ul className="flex w-[60%] gap-12">
-                    {variant.combination.map((item: IVariantChild) => {
-                      return (
-                        <li key={item.id} className="">
-                          {item.name}
-                        </li>
-                      );
-                    })}
-                  </ul>
-                  <label htmlFor="stock" className="w-[20%]">
-                    <Input type="number" name="stock" value={variant.stock} />
-                  </label>
-                  <label htmlFor="stock" className="w-[20%]">
-                    <Input type="number" name="price" value={variant.price} />
-                  </label>
+              {variants.map((variant: any, index: number) => (
+                <div key={index} className="flex gap-6">
+                  <span className="w-[80%]">{variant.combination}</span>
+                  <Input
+                    type="number"
+                    value={variant.price}
+                    onChange={(e) =>
+                      handleVariantChange(index, "price", e.target.value)
+                    }
+                  />
+                  <Input
+                    type="number"
+                    value={variant.stock}
+                    onChange={(e) =>
+                      handleVariantChange(index, "stock", e.target.value)
+                    }
+                  />
                 </div>
               ))}
             </div>
