@@ -1,6 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
 import React from "react";
 import Link from "next/link";
 import { PencilLineIcon, Plus } from "lucide-react";
@@ -8,25 +6,22 @@ import { Separator } from "@/components/ui/separator";
 import BackButton from "@/components/BackButton";
 import Image from "next/image";
 import productImage from "@/app/public/product.png";
-import DeleteProduct from "@/components/DeleteProduct";
 import { capitalizeFirstLetter } from "@/lib/uppercase";
+import { getAllProductsOfStore } from "@/lib/action/getData";
+import DeleteDialog from "@/components/DeleteDialog";
+import { handleDeleteProduct } from "@/lib/deleteSupabase";
 
 export default async function Products({
   searchParams,
 }: {
   searchParams: { id: string };
 }) {
-  const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
+  const dataProducts = await getAllProductsOfStore(searchParams.id);
 
-  const { data: dataProducts, error } = await supabase
-    .from("products")
-    .select()
-    .eq("store_id", searchParams.id);
-
-  if (dataProducts === null || error !== null) {
+  if (dataProducts === null) {
     redirect(`store/products?id=${searchParams.id}&message=products-errors`);
   }
+
   return (
     <div className="w-full flex flex-col items-center mt-10">
       <BackButton
@@ -68,18 +63,14 @@ export default async function Products({
                           query: {
                             id: searchParams.id,
                             productId: item.id,
-                            productName: item.name,
-                            productDescription: item.description,
-                            productPrice: item.price,
-                            productImage: item.image,
-                            collectionId: item.collection_id,
                           },
                         }}>
                         <PencilLineIcon className="mr-2 h-4 w-4" />
                       </Link>
-                      <DeleteProduct
-                        productId={item.id}
+                      <DeleteDialog
+                        id={item.id}
                         storeId={searchParams.id}
+                        deleteFunction={handleDeleteProduct}
                       />
                     </div>
                   </li>

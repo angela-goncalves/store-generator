@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
+import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -15,7 +16,7 @@ type IFormDataUpdateProduct = {
 
 export const updateProduct = async (
   formData: IFormDataUpdateProduct,
-  storeid: string
+  storeId: string
 ) => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
@@ -26,19 +27,37 @@ export const updateProduct = async (
   const price = formData.price;
   const image = formData.image;
   const collection_id = formData.collectionId;
+  const updateProductWithCollection = collection_id
+    ? {
+        name,
+        description,
+        collection_id,
+        price,
+        store_id: storeId,
+        image,
+      }
+    : {
+        name,
+        description,
+        price,
+        store_id: storeId,
+        image,
+      };
 
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("products")
-    .update({ name, description, collection_id, price, image })
+    .update(updateProductWithCollection)
     .eq("id", idProduct)
     .select();
 
-  if (data === null || error !== null) {
+  // console.log("error in update the product", error);
+
+  if (error !== null) {
     redirect(
-      `/store/products/add-products?id=${storeid}&message=something-went-wrong-when-try-to-update-the-product`
+      `/store/products/add-products?id=${storeId}&productId=${formData.id}&message=something-went-wrong-when-try-to-update-the-product`
     );
   }
-  redirect(`/store/products?id=${storeid}`);
+  redirect(`/store/products?id=${storeId}`);
 };
 
 type FormDataType = {
