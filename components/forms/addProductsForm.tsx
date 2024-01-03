@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -9,23 +9,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { updateProduct } from "@/lib/updateSupabase";
 import {
   handleInsertInventory,
   handleInsertProduct,
+  handleInsertAttributesParent,
 } from "@/lib/insertSupabase";
 import { DialogVariants } from "../DialogVariants";
 import { v4 as uuidv4 } from "uuid";
 import AddInventoryForm from "./addInventoryForm";
+import Link from "next/link";
 
-interface IVariantChild {
+interface IInventory {
   id: string;
-  name: string;
-}
-interface IVariants {
-  id: string;
-  variantParent: string;
-  variantChildren: IVariantChild[];
+  combination: string;
+  price: string;
+  stock: string;
 }
 interface ICollections {
   created_at: string;
@@ -45,16 +43,23 @@ interface IProducts {
   name: string | null;
   price: string | null;
 }
+interface IAttributeschildren {
+  id: string;
+  name: string;
+  values: string[];
+}
 interface IDataCollection {
   dataCollections: ICollections[] | null;
   productToEdit: IProducts;
   storeId: string;
+  inventory: IInventory[];
 }
 
 export default function AddProductsForm({
   dataCollections,
   productToEdit,
   storeId,
+  inventory,
 }: IDataCollection) {
   const {
     collection_id,
@@ -65,10 +70,8 @@ export default function AddProductsForm({
     price,
   } = productToEdit;
 
-  const newProductId = uuidv4();
-
   const [formData, setFormData] = useState({
-    id: productId ? productId : newProductId,
+    id: productId ? productId : uuidv4(),
     name: name ?? "",
     description: description ?? "",
     price: price ?? "",
@@ -76,26 +79,36 @@ export default function AddProductsForm({
     collectionId: collection_id ?? "",
   });
 
+  const [attributesChildren, setAttributesChildren] = useState<
+    IAttributeschildren[]
+  >([]);
+
+  const [inventoryList, setInventoryList] = useState<IInventory[]>(
+    inventory.length > 0 ? inventory : []
+  );
+  const [attributeParent, setAttributeParent] = useState<string>("");
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const [variants, setVariants] = useState<any>([]);
-  const [attributes, setAttributes] = useState<any[]>([]);
-
   const handleSelectChange = (event: string) => {
     setFormData({ ...formData, collectionId: event });
   };
 
-  const handleVariantChange = (index: number, field: any, value: string) => {
-    const newVariants = [...variants];
-    newVariants[index][field] = field === "combination" ? value : Number(value);
-    setVariants(newVariants);
+  const handleVariantChange = (id: string, field: string, value: string) => {
+    const newInventories = inventoryList.map((inventory) => {
+      if (inventory.id === id) {
+        return { ...inventory, [field]: value };
+      }
+      return inventory;
+    });
+
+    setInventoryList(newInventories);
   };
 
   const handleAddAttribute = () => {
-    setAttributes([...attributes, { name: "", values: [""] }]);
+    setAttributesChildren([{ id: uuidv4(), name: "", values: [""] }]);
   };
 
   return (
@@ -103,34 +116,52 @@ export default function AddProductsForm({
       <form
         action={() =>
           productId
-            ? updateProduct(formData, storeId)
-            : handleInsertInventory(variants, formData, storeId, [])
+            ? handleInsertInventory(formData, inventoryList, storeId, productId)
+            : handleInsertProduct(formData, storeId)
         }
         className="flex flex-col gap-2">
-        <div className="flex justify-center mb-10 w-full">
-          <Select
-            name="collectionId"
-            defaultValue={formData.collectionId}
-            onValueChange={handleSelectChange}>
-            <SelectTrigger className="w-full max-w-[300px]">
-              <SelectValue placeholder="Select a collection" />
-            </SelectTrigger>
-            <SelectContent className="max-w-[300px]">
-              <SelectGroup>
-                {dataCollections?.map((item) => {
-                  return (
-                    <SelectItem
-                      key={item.id}
-                      value={item.id}
-                      onChange={handleInputChange}>
-                      {item.name}
-                    </SelectItem>
-                  );
-                })}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
+        {formData.collectionId ? (
+          <div className="flex justify-center mb-10 w-full">
+            <h2>
+              Select the collection you want to be related to your products
+            </h2>
+            <Select
+              name="collectionId"
+              defaultValue={formData.collectionId}
+              onValueChange={handleSelectChange}>
+              <SelectTrigger className="w-full max-w-[300px]">
+                <SelectValue placeholder="Select a collection to this product" />
+              </SelectTrigger>
+              <SelectContent className="max-w-[300px]">
+                <SelectGroup>
+                  {dataCollections?.map((item) => {
+                    return (
+                      <SelectItem
+                        key={item.id}
+                        value={item.id}
+                        onChange={handleInputChange}>
+                        {item.name}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+        ) : (
+          <div className="flex gap-1">
+            <Link
+              href={{
+                pathname: "/store/collections",
+                query: { id: storeId },
+              }}
+              className="text-blue-500">
+              Add collections
+            </Link>
+            <h4>to relate them with this product</h4>
+          </div>
+        )}
+
         <div className="bg-white p-6 rounded-lg flex flex-col my-4 gap-6">
           <label htmlFor="name">
             <p>Name</p>
@@ -178,52 +209,65 @@ export default function AddProductsForm({
             />
           </label>
         </div>
+        {productId && (
+          <div className="bg-white p-6 w-full flex-col flex gap-4 rounded-lg">
+            <h3 className="text-lg font-semibold">Variants</h3>
+            <h3>Combine attibutes to have a price per item</h3>
 
-        <div className="bg-white p-6 w-full flex-col flex gap-4 rounded-lg">
-          <h3 className="text-lg font-semibold">Variants</h3>
-          <h3>Combine attibutes to have a price per item</h3>
-          {productId && (
             <DialogVariants
               title="Add variant"
               description="Here you can add the variants for your product"
-              onClick={handleAddAttribute}>
+              onClick={handleAddAttribute}
+              handleSubmitAttributes={async () =>
+                await handleInsertAttributesParent(
+                  attributesChildren,
+                  productId,
+                  storeId
+                )
+              }>
               <AddInventoryForm
-                setVariants={setVariants}
-                variants={variants}
-                attributes={attributes}
-                setAttributes={setAttributes}
+                attributesChildren={attributesChildren}
+                setAttributesChildren={setAttributesChildren}
+                attributeParent={attributeParent}
+                setAttributeParent={setAttributeParent}
               />
             </DialogVariants>
-          )}
-          {variants.length !== 0 && (
-            <div>
-              <div className="flex gap-6">
-                <p className="w-[40%]">Variant</p>
-                <p className="w-[20%]">Stock</p>
-                <p className="w-[20%]">Price</p>
-              </div>
-              {variants.map((variant: any, index: number) => (
-                <div key={index} className="flex gap-6">
-                  <span className="w-[80%]">{variant.combination}</span>
-                  <Input
-                    type="number"
-                    value={variant.price}
-                    onChange={(e) =>
-                      handleVariantChange(index, "price", e.target.value)
-                    }
-                  />
-                  <Input
-                    type="number"
-                    value={variant.stock}
-                    onChange={(e) =>
-                      handleVariantChange(index, "stock", e.target.value)
-                    }
-                  />
+
+            {inventoryList.length !== 0 && (
+              <div className="flex-col flex gap-6">
+                <div className="flex gap-6">
+                  <p className="w-[40%]">Variant</p>
+                  <p className="w-[20%]">Stock</p>
+                  <p className="w-[20%]">Price</p>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
+                {inventoryList.map((variant: any) => (
+                  <div key={variant.id} className="flex gap-6">
+                    <span className="w-[80%]">{variant.combination}</span>
+                    <Input
+                      type="number"
+                      value={variant.stock}
+                      onChange={(e) =>
+                        handleVariantChange(variant.id, "stock", e.target.value)
+                      }
+                    />
+                    <Input
+                      type="number"
+                      value={variant.price}
+                      onChange={(e) =>
+                        handleVariantChange(variant.id, "price", e.target.value)
+                      }
+                    />
+                    {/* <DeleteDialog
+                      id={variant.id}
+                      storeId={storeId}
+                      deleteFunction={handleDeleteInventory}
+                    /> */}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         <button
           type="submit"

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import {
   Select,
   SelectContent,
@@ -13,25 +13,21 @@ import { v4 as uuidv4 } from "uuid";
 import { Input } from "@/components/ui/input";
 import { Plus, XIcon } from "lucide-react";
 
-interface IVariantChild {
+interface IAttributeschildren {
   id: string;
   name: string;
-}
-interface IVariants {
-  id: string;
-  variantParent: string;
-  variantChildren: IVariantChild[];
+  values: string[];
 }
 export default function AddInventory({
-  setVariants,
-  variants,
-  attributes,
-  setAttributes,
+  attributesChildren,
+  setAttributesChildren,
+  attributeParent,
+  setAttributeParent,
 }: {
-  setVariants: (variants: any[]) => void;
-  variants: any[];
-  attributes: any;
-  setAttributes: (attributes: any) => void;
+  attributesChildren: IAttributeschildren[];
+  setAttributesChildren: (attributes: IAttributeschildren[]) => void;
+  setAttributeParent: (attributeParent: string) => void;
+  attributeParent: string;
 }) {
   const variantsobj = [
     { id: uuidv4(), name: "color" },
@@ -39,10 +35,25 @@ export default function AddInventory({
     { id: uuidv4(), name: "other..." },
   ];
 
-  const handleAttributeNameChange = (index: number, name: string) => {
-    const newAttributes = [...attributes];
-    newAttributes[index].name = name;
-    setAttributes(newAttributes);
+  const handleAttributeNameChange = (id: string, value: string) => {
+    const newAttributesChildren = attributesChildren.map((attribute) => {
+      if (attribute.id === id) {
+        return { ...attribute, name: value === "other..." ? "" : value };
+      }
+      return attribute;
+    });
+    setAttributeParent(value);
+    setAttributesChildren(newAttributesChildren);
+  };
+
+  const handleIfAttributeNameIsOther = (id: string, value: string) => {
+    const newAttributesChildren = attributesChildren.map((attribute) => {
+      if (attribute.id === id) {
+        return { ...attribute, name: value };
+      }
+      return attribute;
+    });
+    setAttributesChildren(newAttributesChildren);
   };
 
   const handleAttributeChildChange = (
@@ -50,51 +61,34 @@ export default function AddInventory({
     valueIndex: number,
     value: string
   ) => {
-    const newAttributes = [...attributes];
+    const newAttributes = [...attributesChildren];
     newAttributes[attributeIndex].values[valueIndex] = value;
-    setAttributes(newAttributes);
+    setAttributesChildren(newAttributes);
   };
 
   const handleAddAttributeChild = (attributeIndex: number) => {
-    const newAttributes = [...attributes];
+    const newAttributes = [...attributesChildren];
     newAttributes[attributeIndex].values.push("");
-    setAttributes(newAttributes);
+    setAttributesChildren(newAttributes);
   };
 
   const handleRemoveAttributeChild = (
     attributeIndex: number,
     valueIndex: number
   ) => {
-    const newAttributes = [...attributes];
+    const newAttributes = [...attributesChildren];
     newAttributes[attributeIndex].values.splice(valueIndex, 1);
-    setAttributes(newAttributes);
-  };
-
-  const generateVariants = () => {
-    const combinations = attributes.reduce((acc: any, attribute: any) => {
-      if (acc.length === 0)
-        return attribute.values.map((value: any) => [value]);
-      return acc.flatMap((combination: any) =>
-        attribute.values.map((value: any) => [...combination, value])
-      );
-    }, [] as string[][]);
-
-    const newVariants = combinations.map((combination: any) => ({
-      combination: combination.join(", "),
-      price: 0,
-      stock: 0,
-    }));
-    setVariants(newVariants);
+    setAttributesChildren(newAttributes);
   };
 
   return (
     <div className="flex flex-col">
       <h3>Choose an attribute to create variants for your product</h3>
-      {attributes.map((attribute: any, index: number) => (
-        <div key={index} className="flex-col flex gap-4">
+      {attributesChildren.map((attribute, index: number) => (
+        <div key={attribute.id} className="flex-col flex gap-4">
           <Select
             name="variantParent"
-            onValueChange={(e) => handleAttributeNameChange(index, e)}>
+            onValueChange={(e) => handleAttributeNameChange(attribute.id, e)}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select a variant" />
             </SelectTrigger>
@@ -110,7 +104,18 @@ export default function AddInventory({
               </SelectGroup>
             </SelectContent>
           </Select>
-          {attribute.values.map((value: any, valueIndex: any) => (
+          {attributeParent === "other..." ? (
+            <Input
+              type="text"
+              value={attribute.name}
+              onChange={(e) =>
+                handleIfAttributeNameIsOther(attribute.id, e.target.value)
+              }
+            />
+          ) : (
+            <></>
+          )}
+          {attribute.values.map((value, valueIndex: number) => (
             <div key={valueIndex} className="flex items-center">
               <Input
                 type="text"
@@ -133,14 +138,6 @@ export default function AddInventory({
           </Button>
         </div>
       ))}
-      {/* <button onClick={handleAddAttribute}>Add variant</button> */}
-      {/* <Button>Generate Variants</Button> */}
-      <Button
-        type="button"
-        onClick={generateVariants}
-        className="self-end hover:shadow-md hover:shadow-secondary hover:bg-secondary hover:text-secondary-foreground bg-secondary text-secondary-foreground">
-        Save
-      </Button>
     </div>
   );
 }
