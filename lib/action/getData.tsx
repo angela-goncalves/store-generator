@@ -105,3 +105,20 @@ export const getAttributeParent = async (
   }
   return data;
 };
+
+export const getInventory = async (productid: string, storeId: string) => {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+
+  const { data, error } = await supabase
+    .from("inventory")
+    .select()
+    .eq("product_id", productid);
+
+  if (data === null || error !== null) {
+    redirect(
+      `/store/products/add-products?id=${storeId}&message=something-went-wrong-trying-to-get-inventory`
+    );
+  }
+  return data;
+};

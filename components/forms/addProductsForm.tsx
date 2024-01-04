@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -12,7 +12,7 @@ import {
 import {
   handleInsertInventory,
   handleInsertProduct,
-  handleInsertAttributesParent,
+  handleInsertAttributes,
 } from "@/lib/insertSupabase";
 import { DialogVariants } from "../DialogVariants";
 import { v4 as uuidv4 } from "uuid";
@@ -86,7 +86,9 @@ export default function AddProductsForm({
   const [inventoryList, setInventoryList] = useState<IInventory[]>(
     inventory.length > 0 ? inventory : []
   );
+
   const [attributeParent, setAttributeParent] = useState<string>("");
+
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
@@ -109,6 +111,23 @@ export default function AddProductsForm({
 
   const handleAddAttribute = () => {
     setAttributesChildren([{ id: uuidv4(), name: "", values: [""] }]);
+  };
+
+  const generateVariants = () => {
+    const combinations = attributesChildren.reduce((acc, attribute) => {
+      if (acc.length === 0) return attribute.values.map((value) => [value]);
+      return acc.flatMap((combination) =>
+        attribute.values.map((value) => [...combination, value])
+      );
+    }, [] as string[][]);
+
+    const inventory = combinations.map((combination) => ({
+      id: uuidv4(),
+      combination: combination.join(", "),
+      price: "",
+      stock: "",
+    }));
+    setInventoryList(inventory);
   };
 
   return (
@@ -218,13 +237,7 @@ export default function AddProductsForm({
               title="Add variant"
               description="Here you can add the variants for your product"
               onClick={handleAddAttribute}
-              handleSubmitAttributes={async () =>
-                await handleInsertAttributesParent(
-                  attributesChildren,
-                  productId,
-                  storeId
-                )
-              }>
+              handleSubmitAttributes={generateVariants}>
               <AddInventoryForm
                 attributesChildren={attributesChildren}
                 setAttributesChildren={setAttributesChildren}
@@ -236,13 +249,13 @@ export default function AddProductsForm({
             {inventoryList.length !== 0 && (
               <div className="flex-col flex gap-6">
                 <div className="flex gap-6">
-                  <p className="w-[40%]">Variant</p>
+                  <p className="w-[60%]">Variant</p>
                   <p className="w-[20%]">Stock</p>
                   <p className="w-[20%]">Price</p>
                 </div>
                 {inventoryList.map((variant: any) => (
                   <div key={variant.id} className="flex gap-6">
-                    <span className="w-[80%]">{variant.combination}</span>
+                    <span className="w-[60%]">{variant.combination}</span>
                     <Input
                       type="number"
                       value={variant.stock}
@@ -257,6 +270,12 @@ export default function AddProductsForm({
                         handleVariantChange(variant.id, "price", e.target.value)
                       }
                     />
+                    {/* <p className="w-[20%]">
+                      {variant.stock ? variant.stock : 0}
+                    </p>
+                    <p className="w-[20%]">
+                      {variant.price ? variant.price : 0}
+                    </p> */}
                     {/* <DeleteDialog
                       id={variant.id}
                       storeId={storeId}
