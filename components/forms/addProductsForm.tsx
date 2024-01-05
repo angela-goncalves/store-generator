@@ -238,64 +238,82 @@ export default function AddProductsForm({
             />
           </label>
         </section>
-
-        <div className="bg-white p-6 pb-8 w-full flex-col flex gap-4 rounded-lg">
-          <DialogVariants
-            title="Add variant"
-            description="Here you can add the variants for your product"
-            handleSubmitAttributes={generateVariants}>
-            <AddInventoryForm
-              attributesChildren={attributesChildren}
-              setAttributesChildren={setAttributesChildren}
-              attributeParent={attributeParent}
-              setAttributeParent={setAttributeParent}
-            />
-          </DialogVariants>
-          <h3>Combine attibutes to have a price per item</h3>
-
-          {inventoryList.length !== 0 && (
-            <div className="flex-col flex gap-6">
-              <label
-                htmlFor="stock"
-                className="flex text-sm items-center self-end max-w-[300px] gap-4 mb-6">
-                Apply to all stock values
-                <Input
-                  type="number"
-                  name="stock"
-                  value={stock}
-                  className="w-20"
-                  onChange={(e) => handleStockChange(e.target.value)}
-                />
-              </label>
-              <div className="flex gap-6">
-                <p className="w-[20%]">Variant</p>
-                <p className="w-[30%]">Stock</p>
-                <p className="w-[30%]">Price</p>
-              </div>
-              {inventoryList.map((variant: any) => (
-                <div key={variant.id} className="flex gap-6">
-                  <span className="w-[20%]">{variant.combination}</span>
-                  <Input
-                    type="number"
-                    value={variant.stock}
-                    className="w-[30%]"
-                    onChange={(e) =>
-                      handleVariantChange(variant.id, "stock", e.target.value)
-                    }
-                  />
-                  <Input
-                    type="number"
-                    value={variant.price}
-                    className="w-[30%]"
-                    onChange={(e) =>
-                      handleVariantChange(variant.id, "price", e.target.value)
-                    }
-                  />
-                </div>
-              ))}
+        {productId ? (
+          <div className="bg-white p-6 pb-8 w-full flex-col flex gap-4 rounded-lg">
+            <h3 className="text-xl font-semibold">Variants</h3>
+            <h3>Combine attibutes to have a price per item</h3>
+            <div className="flex gap-6">
+              <p className="w-[60%]">Variant</p>
+              <p className="w-[30%]">Stock</p>
+              <p className="w-[30%]">Price</p>
             </div>
-          )}
-        </div>
+            {inventoryList.map((variant: any) => (
+              <div key={variant.id} className="flex gap-6">
+                <span className="w-[60%]">{variant.combination}</span>
+                <p className="w-[30%]">{variant.stock}</p>
+                <p className="w-[30%]">{variant.price}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="bg-white p-6 pb-8 w-full flex-col flex gap-4 rounded-lg">
+            <DialogVariants
+              title="Add variant"
+              description="Here you can add the variants for your product"
+              handleSubmitAttributes={generateVariants}>
+              <AddInventoryForm
+                attributesChildren={attributesChildren}
+                setAttributesChildren={setAttributesChildren}
+                attributeParent={attributeParent}
+                setAttributeParent={setAttributeParent}
+              />
+            </DialogVariants>
+            <h3>Combine attibutes to have a price per item</h3>
+
+            {inventoryList.length !== 0 && (
+              <div className="flex-col flex gap-6">
+                <label
+                  htmlFor="stock"
+                  className="flex text-sm items-center self-end max-w-[300px] gap-4 mb-6">
+                  Apply to all stock values
+                  <Input
+                    type="number"
+                    name="stock"
+                    value={stock}
+                    className="w-20"
+                    onChange={(e) => handleStockChange(e.target.value)}
+                  />
+                </label>
+                <div className="flex gap-6">
+                  <p className="w-[20%]">Variant</p>
+                  <p className="w-[30%]">Stock</p>
+                  <p className="w-[30%]">Price</p>
+                </div>
+                {inventoryList.map((variant: any) => (
+                  <div key={variant.id} className="flex gap-6">
+                    <span className="w-[20%]">{variant.combination}</span>
+                    <Input
+                      type="number"
+                      value={variant.stock}
+                      className="w-[30%]"
+                      onChange={(e) =>
+                        handleVariantChange(variant.id, "stock", e.target.value)
+                      }
+                    />
+                    <Input
+                      type="number"
+                      value={variant.price}
+                      className="w-[30%]"
+                      onChange={(e) =>
+                        handleVariantChange(variant.id, "price", e.target.value)
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         <button
           type="submit"

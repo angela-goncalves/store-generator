@@ -99,7 +99,7 @@ export default function AddInventory({
       if (attribute.id === attributeId) {
         const newValues = [...attribute.childrenValue];
         newValues.splice(valueIndex, 1);
-        return { ...attribute, children: newValues };
+        return { ...attribute, childrenValue: newValues };
       }
       return attribute;
     });

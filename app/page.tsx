@@ -35,8 +35,8 @@ export default async function Index() {
             </Link>
           </div>
         </div>
-        <footer className="w-full bg-neutral-dark text-neutral-foreground flex justify-center text-center text-xs py-6">
-          <div className="self-end text-neutral-medium p-4 ">
+        <footer className="w-full bg-neutral-medium text-neutral-foreground flex justify-center text-center text-xs py-6">
+          <div className="self-end p-4">
             <p>Built with Next.js, Tailwind, Supabase and Vercel</p>
             <Link href="https://github.com/angela-goncalves">by Angela</Link>
           </div>

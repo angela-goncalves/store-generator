@@ -63,13 +63,14 @@ export const updateProduct = async (
     .eq("id", idProduct)
     .select();
 
-  // console.log("error in update the product", error);
+  console.log("error in update the product", error);
 
   if (error !== null) {
     redirect(
       `/store/products/add-products?id=${storeId}&productId=${formData.id}&message=something-went-wrong-when-try-to-update-the-product`
     );
   }
+  redirect(`/store/products?id=${storeId}`);
 };
 
 export const updateInventory = async (
