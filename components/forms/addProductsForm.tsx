@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -9,15 +9,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  handleInsertInventory,
-  handleInsertProduct,
-  handleInsertAttributesParent,
-} from "@/lib/insertSupabase";
+import { handleInsertProduct } from "@/lib/insertSupabase";
 import { DialogVariants } from "../DialogVariants";
 import { v4 as uuidv4 } from "uuid";
 import AddInventoryForm from "./addInventoryForm";
 import Link from "next/link";
+import { updateProduct } from "@/lib/updateSupabase";
+import { Textarea } from "../ui/textarea";
 
 interface IInventory {
   id: string;
@@ -46,7 +44,7 @@ interface IProducts {
 interface IAttributeschildren {
   id: string;
   name: string;
-  values: string[];
+  childrenValue: string[];
 }
 interface IDataCollection {
   dataCollections: ICollections[] | null;
@@ -86,8 +84,11 @@ export default function AddProductsForm({
   const [inventoryList, setInventoryList] = useState<IInventory[]>(
     inventory.length > 0 ? inventory : []
   );
+
   const [attributeParent, setAttributeParent] = useState<string>("");
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const [stock, setStock] = useState<string>("");
+
+  const handleInputChange = (event: any) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
   };
@@ -107,8 +108,30 @@ export default function AddProductsForm({
     setInventoryList(newInventories);
   };
 
-  const handleAddAttribute = () => {
-    setAttributesChildren([{ id: uuidv4(), name: "", values: [""] }]);
+  const handleStockChange = (value: string) => {
+    setStock(value);
+    const changeStockOfAllList = inventoryList.map((list) => {
+      return { ...list, stock: value };
+    });
+    setInventoryList(changeStockOfAllList);
+  };
+
+  const generateVariants = () => {
+    const combinations = attributesChildren.reduce((acc, attribute) => {
+      if (acc.length === 0)
+        return attribute.childrenValue.map((value) => [value]);
+      return acc.flatMap((combination) =>
+        attribute.childrenValue.map((value) => [...combination, value])
+      );
+    }, [] as string[][]);
+
+    const inventory = combinations.map((combination) => ({
+      id: uuidv4(),
+      combination: combination.join(", "),
+      price: formData.price ? formData.price : "",
+      stock: "",
+    }));
+    setInventoryList(inventory);
   };
 
   return (
@@ -116,8 +139,8 @@ export default function AddProductsForm({
       <form
         action={() =>
           productId
-            ? handleInsertInventory(formData, inventoryList, storeId, productId)
-            : handleInsertProduct(formData, storeId)
+            ? updateProduct(formData, storeId, inventoryList)
+            : handleInsertProduct(formData, storeId, inventoryList)
         }
         className="flex flex-col gap-2">
         {formData.collectionId ? (
@@ -149,7 +172,7 @@ export default function AddProductsForm({
             </Select>
           </div>
         ) : (
-          <div className="flex gap-1">
+          <div className="flex gap-1 justify-center">
             <Link
               href={{
                 pathname: "/store/collections",
@@ -162,7 +185,8 @@ export default function AddProductsForm({
           </div>
         )}
 
-        <div className="bg-white p-6 rounded-lg flex flex-col my-4 gap-6">
+        <section className="bg-white p-6 pb-8 rounded-lg flex flex-col my-4 gap-6">
+          <h3 className="text-xl font-semibold">Name and Description</h3>
           <label htmlFor="name">
             <p>Name</p>
             <Input
@@ -176,15 +200,18 @@ export default function AddProductsForm({
           </label>
           <label htmlFor="description">
             <p>Description</p>
-            <Input
-              type="text"
+            <Textarea
               name="description"
-              className="mt-2"
+              className="mt-2 bg-white"
               value={formData.description}
               onChange={handleInputChange}
               placeholder="Description of the product"
             />
           </label>
+        </section>
+
+        <section className="bg-white p-6 pb-8 rounded-lg flex flex-col my-4 gap-6">
+          <h3 className="text-xl font-semibold">Prices</h3>
           <label htmlFor="price">
             <p>Price</p>
             <Input
@@ -196,7 +223,9 @@ export default function AddProductsForm({
               placeholder="Price"
             />
           </label>
-
+        </section>
+        <section className="bg-white p-6 pb-8 rounded-lg flex flex-col my-4 gap-6">
+          <h3 className="text-xl font-semibold">Images</h3>
           <label htmlFor="image">
             <p>URL of the image</p>
             <Input
@@ -208,66 +237,65 @@ export default function AddProductsForm({
               onChange={handleInputChange}
             />
           </label>
-        </div>
-        {productId && (
-          <div className="bg-white p-6 w-full flex-col flex gap-4 rounded-lg">
-            <h3 className="text-lg font-semibold">Variants</h3>
-            <h3>Combine attibutes to have a price per item</h3>
+        </section>
 
-            <DialogVariants
-              title="Add variant"
-              description="Here you can add the variants for your product"
-              onClick={handleAddAttribute}
-              handleSubmitAttributes={async () =>
-                await handleInsertAttributesParent(
-                  attributesChildren,
-                  productId,
-                  storeId
-                )
-              }>
-              <AddInventoryForm
-                attributesChildren={attributesChildren}
-                setAttributesChildren={setAttributesChildren}
-                attributeParent={attributeParent}
-                setAttributeParent={setAttributeParent}
-              />
-            </DialogVariants>
+        <div className="bg-white p-6 pb-8 w-full flex-col flex gap-4 rounded-lg">
+          <DialogVariants
+            title="Add variant"
+            description="Here you can add the variants for your product"
+            handleSubmitAttributes={generateVariants}>
+            <AddInventoryForm
+              attributesChildren={attributesChildren}
+              setAttributesChildren={setAttributesChildren}
+              attributeParent={attributeParent}
+              setAttributeParent={setAttributeParent}
+            />
+          </DialogVariants>
+          <h3>Combine attibutes to have a price per item</h3>
 
-            {inventoryList.length !== 0 && (
-              <div className="flex-col flex gap-6">
-                <div className="flex gap-6">
-                  <p className="w-[40%]">Variant</p>
-                  <p className="w-[20%]">Stock</p>
-                  <p className="w-[20%]">Price</p>
-                </div>
-                {inventoryList.map((variant: any) => (
-                  <div key={variant.id} className="flex gap-6">
-                    <span className="w-[80%]">{variant.combination}</span>
-                    <Input
-                      type="number"
-                      value={variant.stock}
-                      onChange={(e) =>
-                        handleVariantChange(variant.id, "stock", e.target.value)
-                      }
-                    />
-                    <Input
-                      type="number"
-                      value={variant.price}
-                      onChange={(e) =>
-                        handleVariantChange(variant.id, "price", e.target.value)
-                      }
-                    />
-                    {/* <DeleteDialog
-                      id={variant.id}
-                      storeId={storeId}
-                      deleteFunction={handleDeleteInventory}
-                    /> */}
-                  </div>
-                ))}
+          {inventoryList.length !== 0 && (
+            <div className="flex-col flex gap-6">
+              <label
+                htmlFor="stock"
+                className="flex text-sm items-center self-end max-w-[300px] gap-4 mb-6">
+                Apply to all stock values
+                <Input
+                  type="number"
+                  name="stock"
+                  value={stock}
+                  className="w-20"
+                  onChange={(e) => handleStockChange(e.target.value)}
+                />
+              </label>
+              <div className="flex gap-6">
+                <p className="w-[20%]">Variant</p>
+                <p className="w-[30%]">Stock</p>
+                <p className="w-[30%]">Price</p>
               </div>
-            )}
-          </div>
-        )}
+              {inventoryList.map((variant: any) => (
+                <div key={variant.id} className="flex gap-6">
+                  <span className="w-[20%]">{variant.combination}</span>
+                  <Input
+                    type="number"
+                    value={variant.stock}
+                    className="w-[30%]"
+                    onChange={(e) =>
+                      handleVariantChange(variant.id, "stock", e.target.value)
+                    }
+                  />
+                  <Input
+                    type="number"
+                    value={variant.price}
+                    className="w-[30%]"
+                    onChange={(e) =>
+                      handleVariantChange(variant.id, "price", e.target.value)
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
         <button
           type="submit"

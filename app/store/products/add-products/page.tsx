@@ -5,6 +5,7 @@ import {
   getAttributeChildren,
   getAttributeParent,
   getCollectionsOfStore,
+  getInventory,
   getProductsToEdit,
 } from "@/lib/action/getData";
 import { v4 as uuidv4 } from "uuid";
@@ -23,34 +24,18 @@ export default async function FormAddProducts({
     ? await getProductsToEdit(searchParams.productId)
     : [];
 
-  const attributeschildren = searchParams.productId
-    ? await getAttributeChildren(searchParams.productId, searchParams.id)
+  const inventoryList = searchParams.productId
+    ? await getInventory(searchParams.productId, searchParams.id)
     : [];
 
-  const attributParent = searchParams.productId
-    ? await getAttributeParent(searchParams.productId, searchParams.id)
-    : [];
-
-  const result = attributParent.map((variant) => ({
-    name: variant.name,
-    values: attributeschildren
-      .filter((attr) => attr.attributeparent_id === variant.id)
-      .map((attr) => attr.name),
-  }));
-
-  const combinations = result.reduce((acc, attribute) => {
-    if (acc.length === 0) return attribute.values.map((value) => [value]);
-    return acc.flatMap((combination) =>
-      attribute.values.map((value) => [...combination, value])
-    );
-  }, [] as string[][]);
-
-  const inventory = combinations.map((combination) => ({
-    id: uuidv4(),
-    combination: combination.join(", "),
-    price: productToEdit[0].price,
-    stock: "",
-  }));
+  const inventoryDefault = inventoryList.map((item) => {
+    return {
+      id: item.id,
+      combination: item.attributeschildren,
+      price: item.price,
+      stock: item.stock_level,
+    };
+  });
 
   return (
     <div className="my-10 mx-2 w-full flex flex-col items-center ">
@@ -63,11 +48,12 @@ export default async function FormAddProducts({
       <h1 className="text-2xl mb-12">
         {searchParams.productId ? "Edit" : "Add"} your products
       </h1>
+
       <AddProductsForm
         dataCollections={collections}
         productToEdit={productToEdit.length > 0 ? productToEdit[0] : {}}
         storeId={searchParams.id}
-        inventory={inventory ?? []}
+        inventory={inventoryDefault ?? []}
       />
     </div>
   );
