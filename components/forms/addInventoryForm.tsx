@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import {
   Select,
   SelectContent,
@@ -16,7 +16,7 @@ import { Plus, XIcon } from "lucide-react";
 interface IAttributeschildren {
   id: string;
   name: string;
-  values: string[];
+  childrenValue: string[];
 }
 export default function AddInventory({
   attributesChildren,
@@ -35,62 +35,159 @@ export default function AddInventory({
     { id: uuidv4(), name: "other..." },
   ];
 
+  const [messageToAddData, setMessageToAddData] = useState<boolean>(false);
+
+  const [attributesChildrenCopy, setAttributesChildrenCopy] = useState<
+    IAttributeschildren[]
+  >([{ id: uuidv4(), name: "", childrenValue: [""] }]);
+
   const handleAttributeNameChange = (id: string, value: string) => {
-    const newAttributesChildren = attributesChildren.map((attribute) => {
+    const newAttributesChildren = attributesChildrenCopy.map((attribute) => {
       if (attribute.id === id) {
         return { ...attribute, name: value === "other..." ? "" : value };
       }
       return attribute;
     });
     setAttributeParent(value);
-    setAttributesChildren(newAttributesChildren);
+    setAttributesChildrenCopy(newAttributesChildren);
   };
 
   const handleIfAttributeNameIsOther = (id: string, value: string) => {
-    const newAttributesChildren = attributesChildren.map((attribute) => {
+    const newAttributesChildren = attributesChildrenCopy.map((attribute) => {
       if (attribute.id === id) {
         return { ...attribute, name: value };
       }
       return attribute;
     });
-    setAttributesChildren(newAttributesChildren);
+    setAttributesChildrenCopy(newAttributesChildren);
   };
 
   const handleAttributeChildChange = (
-    attributeIndex: number,
+    attributeId: string,
     valueIndex: number,
     value: string
   ) => {
-    const newAttributes = [...attributesChildren];
-    newAttributes[attributeIndex].values[valueIndex] = value;
-    setAttributesChildren(newAttributes);
+    const newAttributes = attributesChildrenCopy.map((attribute) => {
+      if (attribute.id === attributeId) {
+        const newValues = [...attribute.childrenValue];
+        newValues[valueIndex] = value;
+        return { ...attribute, childrenValue: newValues };
+      }
+      return attribute;
+    });
+    setAttributesChildrenCopy(newAttributes);
   };
 
-  const handleAddAttributeChild = (attributeIndex: number) => {
-    const newAttributes = [...attributesChildren];
-    newAttributes[attributeIndex].values.push("");
-    setAttributesChildren(newAttributes);
+  const handleAddAttributeChild = (attributeId: string) => {
+    const newAttributes = attributesChildrenCopy.map((attribute) => {
+      if (attribute.id === attributeId) {
+        return {
+          ...attribute,
+          childrenValue: [...attribute.childrenValue, ""],
+        };
+      }
+      return attribute;
+    });
+    setAttributesChildrenCopy(newAttributes);
   };
 
   const handleRemoveAttributeChild = (
-    attributeIndex: number,
+    attributeId: string,
     valueIndex: number
   ) => {
-    const newAttributes = [...attributesChildren];
-    newAttributes[attributeIndex].values.splice(valueIndex, 1);
-    setAttributesChildren(newAttributes);
+    const newAttributes = attributesChildrenCopy.map((attribute) => {
+      if (attribute.id === attributeId) {
+        const newValues = [...attribute.childrenValue];
+        newValues.splice(valueIndex, 1);
+        return { ...attribute, children: newValues };
+      }
+      return attribute;
+    });
+    setAttributesChildrenCopy(newAttributes);
+  };
+
+  const handleSaveNewAttribute = () => {
+    const findEmptyNameWithChildren = attributesChildrenCopy.some(
+      (item) => item.name === "" && item.childrenValue.length > 1
+    );
+    if (findEmptyNameWithChildren) {
+      setMessageToAddData(true);
+    } else {
+      setAttributesChildrenCopy([
+        { id: uuidv4(), name: "", childrenValue: [""] },
+      ]);
+      setAttributesChildren([...attributesChildren, ...attributesChildrenCopy]);
+      setMessageToAddData(false);
+    }
+  };
+
+  const removeAttributeChild = (
+    attributeId: string,
+    attributeChildName: string
+  ) => {
+    const findParentId = attributesChildren.map((attribute) => {
+      if (attribute.id === attributeId) {
+        return {
+          ...attribute,
+          childrenValue: attribute.childrenValue.filter(
+            (ele) => !ele.includes(attributeChildName)
+          ),
+        };
+      } else {
+        return attribute;
+      }
+    });
+    setAttributesChildren(findParentId);
+  };
+
+  const handleRemoveAttribute = (attributeId: string) => {
+    const removeAttribute = attributesChildren.filter(
+      (item) => item.id !== attributeId
+    );
+    setAttributesChildren(removeAttribute);
   };
 
   return (
     <div className="flex flex-col">
-      <h3>Choose an attribute to create variants for your product</h3>
-      {attributesChildren.map((attribute, index: number) => (
-        <div key={attribute.id} className="flex-col flex gap-4">
+      <h3 className="my-2">
+        Choose an attribute to create variants for your product
+      </h3>
+      {attributesChildren.length > 0 &&
+        attributesChildren.map((item) => (
+          <div key={item.id} className="mb-4">
+            <div className="flex items-center">
+              <p>{item.name}</p>
+              <Button
+                variant="ghost"
+                onClick={() => handleRemoveAttribute(item.id)}>
+                <XIcon className="w-4 " />
+              </Button>
+            </div>
+            <div className="flex">
+              {item.childrenValue.map((value, index) => (
+                <div
+                  key={value + index}
+                  className="border mx-2 rounded-md flex items-center">
+                  <p className="ml-4">{value}</p>
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      removeAttributeChild(item.id, value);
+                    }}>
+                    <XIcon className="w-4 p-0" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      {attributesChildrenCopy.map((attribute) => (
+        <div key={attribute.id} className="flex-col flex gap-4 mt-4">
           <Select
             name="variantParent"
             onValueChange={(e) => handleAttributeNameChange(attribute.id, e)}>
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select a variant" />
+              <SelectValue placeholder="Select an attribute" />
             </SelectTrigger>
             <SelectContent className="">
               <SelectGroup>
@@ -115,26 +212,46 @@ export default function AddInventory({
           ) : (
             <></>
           )}
-          {attribute.values.map((value, valueIndex: number) => (
+          {attribute.childrenValue.map((value, valueIndex: number) => (
             <div key={valueIndex} className="flex items-center">
               <Input
                 type="text"
                 value={value}
                 onChange={(e) =>
-                  handleAttributeChildChange(index, valueIndex, e.target.value)
+                  handleAttributeChildChange(
+                    attribute.id,
+                    valueIndex,
+                    e.target.value
+                  )
                 }
               />
               <Button
                 variant="ghost"
-                onClick={() => handleRemoveAttributeChild(index, valueIndex)}>
+                onClick={() =>
+                  handleRemoveAttributeChild(attribute.id, valueIndex)
+                }>
                 <XIcon className="w-4 " />
               </Button>
             </div>
           ))}
+          {messageToAddData && (
+            <p className="text-destructive">Should fill all options</p>
+          )}
           <Button
-            onClick={() => handleAddAttributeChild(index)}
-            className="self-start">
+            onClick={() => handleAddAttributeChild(attribute.id)}
+            className="self-start"
+            variant="outline">
             <Plus className="w-4" />
+          </Button>
+
+          <Button
+            onClick={handleSaveNewAttribute}
+            disabled={
+              attribute.name === "" && attribute.childrenValue[0] === ""
+            }
+            className="self-end hover:bg-secondary "
+            variant="secondary">
+            Save variant
           </Button>
         </div>
       ))}

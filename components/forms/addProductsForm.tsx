@@ -9,15 +9,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  handleInsertInventory,
-  handleInsertProduct,
-  handleInsertAttributes,
-} from "@/lib/insertSupabase";
+import { handleInsertProduct } from "@/lib/insertSupabase";
 import { DialogVariants } from "../DialogVariants";
 import { v4 as uuidv4 } from "uuid";
 import AddInventoryForm from "./addInventoryForm";
 import Link from "next/link";
+import { updateProduct } from "@/lib/updateSupabase";
 
 interface IInventory {
   id: string;
@@ -46,7 +43,7 @@ interface IProducts {
 interface IAttributeschildren {
   id: string;
   name: string;
-  values: string[];
+  childrenValue: string[];
 }
 interface IDataCollection {
   dataCollections: ICollections[] | null;
@@ -88,6 +85,7 @@ export default function AddProductsForm({
   );
 
   const [attributeParent, setAttributeParent] = useState<string>("");
+  const [stock, setStock] = useState<string>("");
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -109,22 +107,27 @@ export default function AddProductsForm({
     setInventoryList(newInventories);
   };
 
-  const handleAddAttribute = () => {
-    setAttributesChildren([{ id: uuidv4(), name: "", values: [""] }]);
+  const handleStockChange = (value: string) => {
+    setStock(value);
+    const changeStockOfAllList = inventoryList.map((list) => {
+      return { ...list, stock: value };
+    });
+    setInventoryList(changeStockOfAllList);
   };
 
   const generateVariants = () => {
     const combinations = attributesChildren.reduce((acc, attribute) => {
-      if (acc.length === 0) return attribute.values.map((value) => [value]);
+      if (acc.length === 0)
+        return attribute.childrenValue.map((value) => [value]);
       return acc.flatMap((combination) =>
-        attribute.values.map((value) => [...combination, value])
+        attribute.childrenValue.map((value) => [...combination, value])
       );
     }, [] as string[][]);
 
     const inventory = combinations.map((combination) => ({
       id: uuidv4(),
       combination: combination.join(", "),
-      price: "",
+      price: formData.price ? formData.price : "",
       stock: "",
     }));
     setInventoryList(inventory);
@@ -135,8 +138,8 @@ export default function AddProductsForm({
       <form
         action={() =>
           productId
-            ? handleInsertInventory(formData, inventoryList, storeId, productId)
-            : handleInsertProduct(formData, storeId)
+            ? updateProduct(formData, storeId, inventoryList)
+            : handleInsertProduct(formData, storeId, inventoryList)
         }
         className="flex flex-col gap-2">
         {formData.collectionId ? (
@@ -228,65 +231,58 @@ export default function AddProductsForm({
             />
           </label>
         </div>
-        {productId && (
-          <div className="bg-white p-6 w-full flex-col flex gap-4 rounded-lg">
-            <h3 className="text-lg font-semibold">Variants</h3>
-            <h3>Combine attibutes to have a price per item</h3>
 
-            <DialogVariants
-              title="Add variant"
-              description="Here you can add the variants for your product"
-              onClick={handleAddAttribute}
-              handleSubmitAttributes={generateVariants}>
-              <AddInventoryForm
-                attributesChildren={attributesChildren}
-                setAttributesChildren={setAttributesChildren}
-                attributeParent={attributeParent}
-                setAttributeParent={setAttributeParent}
-              />
-            </DialogVariants>
+        <div className="bg-white p-6 w-full flex-col flex gap-4 rounded-lg">
+          <h3 className="text-lg font-semibold">Variants</h3>
+          <h3>Combine attibutes to have a price per item</h3>
 
-            {inventoryList.length !== 0 && (
-              <div className="flex-col flex gap-6">
-                <div className="flex gap-6">
-                  <p className="w-[60%]">Variant</p>
-                  <p className="w-[20%]">Stock</p>
-                  <p className="w-[20%]">Price</p>
-                </div>
-                {inventoryList.map((variant: any) => (
-                  <div key={variant.id} className="flex gap-6">
-                    <span className="w-[60%]">{variant.combination}</span>
-                    <Input
-                      type="number"
-                      value={variant.stock}
-                      onChange={(e) =>
-                        handleVariantChange(variant.id, "stock", e.target.value)
-                      }
-                    />
-                    <Input
-                      type="number"
-                      value={variant.price}
-                      onChange={(e) =>
-                        handleVariantChange(variant.id, "price", e.target.value)
-                      }
-                    />
-                    {/* <p className="w-[20%]">
-                      {variant.stock ? variant.stock : 0}
-                    </p>
-                    <p className="w-[20%]">
-                      {variant.price ? variant.price : 0}
-                    </p> */}
-                    {/* <DeleteDialog
-                      id={variant.id}
-                      storeId={storeId}
-                      deleteFunction={handleDeleteInventory}
-                    /> */}
-                  </div>
-                ))}
+          <DialogVariants
+            title="Add variant"
+            description="Here you can add the variants for your product"
+            onClick={() => {}}
+            handleSubmitAttributes={generateVariants}>
+            <AddInventoryForm
+              attributesChildren={attributesChildren}
+              setAttributesChildren={setAttributesChildren}
+              attributeParent={attributeParent}
+              setAttributeParent={setAttributeParent}
+            />
+          </DialogVariants>
+
+          {inventoryList.length !== 0 && (
+            <div className="flex-col flex gap-6">
+              <div className="flex gap-6">
+                <p className="w-[60%]">Variant</p>
+                <p className="w-[20%]">Stock</p>
+                <p className="w-[20%]">Price</p>
               </div>
-            )}
-          </div>
-        )}
+              <Input
+                type="number"
+                value={stock}
+                onChange={(e) => handleStockChange(e.target.value)}
+              />
+              {inventoryList.map((variant: any) => (
+                <div key={variant.id} className="flex gap-6">
+                  <span className="w-[60%]">{variant.combination}</span>
+                  <Input
+                    type="number"
+                    value={variant.stock}
+                    onChange={(e) =>
+                      handleVariantChange(variant.id, "stock", e.target.value)
+                    }
+                  />
+                  <Input
+                    type="number"
+                    value={variant.price}
+                    onChange={(e) =>
+                      handleVariantChange(variant.id, "price", e.target.value)
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
         <button
           type="submit"

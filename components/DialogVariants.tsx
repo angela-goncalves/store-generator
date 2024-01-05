@@ -33,18 +33,21 @@ export function DialogVariants({
           New variant
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] flex-col flex h-full overflow-scroll">
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
-        </DialogHeader>
-        {children}
+      <DialogContent className="sm:max-w-[425px] flex-col flex h-full overflow-scroll flex-1 justify-between">
+        <div>
+          <DialogHeader>
+            <DialogTitle className="mb-4">{title}</DialogTitle>
+            <DialogDescription>{description}</DialogDescription>
+          </DialogHeader>
+          {children}
+        </div>
         <DialogClose asChild>
           <Button
             type="button"
             onClick={handleSubmitAttributes}
-            className="self-end hover:shadow-md hover:shadow-secondary hover:bg-secondary hover:text-secondary-foreground bg-secondary text-secondary-foreground">
-            Save
+            className="hover:shadow-md hover:shadow-primary hover:bg-primary hover:text-primary-foreground"
+            variant="default">
+            Save all
           </Button>
         </DialogClose>
       </DialogContent>
