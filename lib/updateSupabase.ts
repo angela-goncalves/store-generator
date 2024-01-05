@@ -80,13 +80,13 @@ export const updateInventory = async (
   const supabase = createClient(cookieStore);
 
   const id = inventory.id;
-  const attributeschildren_id = inventory.combination;
+  const attributeschildren = inventory.combination;
   const price = Number(inventory.price) ?? 0;
   const stock_leve = Number(inventory.stock) ?? 0;
 
   const { data, error } = await supabase
     .from("inventory")
-    .update({ id, attributeschildren_id, price, stock_leve })
+    .update({ id, attributeschildren, price, stock_leve })
     .eq("id", id)
     .select();
 

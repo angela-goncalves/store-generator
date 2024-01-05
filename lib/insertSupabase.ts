@@ -129,7 +129,7 @@ export const handleInsertProduct = async (
     .insert(productAdded)
     .select();
 
-  console.log("error product", error);
+  // console.log("error product", error);
 
   if (error !== null) {
     redirect(
@@ -154,7 +154,7 @@ const handleInsertInventory = async (
     return {
       id: item.id,
       product_id: productId,
-      attributeschildren_id: item.combination,
+      attributeschildren: item.combination,
       price: Number(item.price) ?? 0,
       stock_level: Number(item.stock) ?? 0,
     };
@@ -162,7 +162,7 @@ const handleInsertInventory = async (
 
   const { error } = await supabase.from("inventory").insert(inventory).select();
 
-  console.log("error insert inventory", error);
+  // console.log("error insert inventory", error);
 
   if (error !== null) {
     redirect(
@@ -172,83 +172,3 @@ const handleInsertInventory = async (
 
   redirect(`/store/products?id=${storeid}`);
 };
-
-// export const handleInsertAttributes = async (
-//   attributes: IAttributes[],
-//   productId: string,
-//   storeId: string
-// ) => {
-//   const cookieStore = cookies();
-//   const supabase = createClient(cookieStore);
-
-//   const lastAttribute = attributes.slice(-1);
-
-//   const attributesName = lastAttribute.map((item) => {
-//     return {
-//       name: item.name,
-//       product_id: productId,
-//     };
-//   });
-//   const { data, error } = await supabase
-//     .from("attributesparent")
-//     .insert(attributesName)
-//     .select();
-
-//   // console.log("error attributesparent", error);
-
-//   if (error !== null) {
-//     redirect(
-//       `/store/products/add-products?id=${storeId}&message=error-when-try-to-insert-variantParents`
-//     );
-//   }
-
-//   if (data[0].id) {
-//     const attributesChildren = lastAttribute.map((item) => {
-//       return {
-//         idParent: data[0].id,
-//         values: item.values,
-//         productId,
-//       };
-//     });
-
-//     await handleInsertVariantsChildren(attributesChildren, storeId, productId);
-//   }
-
-//   // revalidatePath(
-//   //   `/store/products/add-products?id=${storeId}&productId=${productId}`
-//   // );
-// };
-
-// const handleInsertVariantsChildren = async (
-//   attributesChildren: IAttributesChildren[],
-//   storeId: string,
-//   productId: string
-// ) => {
-//   const cookieStore = cookies();
-//   const supabase = createClient(cookieStore);
-
-//   const lastAttribute = attributesChildren.pop();
-
-//   const attributeChildren = lastAttribute?.values.map((child) => {
-//     return {
-//       attributeparent_id: lastAttribute.idParent,
-//       name: child,
-//       product_id: lastAttribute.productId,
-//     };
-//   });
-//   const { error } = await supabase
-//     .from("attributeschildren")
-//     .insert(attributeChildren)
-//     .select();
-
-//   // console.log("error inserting variants children", error);
-
-//   if (error !== null) {
-//     redirect(
-//       `/store/products/add-products?id=${storeId}&productId=${productId}&message=error-when-try-to-insert-variant-children`
-//     );
-//   }
-//   revalidatePath(
-//     `/store/products/add-products?id=${storeId}&productId=${productId}`
-//   );
-// };

@@ -31,7 +31,7 @@ export default async function FormAddProducts({
   const inventoryDefault = inventoryList.map((item) => {
     return {
       id: item.id,
-      combination: item.attributeschildren_id,
+      combination: item.attributeschildren,
       price: item.price,
       stock: item.stock_level,
     };

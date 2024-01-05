@@ -15,6 +15,7 @@ import { v4 as uuidv4 } from "uuid";
 import AddInventoryForm from "./addInventoryForm";
 import Link from "next/link";
 import { updateProduct } from "@/lib/updateSupabase";
+import { Textarea } from "../ui/textarea";
 
 interface IInventory {
   id: string;
@@ -87,7 +88,7 @@ export default function AddProductsForm({
   const [attributeParent, setAttributeParent] = useState<string>("");
   const [stock, setStock] = useState<string>("");
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (event: any) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
   };
@@ -171,7 +172,7 @@ export default function AddProductsForm({
             </Select>
           </div>
         ) : (
-          <div className="flex gap-1">
+          <div className="flex gap-1 justify-center">
             <Link
               href={{
                 pathname: "/store/collections",
@@ -184,7 +185,8 @@ export default function AddProductsForm({
           </div>
         )}
 
-        <div className="bg-white p-6 rounded-lg flex flex-col my-4 gap-6">
+        <section className="bg-white p-6 pb-8 rounded-lg flex flex-col my-4 gap-6">
+          <h3 className="text-xl font-semibold">Name and Description</h3>
           <label htmlFor="name">
             <p>Name</p>
             <Input
@@ -198,15 +200,18 @@ export default function AddProductsForm({
           </label>
           <label htmlFor="description">
             <p>Description</p>
-            <Input
-              type="text"
+            <Textarea
               name="description"
-              className="mt-2"
+              className="mt-2 bg-white"
               value={formData.description}
               onChange={handleInputChange}
               placeholder="Description of the product"
             />
           </label>
+        </section>
+
+        <section className="bg-white p-6 pb-8 rounded-lg flex flex-col my-4 gap-6">
+          <h3 className="text-xl font-semibold">Prices</h3>
           <label htmlFor="price">
             <p>Price</p>
             <Input
@@ -218,7 +223,9 @@ export default function AddProductsForm({
               placeholder="Price"
             />
           </label>
-
+        </section>
+        <section className="bg-white p-6 pb-8 rounded-lg flex flex-col my-4 gap-6">
+          <h3 className="text-xl font-semibold">Images</h3>
           <label htmlFor="image">
             <p>URL of the image</p>
             <Input
@@ -230,16 +237,12 @@ export default function AddProductsForm({
               onChange={handleInputChange}
             />
           </label>
-        </div>
+        </section>
 
-        <div className="bg-white p-6 w-full flex-col flex gap-4 rounded-lg">
-          <h3 className="text-lg font-semibold">Variants</h3>
-          <h3>Combine attibutes to have a price per item</h3>
-
+        <div className="bg-white p-6 pb-8 w-full flex-col flex gap-4 rounded-lg">
           <DialogVariants
             title="Add variant"
             description="Here you can add the variants for your product"
-            onClick={() => {}}
             handleSubmitAttributes={generateVariants}>
             <AddInventoryForm
               attributesChildren={attributesChildren}
@@ -248,25 +251,34 @@ export default function AddProductsForm({
               setAttributeParent={setAttributeParent}
             />
           </DialogVariants>
+          <h3>Combine attibutes to have a price per item</h3>
 
           {inventoryList.length !== 0 && (
             <div className="flex-col flex gap-6">
+              <label
+                htmlFor="stock"
+                className="flex text-sm items-center self-end max-w-[300px] gap-4 mb-6">
+                Apply to all stock values
+                <Input
+                  type="number"
+                  name="stock"
+                  value={stock}
+                  className="w-20"
+                  onChange={(e) => handleStockChange(e.target.value)}
+                />
+              </label>
               <div className="flex gap-6">
-                <p className="w-[60%]">Variant</p>
-                <p className="w-[20%]">Stock</p>
-                <p className="w-[20%]">Price</p>
+                <p className="w-[20%]">Variant</p>
+                <p className="w-[30%]">Stock</p>
+                <p className="w-[30%]">Price</p>
               </div>
-              <Input
-                type="number"
-                value={stock}
-                onChange={(e) => handleStockChange(e.target.value)}
-              />
               {inventoryList.map((variant: any) => (
                 <div key={variant.id} className="flex gap-6">
-                  <span className="w-[60%]">{variant.combination}</span>
+                  <span className="w-[20%]">{variant.combination}</span>
                   <Input
                     type="number"
                     value={variant.stock}
+                    className="w-[30%]"
                     onChange={(e) =>
                       handleVariantChange(variant.id, "stock", e.target.value)
                     }
@@ -274,6 +286,7 @@ export default function AddProductsForm({
                   <Input
                     type="number"
                     value={variant.price}
+                    className="w-[30%]"
                     onChange={(e) =>
                       handleVariantChange(variant.id, "price", e.target.value)
                     }

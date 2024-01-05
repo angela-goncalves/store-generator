@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { handleInsertStore } from "@/lib/insertSupabase";
+import { Button } from "../ui/button";
 
 export default function AddStoreForm() {
   const [addComment, setAddComment] = useState(false);
@@ -48,11 +49,11 @@ export default function AddStoreForm() {
             placeholder="Location of the product"
           />
         </div>
-        <button
-          className="px-6 py-4 border border-emerald-300 rounded-lg mt-6 self-end"
+        <Button
+          className="text-base px-6 py-4 rounded-lg mt-6 self-end"
           type="submit">
-          submit
-        </button>
+          Save store
+        </Button>
       </form>
     </div>
   );

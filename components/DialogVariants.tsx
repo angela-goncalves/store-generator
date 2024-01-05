@@ -9,12 +9,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Plus } from "lucide-react";
 
 interface IDialogVariants {
   title: string;
   description?: string;
   children: ReactElement;
-  onClick: () => void;
   handleSubmitAttributes: any;
 }
 
@@ -22,17 +22,19 @@ export function DialogVariants({
   title,
   description,
   children,
-  onClick,
 
   handleSubmitAttributes,
 }: IDialogVariants) {
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline" className="self-end" onClick={onClick}>
-          New variant
-        </Button>
-      </DialogTrigger>
+      <div className="flex items-center justify-between">
+        <h3 className="text-xl font-semibold">Variants</h3>
+        <DialogTrigger asChild>
+          <Button variant="outline" className="self-end bg-neutral-light">
+            <Plus className="w-4 mr-2" /> New variant
+          </Button>
+        </DialogTrigger>
+      </div>
       <DialogContent className="sm:max-w-[425px] flex-col flex h-full overflow-scroll flex-1 justify-between">
         <div>
           <DialogHeader>
