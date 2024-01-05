@@ -24,12 +24,6 @@ export default async function Products({
 
   return (
     <div className="w-full flex flex-col items-center mt-10">
-      <BackButton
-        query={{
-          pathname: "/store",
-          query: { id: searchParams.id },
-        }}
-      />
       <div className="w-full max-w-[800px] flex flex-col h-full">
         <h1 className="text-secondary font-bold text-3xl">Products</h1>
         {dataProducts.length > 0 ? (

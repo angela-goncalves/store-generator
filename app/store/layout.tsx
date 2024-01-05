@@ -29,10 +29,10 @@ export default async function LayoutEditStore({
   }
 
   return (
-    <main className="flex flex-col w-full justify-center">
-      <NavBar user={session.user.id} />
-      <div className="flex">
-        <SideBar dataStore={data} />
+    <main className="flex w-full">
+      <SideBar dataStore={data} />
+      <div className="flex flex-col w-full">
+        <NavBar user={session.user.id} />
         {children}
       </div>
     </main>

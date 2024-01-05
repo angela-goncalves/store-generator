@@ -36,9 +36,6 @@ module.exports = {
           dark: "hsl(var(--neutral-dark))",
           foreground: "hsl(var(--neutral-foreground))",
         },
-        blackAndWhite: {
-          DEFAULT: "hsl(var(--blackAndWhite))",
-        },
         btn: {
           successBg: "hsl(var(--btn-successBg))",
           foreground: "hsl(var(--btn-successBg-foreground))",
@@ -64,6 +61,9 @@ module.exports = {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        },
+        footer: {
+          DEFAULT: "hsl(var(--footer))",
         },
       },
       borderRadius: {

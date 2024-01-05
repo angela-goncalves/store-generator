@@ -26,7 +26,7 @@ export default async function NavBar({ user }: { user: string }) {
   }
 
   return (
-    <div className="w-full bg-white dark:bg-black self-center flex justify-between items-center p-3 text-sm">
+    <div className="w-full bg-white dark:bg-background self-center flex justify-between items-center p-3 text-sm border border-b-neutral-dark">
       <Link href="/">store-generator</Link>
       {session.user.id && (
         <div className="flex items-center gap-4">

@@ -11,8 +11,15 @@ export default async function Index() {
   const supabase = createClient(cookieStore);
 
   const { data, error } = await supabase.auth.getSession();
-
   const { session } = data;
+  // const session = {
+  //   user: {
+  //     id: "cb515485-43a2-4ffb-91f1-6511fa08f660",
+  //     email: "angelakgo20@gmail.com",
+  //   },
+  // };
+
+  // const error = "session";
 
   if (session === null || error !== null) {
     return (
@@ -29,16 +36,10 @@ export default async function Index() {
           </div>
         </div>
         <footer className="w-full bg-neutral-dark text-neutral-foreground flex justify-center text-center text-xs py-6">
-          <p>
-            Powered by{" "}
-            <a
-              href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
-              target="_blank"
-              className="font-bold hover:underline"
-              rel="noreferrer">
-              Supabase
-            </a>
-          </p>
+          <div className="self-end text-neutral-medium p-4 ">
+            <p>Built with Next.js, Tailwind, Supabase and Vercel</p>
+            <Link href="https://github.com/angela-goncalves">by Angela</Link>
+          </div>
         </footer>
       </div>
     );
@@ -93,17 +94,11 @@ export default async function Index() {
         </div>
       )}
 
-      <footer className="w-full bg-neutral-medium text-neutral-foreground flex justify-center text-center text-xs py-6">
-        <p>
-          Powered by{" "}
-          <a
-            href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
-            target="_blank"
-            className="font-bold hover:underline"
-            rel="noreferrer">
-            Supabase
-          </a>
-        </p>
+      <footer className="w-full bg-footer text-neutral-foreground flex justify-center text-center text-xs py-6">
+        <div className="self-end text-neutral-medium p-4 ">
+          <p>Built with Next.js, Tailwind, Supabase and Vercel</p>
+          <Link href="https://github.com/angela-goncalves">by Angela</Link>
+        </div>
       </footer>
     </div>
   );

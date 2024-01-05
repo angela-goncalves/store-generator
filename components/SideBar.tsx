@@ -2,6 +2,7 @@
 import React from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { ExternalLinkIcon } from "lucide-react";
 
 export default function SideBar({ dataStore }: { dataStore: any[] }) {
   const searchParams = useSearchParams();
@@ -9,20 +10,29 @@ export default function SideBar({ dataStore }: { dataStore: any[] }) {
   const selectedStore = dataStore.filter((item) => item.id === storeID);
 
   return (
-    <nav className="bg-white dark:bg-black border border-gray-300 rounded-tr-lg p-4 min-h-screen w-[180px] flex flex-col text-neutral-foreground items-center">
+    <nav className="bg-secondary-foreground border border-r-neutral-dark p-4 pt-10 min-h-screen w-[180px] flex flex-col text-neutral-foreground items-center">
       {selectedStore.length > 0 ? (
         <ul className="flex flex-col gap-8">
-          <div>
-            <h3 className="text-lg ml-2">My Stores:</h3>
-            <li className="border border-primary p-2 rounded-lg">
-              <Link
-                href={`/${selectedStore[0]?.name}`}
-                target="_blank"
-                rel="noopener noreferrer">
-                {selectedStore[0]?.name}
-              </Link>
-            </li>
-          </div>
+          <li>
+            <Link
+              href={`/${selectedStore[0]?.name}`}
+              target="_blank"
+              rel="noopener noreferrer">
+              <div className="flex gap-4 items-center">
+                <p className="text-xl"> {selectedStore[0]?.name}</p>
+                <ExternalLinkIcon className="w-4" />
+              </div>
+            </Link>
+          </li>
+          <li>
+            <Link
+              href={{
+                pathname: "/store",
+                query: { id: storeID },
+              }}>
+              Your store
+            </Link>
+          </li>
           <li>
             <Link
               href={{

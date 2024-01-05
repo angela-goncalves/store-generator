@@ -9,21 +9,10 @@ interface IHero {
 
 export default function Hero({ name, description }: IHero) {
   return (
-    <div className="w-full mb-10">
+    <div className="w-full mt-10">
       {name ? (
         <div className="flex flex-col items-center">
-          <div className="relative flex flex-col items-center">
-            <Image
-              src={heroImage}
-              alt="image hero"
-              width={5000}
-              height={3000}
-              style={{ objectFit: "cover", maxHeight: "50vh" }}
-            />
-            <div className="absolute -bottom-14 border rounded-full w-max p-4 m-6 bg-primary">
-              <h1 className="text-3xl">{name}</h1>
-            </div>
-          </div>
+          <h1 className="text-5xl text-purple-600">{name}</h1>
           <h3 className="text-2xl mt-12">{description}</h3>
         </div>
       ) : (
