@@ -22,7 +22,9 @@ export const signIn = async (formData: FormData) => {
 };
 
 export const signUp = async (formData: FormData) => {
-  const origin = headers().get("origin");
+  const baseURL = process.env.VERCEL_URL
+    ? "https://" + process.env.VERCEL_URL
+    : "http://localhost:3000";
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
   const cookieStore = cookies();
@@ -32,7 +34,7 @@ export const signUp = async (formData: FormData) => {
     email,
     password,
     options: {
-      emailRedirectTo: `${origin}/auth/callback`,
+      emailRedirectTo: `${baseURL}/auth/callback`,
     },
   });
 
