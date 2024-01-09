@@ -14,8 +14,10 @@ import { DialogVariants } from "../DialogVariants";
 import { v4 as uuidv4 } from "uuid";
 import AddInventoryForm from "./addInventoryForm";
 import Link from "next/link";
-import { updateProduct } from "@/lib/updateSupabase";
+import { updateProduct, upsertInventory } from "@/lib/updateSupabase";
 import { Textarea } from "../ui/textarea";
+import { Plus } from "lucide-react";
+import { Button } from "../ui/button";
 
 interface IInventory {
   id: string;
@@ -75,6 +77,7 @@ export default function AddProductsForm({
     price: price ?? "",
     image: image ?? "",
     collectionId: collection_id ?? "",
+    collectionName: "",
   });
 
   const [attributesChildren, setAttributesChildren] = useState<
@@ -87,9 +90,11 @@ export default function AddProductsForm({
 
   const [attributeParent, setAttributeParent] = useState<string>("");
   const [stock, setStock] = useState<string>("");
+  const [addNewCollection, setAddNewCollection] = useState<boolean>(false);
 
   const handleInputChange = (event: any) => {
     const { name, value } = event.target;
+
     setFormData({ ...formData, [name]: value });
   };
 
@@ -143,15 +148,28 @@ export default function AddProductsForm({
             : handleInsertProduct(formData, storeId, inventoryList)
         }
         className="flex flex-col gap-2">
-        {formData.collectionId ? (
+        <div className="flex items-center justify-between">
+          <h2>Add the collection you want to be related to your product</h2>
+          <Button
+            variant="outline"
+            type="button"
+            className="bg-neutral-light self-end"
+            onClick={() => {
+              setAddNewCollection(!addNewCollection);
+            }}>
+            <Plus className="mr-2 h-4 w-4 " />
+            <p>Add new collection</p>
+          </Button>
+        </div>
+        {formData.collectionId && (
           <div className="flex justify-center mb-10 w-full">
-            <h2>
-              Select the collection you want to be related to your products
-            </h2>
             <Select
               name="collectionId"
               defaultValue={formData.collectionId}
-              onValueChange={handleSelectChange}>
+              onValueChange={(e) => {
+                handleSelectChange(e);
+                setAddNewCollection(false);
+              }}>
               <SelectTrigger className="w-full max-w-[300px]">
                 <SelectValue placeholder="Select a collection to this product" />
               </SelectTrigger>
@@ -171,18 +189,16 @@ export default function AddProductsForm({
               </SelectContent>
             </Select>
           </div>
-        ) : (
-          <div className="flex gap-1 justify-center">
-            <Link
-              href={{
-                pathname: "/store/collections",
-                query: { id: storeId },
-              }}
-              className="text-blue-500">
-              Add collections
-            </Link>
-            <h4>to relate them with this product</h4>
-          </div>
+        )}
+        {addNewCollection && (
+          <Input
+            type="text"
+            name="collectionName"
+            className="max-w-[300px]"
+            value={formData.collectionName}
+            onChange={handleInputChange}
+            placeholder="Name of the collection"
+          />
         )}
 
         <section className="bg-white p-6 pb-8 rounded-lg flex flex-col my-4 gap-6">
@@ -238,7 +254,7 @@ export default function AddProductsForm({
             />
           </label>
         </section>
-        {productId ? (
+        {/* {inventoryList.length > 0 ? (
           <div className="bg-white p-6 pb-8 w-full flex-col flex gap-4 rounded-lg">
             <h3 className="text-xl font-semibold">Variants</h3>
             <h3>Combine attibutes to have a price per item</h3>
@@ -255,65 +271,64 @@ export default function AddProductsForm({
               </div>
             ))}
           </div>
-        ) : (
-          <div className="bg-white p-6 pb-8 w-full flex-col flex gap-4 rounded-lg">
-            <DialogVariants
-              title="Add variant"
-              description="Here you can add the variants for your product"
-              handleSubmitAttributes={generateVariants}>
-              <AddInventoryForm
-                attributesChildren={attributesChildren}
-                setAttributesChildren={setAttributesChildren}
-                attributeParent={attributeParent}
-                setAttributeParent={setAttributeParent}
-              />
-            </DialogVariants>
-            <h3>Combine attibutes to have a price per item</h3>
-
-            {inventoryList.length !== 0 && (
-              <div className="flex-col flex gap-6">
-                <label
-                  htmlFor="stock"
-                  className="flex text-sm items-center self-end max-w-[300px] gap-4 mb-6">
-                  Apply to all stock values
+        ) : ( */}
+        <section className="bg-white my-4 p-6 pb-8 w-full flex-col flex gap-4 rounded-lg">
+          <DialogVariants
+            title="Add variant"
+            description="Here you can add the variants for your product"
+            handleSubmitAttributes={generateVariants}>
+            <AddInventoryForm
+              attributesChildren={attributesChildren}
+              setAttributesChildren={setAttributesChildren}
+              attributeParent={attributeParent}
+              setAttributeParent={setAttributeParent}
+            />
+          </DialogVariants>
+          <h3>Combine attibutes to have a price per item</h3>
+          {inventoryList.length > 0 && (
+            <div className="flex-col flex gap-6">
+              <label
+                htmlFor="stock"
+                className="flex text-sm items-center self-end max-w-[300px] gap-4 mb-6">
+                Apply to all stock values
+                <Input
+                  type="number"
+                  name="stock"
+                  value={stock}
+                  className="w-20"
+                  onChange={(e) => handleStockChange(e.target.value)}
+                />
+              </label>
+              <div className="flex gap-6">
+                <p className="w-[20%]">Variant</p>
+                <p className="w-[30%]">Stock</p>
+                <p className="w-[30%]">Price</p>
+              </div>
+              {inventoryList.map((variant: any) => (
+                <div key={variant.id} className="flex gap-6">
+                  <span className="w-[20%]">{variant.combination}</span>
                   <Input
                     type="number"
-                    name="stock"
-                    value={stock}
-                    className="w-20"
-                    onChange={(e) => handleStockChange(e.target.value)}
+                    value={variant.stock}
+                    className="w-[30%]"
+                    onChange={(e) =>
+                      handleVariantChange(variant.id, "stock", e.target.value)
+                    }
                   />
-                </label>
-                <div className="flex gap-6">
-                  <p className="w-[20%]">Variant</p>
-                  <p className="w-[30%]">Stock</p>
-                  <p className="w-[30%]">Price</p>
+                  <Input
+                    type="number"
+                    value={variant.price}
+                    className="w-[30%]"
+                    onChange={(e) =>
+                      handleVariantChange(variant.id, "price", e.target.value)
+                    }
+                  />
                 </div>
-                {inventoryList.map((variant: any) => (
-                  <div key={variant.id} className="flex gap-6">
-                    <span className="w-[20%]">{variant.combination}</span>
-                    <Input
-                      type="number"
-                      value={variant.stock}
-                      className="w-[30%]"
-                      onChange={(e) =>
-                        handleVariantChange(variant.id, "stock", e.target.value)
-                      }
-                    />
-                    <Input
-                      type="number"
-                      value={variant.price}
-                      className="w-[30%]"
-                      onChange={(e) =>
-                        handleVariantChange(variant.id, "price", e.target.value)
-                      }
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </section>
+        {/* )} */}
 
         <button
           type="submit"

@@ -14,6 +14,7 @@ interface IFormProduct {
   price: string;
   image: string;
   collectionId: string;
+  collectionName: string;
 }
 interface IVariants {
   id: string;
@@ -60,7 +61,8 @@ export const handleInsertStore = async (formData: FormData) => {
 
 export const handleInsertCollections = async (
   formData: FormCollections[],
-  storeId: string
+  storeId: string,
+  isFromProductPage?: boolean
 ) => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
@@ -74,15 +76,21 @@ export const handleInsertCollections = async (
   }
 
   const collections = formData.map((item) => {
-    return {
-      id: item.id,
-      name: item.name,
-      store_id: storeId,
-      user_id: session.user.id,
-    };
+    return item.id === ""
+      ? {
+          name: item.name,
+          store_id: storeId,
+          user_id: session.user.id,
+        }
+      : {
+          id: item.id,
+          name: item.name,
+          store_id: storeId,
+          user_id: session.user.id,
+        };
   });
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("collections")
     .insert(collections)
     .select();
@@ -93,12 +101,16 @@ export const handleInsertCollections = async (
     redirect(`/store/collections?id=${storeId}&message=collections-errors`);
   }
 
-  redirect(`/store/collections?id=${storeId}`);
+  if (isFromProductPage) {
+    return data;
+  } else {
+    redirect(`/store/collections?id=${storeId}`);
+  }
 };
 
 export const handleInsertProduct = async (
   product: IFormProduct,
-  storeid: string,
+  storeId: string,
   inventory: IVariants[]
 ) => {
   const cookieStore = cookies();
@@ -109,8 +121,50 @@ export const handleInsertProduct = async (
   const description = product.description;
   const price = product.price;
   const image = product.image;
-  const collection_id =
-    product.collectionId === "" ? null : product.collectionId;
+
+  if (product.collectionName) {
+    const isFromProductPage = true;
+    const collection = await handleInsertCollections(
+      [{ id: "", name: product.collectionName }],
+      storeId,
+      isFromProductPage
+    );
+
+    if (collection.length > 0) {
+      const productAdded = [
+        {
+          id,
+          name,
+          description,
+          price: Number(price),
+          image,
+          collection_id: collection[0].id,
+          store_id: storeId,
+        },
+      ];
+
+      const { data: productData, error: productError } = await supabase
+        .from("products")
+        .insert(productAdded)
+        .select();
+
+      console.log("error product", productError);
+
+      if (productError !== null) {
+        redirect(
+          `/store/products/add-products?id=${storeId}&message=error-when-try-to-insert-products`
+        );
+      }
+
+      if (productData[0].id) {
+        await handleInsertInventory(inventory, storeId, productData[0].id);
+      }
+    }
+
+    redirect(
+      `/store/collections?id=${storeId}&message=collections-errors-when-try-to-insert-products`
+    );
+  }
 
   const productAdded = [
     {
@@ -119,8 +173,8 @@ export const handleInsertProduct = async (
       description,
       price: Number(price),
       image,
-      collection_id,
-      store_id: storeid,
+      collection_id: product.collectionId ? product.collectionId : null,
+      store_id: storeId,
     },
   ];
 
@@ -133,13 +187,15 @@ export const handleInsertProduct = async (
 
   if (error !== null) {
     redirect(
-      `/store/products/add-products?id=${storeid}&message=error-when-try-to-insert-products`
+      `/store/products/add-products?id=${storeId}&message=error-when-try-to-insert-products`
     );
   }
 
   if (data !== null && data[0].id) {
-    await handleInsertInventory(inventory, storeid, data[0].id);
+    await handleInsertInventory(inventory, storeId, data[0].id);
   }
+
+  redirect(`/store/products?id=${storeId}`);
 };
 
 const handleInsertInventory = async (

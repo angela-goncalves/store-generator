@@ -23,10 +23,12 @@ export default function AddStoreForm() {
             onBlur={() => setAddComment(false)}
             placeholder="Name of your store"
           />
-          {addComment && (
-            <h3 className="text-gray-400 text-sm">
+          {addComment ? (
+            <h3 className="text-neutral-dark text-sm">
               Don't worry, you can change this info later
             </h3>
+          ) : (
+            <p className="h-5"></p>
           )}
         </div>
         <div className="text-3xl mt-6">

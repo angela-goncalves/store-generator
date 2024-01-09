@@ -75,14 +75,16 @@ export default async function Products({
           </div>
         ) : (
           <div className="flex mt-20 justify-center">
-            <div className="flex justify-center self-center bg-white p-6 rounded-lg gap-10">
-              <Image
-                src={productImage}
-                width={400}
-                height={400}
-                alt="image relate to edit products"
-              />
-              <div className="flex flex-col gap-2">
+            <div className="flex justify-center h-[300px] self-center bg-white p-6 rounded-lg gap-10">
+              <div className="lg:w-[340px] relative">
+                <Image
+                  src={productImage}
+                  fill
+                  style={{ objectFit: "cover" }}
+                  alt="image relate to edit products"
+                />
+              </div>
+              <div className="flex flex-col gap-2 w-[240px]">
                 <h3 className="font-bold text-lg">Your Showcase Awaits!"</h3>
                 <h3 className="text-sm">
                   You haven't added any products yet. Get started and show the
