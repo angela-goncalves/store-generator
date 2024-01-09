@@ -35,6 +35,23 @@ export const getCollectionsOfStore = async (id: string) => {
   return data;
 };
 
+export const getCollectionById = async (id: string, storeId: string) => {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+
+  const { data, error } = await supabase
+    .from("collections")
+    .select()
+    .eq("id", id);
+
+  if (data === null || error !== null) {
+    redirect(
+      `/store/collections?id=${storeId}&message=something-went-wrong-trying-to-get-collections`
+    );
+  }
+  return data;
+};
+
 export const getAllProductsOfStore = async (id: string) => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
