@@ -155,43 +155,46 @@ export default function AddProductsForm({
             related to your product
           </h2>
           <div className="flex items-center justify-between">
-            {formData.collectionId && (
+            {addNewCollection ? (
+              <Input
+                type="text"
+                name="collectionName"
+                className="max-w-[300px]"
+                value={formData.collectionName}
+                onChange={handleInputChange}
+                placeholder="Name of the collection"
+              />
+            ) : (
               <div className="w-full">
-                {addNewCollection ? (
-                  <Input
-                    type="text"
-                    name="collectionName"
-                    className="max-w-[300px]"
-                    value={formData.collectionName}
-                    onChange={handleInputChange}
-                    placeholder="Name of the collection"
-                  />
-                ) : (
-                  <Select
-                    name="collectionId"
-                    defaultValue={formData.collectionId}
-                    onValueChange={handleSelectChange}>
-                    <SelectTrigger className="w-full max-w-[300px] dark:bg-secondary bg-neutral-light dark:text-black">
-                      <SelectValue placeholder="Select a collection to this product" />
-                    </SelectTrigger>
-                    <SelectContent className="max-w-[300px] text-secondary dark:text-gray-800">
-                      <SelectGroup>
-                        {dataCollections?.map((item) => {
-                          return (
-                            <SelectItem
-                              key={item.id}
-                              value={item.id}
-                              onChange={handleInputChange}>
-                              {item.name}
-                            </SelectItem>
-                          );
-                        })}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
+                {formData.collectionId && !addNewCollection && (
+                  <div className="w-full">
+                    <Select
+                      name="collectionId"
+                      defaultValue={formData.collectionId}
+                      onValueChange={handleSelectChange}>
+                      <SelectTrigger className="w-full max-w-[300px] dark:bg-secondary bg-neutral-light dark:text-black">
+                        <SelectValue placeholder="Select a collection to this product" />
+                      </SelectTrigger>
+                      <SelectContent className="max-w-[300px] text-secondary dark:text-gray-800">
+                        <SelectGroup>
+                          {dataCollections?.map((item) => {
+                            return (
+                              <SelectItem
+                                key={item.id}
+                                value={item.id}
+                                onChange={handleInputChange}>
+                                {item.name}
+                              </SelectItem>
+                            );
+                          })}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 )}
               </div>
             )}
+
             <Button
               type="button"
               variant="outline"
@@ -200,7 +203,7 @@ export default function AddProductsForm({
                 setAddNewCollection(!addNewCollection);
               }}>
               <Plus className="mr-2 h-4 w-4 " />
-              <p>{addNewCollection ? "Select a" : "Add new"} collection</p>
+              <p>Add a collection</p>
             </Button>
           </div>
         </section>
