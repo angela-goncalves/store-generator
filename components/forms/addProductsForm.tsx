@@ -140,7 +140,7 @@ export default function AddProductsForm({
   };
 
   return (
-    <div className="w-full max-w-[800px]">
+    <div className="w-full max-w-[800px] dark:text-gray-800">
       <form
         action={() =>
           productId
@@ -148,58 +148,62 @@ export default function AddProductsForm({
             : handleInsertProduct(formData, storeId, inventoryList)
         }
         className="flex flex-col gap-2">
-        <div className="flex items-center justify-between">
-          <h2>Add the collection you want to be related to your product</h2>
-          <Button
-            variant="outline"
-            type="button"
-            className="bg-neutral-light self-end"
-            onClick={() => {
-              setAddNewCollection(!addNewCollection);
-            }}>
-            <Plus className="mr-2 h-4 w-4 " />
-            <p>Add new collection</p>
-          </Button>
-        </div>
-        {formData.collectionId && (
-          <div className="flex justify-center mb-10 w-full">
-            <Select
-              name="collectionId"
-              defaultValue={formData.collectionId}
-              onValueChange={(e) => {
-                handleSelectChange(e);
-                setAddNewCollection(false);
+        <section className="bg-white p-6 pb-8 rounded-lg flex flex-col my-4 gap-6">
+          <h2 className="self-center">
+            You can add a new collection{" "}
+            {formData.collectionId ? "or select" : " "} the one you want to be
+            related to your product
+          </h2>
+          <div className="flex items-center justify-between">
+            {formData.collectionId && (
+              <div className="w-full">
+                {addNewCollection ? (
+                  <Input
+                    type="text"
+                    name="collectionName"
+                    className="max-w-[300px]"
+                    value={formData.collectionName}
+                    onChange={handleInputChange}
+                    placeholder="Name of the collection"
+                  />
+                ) : (
+                  <Select
+                    name="collectionId"
+                    defaultValue={formData.collectionId}
+                    onValueChange={handleSelectChange}>
+                    <SelectTrigger className="w-full max-w-[300px] dark:bg-secondary bg-neutral-light dark:text-black">
+                      <SelectValue placeholder="Select a collection to this product" />
+                    </SelectTrigger>
+                    <SelectContent className="max-w-[300px] text-secondary dark:text-gray-800">
+                      <SelectGroup>
+                        {dataCollections?.map((item) => {
+                          return (
+                            <SelectItem
+                              key={item.id}
+                              value={item.id}
+                              onChange={handleInputChange}>
+                              {item.name}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                )}
+              </div>
+            )}
+            <Button
+              type="button"
+              variant="outline"
+              className="dark:text-black dark:bg-secondary self-end border-none"
+              onClick={() => {
+                setAddNewCollection(!addNewCollection);
               }}>
-              <SelectTrigger className="w-full max-w-[300px]">
-                <SelectValue placeholder="Select a collection to this product" />
-              </SelectTrigger>
-              <SelectContent className="max-w-[300px]">
-                <SelectGroup>
-                  {dataCollections?.map((item) => {
-                    return (
-                      <SelectItem
-                        key={item.id}
-                        value={item.id}
-                        onChange={handleInputChange}>
-                        {item.name}
-                      </SelectItem>
-                    );
-                  })}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+              <Plus className="mr-2 h-4 w-4 " />
+              <p>{addNewCollection ? "Select a" : "Add new"} collection</p>
+            </Button>
           </div>
-        )}
-        {addNewCollection && (
-          <Input
-            type="text"
-            name="collectionName"
-            className="max-w-[300px]"
-            value={formData.collectionName}
-            onChange={handleInputChange}
-            placeholder="Name of the collection"
-          />
-        )}
+        </section>
 
         <section className="bg-white p-6 pb-8 rounded-lg flex flex-col my-4 gap-6">
           <h3 className="text-xl font-semibold">Name and Description</h3>
