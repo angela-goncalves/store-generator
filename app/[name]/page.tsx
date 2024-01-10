@@ -29,7 +29,7 @@ export default async function TheStore({
   }
   return (
     <div className="flex-1 flex flex-col justify-between">
-      <TemplateComponent storeId={data ? data[0].id : ""} />
+      <TemplateComponent storeId={data ? data[0].id : ""} storeForUser />
     </div>
   );
 }

@@ -7,7 +7,7 @@ export default function Store({
 }) {
   return (
     <div className="w-[calc(100%-180px)]">
-      <TemplateComponent storeId={searchParams.id} />
+      <TemplateComponent storeId={searchParams.id} storeForUser={false} />
     </div>
   );
 }
