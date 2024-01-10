@@ -62,7 +62,7 @@ export default async function Index() {
           {dataStore.length > 0 ? (
             <div className=" text-center w-full max-w-[800px]  flex flex-col gap-10 ">
               <Link
-                href={`/add_store`}
+                href={`/add-storeore`}
                 className="p-2 flex items-center gap-2 border border-neutral-dark text-primary-foreground rounded-lg w-max self-end hover:bg-neutral-light hover:text-secondary">
                 <Plus className="w-4" />
                 <p className="text-sm">New store</p>
@@ -85,7 +85,7 @@ export default async function Index() {
             <div className="animate-in opacity-0 w-full flex-1 flex flex-col items-center gap-6 max-w-4xl px-3">
               <Header usermail={session.user.email ? session.user.email : ""} />
               <Link
-                href={`/add_store`}
+                href={`/add-storeore`}
                 className="text-2xl p-4 border-none bg-primary text-primary-foreground rounded-lg w-max">
                 Let's create your new store!
               </Link>

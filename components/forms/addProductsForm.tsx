@@ -92,7 +92,11 @@ export default function AddProductsForm({
   const [stock, setStock] = useState<string>("");
   const [addNewCollection, setAddNewCollection] = useState<boolean>(false);
 
-  const handleInputChange = (event: any) => {
+  const handleInputChange = (
+    event:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
     const { name, value } = event.target;
 
     setFormData({ ...formData, [name]: value });
@@ -138,6 +142,7 @@ export default function AddProductsForm({
     }));
     setInventoryList(inventory);
   };
+  console.log(formData);
 
   return (
     <div className="w-full max-w-[800px] dark:text-gray-800">
@@ -179,10 +184,7 @@ export default function AddProductsForm({
                         <SelectGroup>
                           {dataCollections?.map((item) => {
                             return (
-                              <SelectItem
-                                key={item.id}
-                                value={item.id}
-                                onChange={handleInputChange}>
+                              <SelectItem key={item.id} value={item.id}>
                                 {item.name}
                               </SelectItem>
                             );
