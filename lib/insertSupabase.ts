@@ -3,6 +3,12 @@ import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+interface IStore {
+  id: string;
+  name: string;
+  description: string;
+  location: string;
+}
 interface FormCollections {
   name: string;
   id: string;
@@ -23,7 +29,7 @@ interface IVariants {
   stock: string;
 }
 
-export const handleInsertStore = async (formData: FormData) => {
+export const handleInsertStore = async (formData: IStore) => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
@@ -35,26 +41,25 @@ export const handleInsertStore = async (formData: FormData) => {
     redirect(`/login?signin=true`);
   }
 
-  const siteName = formData.get("siteName") as string;
-  const siteDescription = formData.get("siteDescription") as string;
-  const siteLocation = formData.get("siteLocation") as string;
+  const name = formData.name;
+  const description = formData.description;
+  const location = formData.location;
 
   const { data, error } = await supabase
     .from("store")
-    .insert([
+    .upsert([
       {
-        name: siteName,
-        description: siteDescription,
-        location: siteLocation,
+        id: formData.id ? formData.id : "",
+        name,
+        description,
+        location,
         user_id: session.user.id,
       },
     ])
     .select();
 
-  // console.log("error inserting store", error);
-
   if (error !== null) {
-    redirect("/add_store?message=store-error");
+    redirect("/add-storeore?message=store-error");
   }
   redirect(`/store?id=${data[0].id}`);
 };
