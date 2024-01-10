@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, MoonIcon, Plus, Settings, SunIcon, User } from "lucide-react";
+import { LogOut, MoonIcon, PaletteIcon, SunIcon, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,13 +11,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import Link from "next/link";
 import { useTheme } from "next-themes";
 import { signOut } from "@/lib/auth";
 
@@ -47,8 +45,8 @@ export function ConfigMenu() {
         <DropdownMenuGroup>
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
-              <Settings className="mr-2 h-4 w-4" />
-              <span>Settings</span>
+              <PaletteIcon className="mr-2 h-4 w-4" />
+              <span>Theme</span>
             </DropdownMenuSubTrigger>
             <DropdownMenuPortal>
               <DropdownMenuSubContent>
@@ -73,10 +71,6 @@ export function ConfigMenu() {
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
           </DropdownMenuSub>
-          <DropdownMenuItem>
-            <Plus className="mr-2 h-4 w-4" />
-            <Link href="/add_store">Create new store</Link>
-          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
