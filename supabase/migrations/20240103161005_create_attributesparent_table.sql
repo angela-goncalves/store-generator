@@ -5,5 +5,5 @@ create table
     product_id uuid null,
     name text null,
     constraint attributesparent_pkey primary key (id),
-    constraint attributes_parent_product_id_fkey foreign key (product_id) references products (id) on update cascade on delete cascade
+    constraint attributesparent_product_id_fkey foreign key (product_id) references products (id) on update cascade on delete cascade
   ) tablespace pg_default;

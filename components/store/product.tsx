@@ -1,29 +1,66 @@
+"use client";
+
+import React, { useState } from "react";
+import { Button } from "../ui/button";
 import { capitalizeFirstLetter } from "@/lib/uppercase";
-import React from "react";
-import Image from "next/image";
-import Link from "next/link";
+import ShoppingBag from "./shoppingBag";
 
 interface IProduct {
-  name: string;
+  id: string;
+  created_at: string;
   description: string;
   image: string;
+  name: string;
   price: string;
-  id: string;
-  nameStore: string;
+  store_id: string;
 }
-export default function Product({
-  name,
-  description,
-  image,
-  price,
-  id,
-  nameStore,
-}: IProduct) {
+
+interface IProductComponent {
+  productData: IProduct;
+}
+
+export default function Product({ productData }: IProductComponent) {
+  const [openCart, setOpenCart] = useState(false);
   return (
-    <Link href={`${nameStore}/${id}`}>
-      {/* <Image src={image} alt="image of product" width={200} height={200} /> */}
-      <p className="text-lg">{capitalizeFirstLetter(name)}</p>
-      <p>${price}</p>
-    </Link>
+    <div className="flex w-full justify-around ">
+      <div className="max-w-xs flex">
+        <div className="flex flex-col self-end">
+          <h3>Composition</h3>
+          <p className="text-sm mt-3">
+            We work with monitoring programs to guarantee compliance with the
+            social, environmental, and health and safety standards of our
+            products. To assess its compliance, we have developed an audit
+            program and plans for continual improvement.
+          </p>
+        </div>
+      </div>
+      <div className="flex flex-col mt-10">
+        <h2 className="text-3xl">{productData.name.toUpperCase()}</h2>
+        <div className="flex gap-4 mt-14 bg-secondary p-4">
+          <img
+            className="max-w-[300px]"
+            src={productData.image}
+            alt={`${productData.name} image`}
+          />
+          {/* <img
+              className="max-w-[300px]"
+              src={productData.image}
+              alt={`${productData.name} image`}
+            /> */}
+        </div>
+      </div>
+      <div className="flex flex-col justify-center gap-14">
+        <div className="p-2 max-w-xs h-min">
+          <p className="text-sm">
+            {capitalizeFirstLetter(productData.description || "")}
+          </p>
+        </div>
+        <p className="text-2xl">${productData.price}</p>
+        <Button onClick={() => setOpenCart(true)}>
+          <p className="p-4 text-center text-md">Add to shopping bag</p>
+        </Button>
+        {openCart && <ShoppingBag productData={productData} />}
+      </div>
+    </div>
   );
 }

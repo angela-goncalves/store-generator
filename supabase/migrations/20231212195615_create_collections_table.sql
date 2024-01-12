@@ -6,6 +6,7 @@ create table
     description text null default ''::text,
     store_id uuid null,
     user_id uuid null,
+    image text null default ''::text,
     constraint collections_pkey primary key (id),
     constraint collections_store_id_fkey foreign key (store_id) references store (id) on update cascade on delete cascade
   ) tablespace pg_default;

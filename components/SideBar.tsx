@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { ExternalLinkIcon, PencilIcon, Plus } from "lucide-react";
 import {
   Menubar,
@@ -16,6 +16,11 @@ import {
 export default function SideBar({ dataStore }: { dataStore: any[] }) {
   const searchParams = useSearchParams();
   const storeID = searchParams.get("id");
+
+  const pathname = usePathname();
+  const product = pathname.includes("products");
+  const collections = pathname.includes("collections");
+
   const selectedStore = dataStore.filter((item) => item.id === storeID);
 
   return (
@@ -28,7 +33,12 @@ export default function SideBar({ dataStore }: { dataStore: any[] }) {
               href={{
                 pathname: "/store",
                 query: { id: storeID },
-              }}>
+              }}
+              className={`text-lg ${
+                !collections && !product
+                  ? "p-4 rounded-lg bg-neutral-medium"
+                  : "px-4"
+              }`}>
               {selectedStore[0]?.name}
             </Link>
           </MenubarItem>
@@ -67,7 +77,11 @@ export default function SideBar({ dataStore }: { dataStore: any[] }) {
           pathname: `/store/products`,
           query: { id: storeID },
         }}
-        className="text-xl my-2">
+        className={`text-lg underline underline-offset-4 ${
+          product
+            ? "hover:underline bg-neutral-medium p-4 rounded-lg"
+            : "hover:no-underline bg-transparent p-4"
+        }`}>
         Products
       </Link>
 
@@ -76,7 +90,11 @@ export default function SideBar({ dataStore }: { dataStore: any[] }) {
           pathname: `/store/collections`,
           query: { id: storeID },
         }}
-        className="text-xl ">
+        className={`text-lg underline underline-offset-4 ${
+          collections
+            ? "hover:underline bg-neutral-medium p-4 rounded-lg"
+            : "hover:no-underline bg-transparent p-4"
+        }`}>
         Collections
       </Link>
     </Menubar>
