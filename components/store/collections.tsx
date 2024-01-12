@@ -1,7 +1,6 @@
 import React from "react";
-import Product from "./products";
 import { capitalizeFirstLetter } from "@/lib/uppercase";
-import { getCollectionsById } from "@/lib/action/getData";
+import { getCollectionById } from "@/lib/action/getData";
 import Link from "next/link";
 import heroImage from "@/app/public/heroImage.jpg";
 import Image from "next/image";
@@ -17,7 +16,7 @@ export default async function Collections({
   storeId: string;
   storeForUser: boolean;
 }) {
-  const collection = await getCollectionsById(collectionId);
+  const collection = await getCollectionById(collectionId, storeId);
 
   return (
     <div className="w-96" id="collections-store">
