@@ -5,28 +5,54 @@ import { Input } from "@/components/ui/input";
 import { handleInsertStore } from "@/lib/insertSupabase";
 import { Button } from "../ui/button";
 
-export default function AddStoreForm() {
+interface IStore {
+  id: string;
+  name: string;
+  description: string;
+  location: string;
+}
+interface IAddStoreForm {
+  storeData?: IStore;
+}
+
+export default function AddStoreForm({ storeData }: IAddStoreForm) {
   const [addComment, setAddComment] = useState(false);
+  const [formData, setFormData] = useState<IStore>({
+    id: storeData ? storeData.id : "",
+    name: storeData ? storeData.name : "",
+    description: storeData ? storeData.description : "",
+    location: storeData ? storeData.location : "",
+  });
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
   return (
     <div className="w-1/2 max-w-[500px]">
       <form
-        action={(formData) => handleInsertStore(formData)}
+        action={() => handleInsertStore(formData)}
         className="h-full flex flex-col">
         <div className="text-3xl mt-6">
           <label htmlFor="siteName">What is your store's name?</label>
           <Input
             type="text"
             className="mt-2"
-            name="siteName"
+            name="name"
             required
+            value={formData.name}
+            onChange={handleInputChange}
             onFocus={() => setAddComment(true)}
             onBlur={() => setAddComment(false)}
             placeholder="Name of your store"
           />
-          {addComment && (
-            <h3 className="text-gray-400 text-sm">
+          {addComment && !storeData?.id ? (
+            <h3 className="text-neutral-dark text-sm">
               Don't worry, you can change this info later
             </h3>
+          ) : (
+            <p className="h-5"></p>
           )}
         </div>
         <div className="text-3xl mt-6">
@@ -36,7 +62,9 @@ export default function AddStoreForm() {
           <Input
             className="mt-2"
             type="text"
-            name="siteDescription"
+            name="description"
+            value={formData.description}
+            onChange={handleInputChange}
             placeholder="Description of your store of some key word"
           />
         </div>
@@ -45,7 +73,9 @@ export default function AddStoreForm() {
           <Input
             className="mt-2"
             type="text"
-            name="siteLocation"
+            name="location"
+            value={formData.location}
+            onChange={handleInputChange}
             placeholder="Location of the product"
           />
         </div>

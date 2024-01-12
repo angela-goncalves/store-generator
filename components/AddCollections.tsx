@@ -32,14 +32,16 @@ export default function AddCollections({
         />
       ) : (
         <div className="h-full mt-20">
-          <div className="flex justify-center self-center bg-white p-6 rounded-lg gap-10">
-            <Image
-              src={collectionImage}
-              width={400}
-              height={400}
-              alt="image relate to edit products"
-            />
-            <div className="flex flex-col gap-4">
+          <div className="flex justify-center self-center h-[300px] bg-white p-6 rounded-lg gap-10">
+            <div className="lg:w-[850px] relative">
+              <Image
+                src={collectionImage}
+                fill
+                style={{ objectFit: "cover" }}
+                alt="image relate to edit products"
+              />
+            </div>
+            <div className="flex flex-col gap-4 w-[500px]">
               <h3 className="font-bold text-lg">Start Your Collections!</h3>
               <h3 className="text-sm">
                 You haven't created any collections yet. Begin by crafting your

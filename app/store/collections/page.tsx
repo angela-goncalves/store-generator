@@ -25,13 +25,7 @@ export default async function Collections({
   }
 
   return (
-    <div className="w-full flex flex-col items-center mt-10 text-secondary">
-      <BackButton
-        query={{
-          pathname: "/store",
-          query: { id: searchParams.id },
-        }}
-      />
+    <div className="w-full flex flex-col items-center text-secondary">
       <div className="w-full max-w-[800px] flex flex-col h-full">
         <div className="flex justify-between">
           <h1 className="text-secondary font-bold text-3xl mt-10">

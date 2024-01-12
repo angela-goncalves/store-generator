@@ -34,7 +34,7 @@ export const getCollectionsOfStore = async (id: string) => {
   return data;
 };
 
-export const getCollectionsById = async (id: string) => {
+export const getCollectionById = async (id: string, storeId: string) => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
@@ -45,7 +45,7 @@ export const getCollectionsById = async (id: string) => {
 
   if (data === null || error !== null) {
     redirect(
-      `/store?id=${id}&message=something-went-wrong-trying-to-get-collections`
+      `/store/collections?id=${storeId}&message=something-went-wrong-trying-to-get-collections`
     );
   }
   return data;
