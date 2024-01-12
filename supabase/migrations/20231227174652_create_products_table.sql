@@ -8,6 +8,7 @@ create table
     image text null default ''::text,
     collection_id uuid null default gen_random_uuid (),
     store_id uuid null,
+    url text null default ''::text,
     extrainfo text null default ''::text,
     constraint products_pkey primary key (id),
     constraint products_store_id_fkey foreign key (store_id) references store (id) on update cascade on delete cascade

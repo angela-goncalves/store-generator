@@ -155,7 +155,7 @@ export default function AddInventory({
       {attributesChildren.length > 0 &&
         attributesChildren.map((item) => (
           <div key={item.id} className="mb-4">
-            <div className="flex items-center">
+            <div className="flex items-center ">
               <p>{item.name}</p>
               <Button
                 variant="ghost"
@@ -163,11 +163,11 @@ export default function AddInventory({
                 <XIcon className="w-4 " />
               </Button>
             </div>
-            <div className="flex">
+            <div className="flex w-full flex-wrap max-w-sm">
               {item.childrenValue.map((value, index) => (
                 <div
                   key={value + index}
-                  className="border mx-2 rounded-md flex items-center">
+                  className="border m-2 rounded-md flex items-center">
                   <p className="ml-4">{value}</p>
                   <Button
                     variant="ghost"

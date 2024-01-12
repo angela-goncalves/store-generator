@@ -74,7 +74,7 @@ export default function AddCollectionsForm({
             {dataCollections.map((item) => (
               <div key={item.id}>
                 <li className="flex justify-between gap-4">
-                  <h3>{capitalizeFirstLetter(item.name)}</h3>
+                  <h3>{capitalizeFirstLetter(item.name || "")}</h3>
                   <div className="flex gap-2 items-center">
                     <Link
                       href={{
