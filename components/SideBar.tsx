@@ -1,12 +1,17 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { ExternalLinkIcon } from "lucide-react";
 
 export default function SideBar({ dataStore }: { dataStore: any[] }) {
   const searchParams = useSearchParams();
   const storeID = searchParams.get("id");
+
+  const pathname = usePathname();
+  const product = pathname.includes("products");
+  const collections = pathname.includes("collections");
+
   const selectedStore = dataStore.filter((item) => item.id === storeID);
 
   return (
@@ -29,7 +34,12 @@ export default function SideBar({ dataStore }: { dataStore: any[] }) {
               href={{
                 pathname: "/store",
                 query: { id: storeID },
-              }}>
+              }}
+              className={`text-lg ${
+                !collections && !product
+                  ? "p-4 rounded-lg bg-neutral-medium"
+                  : "px-4"
+              }`}>
               Your store
             </Link>
           </li>
@@ -39,7 +49,11 @@ export default function SideBar({ dataStore }: { dataStore: any[] }) {
                 pathname: `/store/collections`,
                 query: { id: storeID },
               }}
-              className="text-lg underline underline-offset-4 hover:no-underline">
+              className={`text-lg underline underline-offset-4 ${
+                collections
+                  ? "hover:underline bg-neutral-medium p-4 rounded-lg"
+                  : "hover:no-underline bg-transparent p-4"
+              }`}>
               Collections
             </Link>
           </li>
@@ -49,7 +63,11 @@ export default function SideBar({ dataStore }: { dataStore: any[] }) {
                 pathname: `/store/products`,
                 query: { id: storeID },
               }}
-              className="text-lg underline underline-offset-4 hover:no-underline">
+              className={`text-lg underline underline-offset-4 ${
+                product
+                  ? "hover:underline bg-neutral-medium p-4 rounded-lg"
+                  : "hover:no-underline bg-transparent p-4"
+              }`}>
               Products
             </Link>
           </li>

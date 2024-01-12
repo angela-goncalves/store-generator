@@ -1,5 +1,5 @@
 import React from "react";
-import Product from "./product";
+import Product from "./products";
 import { capitalizeFirstLetter } from "@/lib/uppercase";
 import { getCollectionsById } from "@/lib/action/getData";
 import Link from "next/link";
@@ -20,30 +20,21 @@ export default async function Collections({
   const collection = await getCollectionsById(collectionId);
 
   return (
-    <Link
-      href={
-        storeForUser
-          ? {
-              pathname: `/${nameStore}`,
-              query: { collectionId: collectionId },
-            }
-          : {
-              pathname: "/store",
-              query: { id: storeId, collectionId: collectionId },
-            }
-      }>
-      <div className="relative">
-        <Image
-          src={heroImage}
-          alt="image hero"
-          width={300}
-          height={300}
-          className="object-cover transition ease-in-out duration-500 hover:scale-105"
-        />
-        <p className="text-lg absolute top-[50%] left-[40%]">
-          {capitalizeFirstLetter(collection[0].name)}
-        </p>
-      </div>
-    </Link>
+    <div className="w-96" id="collections-store">
+      <Link href={"#collections-store"}>
+        <div className="relative">
+          <Image
+            src={heroImage}
+            alt="image hero"
+            width={500}
+            height={500}
+            className="transition ease-in-out duration-500 hover:scale-105 rounded-lg"
+          />
+          <p className="text-lg absolute top-[20px] left-[20px]">
+            {capitalizeFirstLetter(collection[0].name)}
+          </p>
+        </div>
+      </Link>
+    </div>
   );
 }
