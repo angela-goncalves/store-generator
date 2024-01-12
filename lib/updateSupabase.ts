@@ -63,44 +63,57 @@ export const updateProduct = async (
     .eq("id", idProduct)
     .select();
 
-  console.log("error in update the product", error);
+  // console.log("error in update the product", error);
 
   if (error !== null) {
     redirect(
       `/store/products/add-products?id=${storeId}&productId=${formData.id}&message=something-went-wrong-when-try-to-update-the-product`
     );
   }
+
+  await upsertInventory(inventory, storeId, idProduct);
+
   redirect(`/store/products?id=${storeId}`);
 };
 
-export const updateInventory = async (
-  inventory: IVariants,
-  storeId: string
+export const upsertInventory = async (
+  inventory: IVariants[],
+  storeId: string,
+  idProduct: string
 ) => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
-  const id = inventory.id;
-  const attributeschildren = inventory.combination;
-  const price = Number(inventory.price) ?? 0;
-  const stock_leve = Number(inventory.stock) ?? 0;
+  const inventories = inventory.map((item) => {
+    return {
+      id: item.id,
+      product_id: idProduct,
+      attributeschildren: item.combination,
+      price: Number(item.price) ?? 0,
+      stock_level: Number(item.stock) ?? 0,
+    };
+  });
 
   const { data, error } = await supabase
     .from("inventory")
-    .update({ id, attributeschildren, price, stock_leve })
-    .eq("id", id)
+    .upsert(inventories)
     .select();
+
+  // console.log("error upserting inventory", error);
 
   if (data === null || error !== null) {
     redirect(
-      "/store/collections/edit-collection&message=something-went-wrong-when-try-to-update"
+      `/store/products/add-products?id=${storeId}&message=something-went-wrong-when-try-to-upsert-inventory`
     );
   }
 
   redirect(`/store/products?id=${storeId}`);
 };
 
-export const updateCollections = async (formData: FormDataType) => {
+export const updateCollections = async (
+  formData: FormDataType,
+  storeId: string
+) => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
@@ -113,9 +126,14 @@ export const updateCollections = async (formData: FormDataType) => {
     .update({ name, description })
     .eq("id", collectionid)
     .select();
+
+  // console.log("error in update collections", error);
+
   if (data === null || error !== null) {
     redirect(
-      "/store/collections/edit-collection&message=something-went-wrong-when-try-to-update"
+      `/store/collections/edit-collection?id=${storeId}&message=something-went-wrong-when-try-to-update`
     );
   }
+
+  redirect(`/store/collections?id=${storeId}`);
 };

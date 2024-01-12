@@ -4,26 +4,31 @@ import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
 import { updateCollections } from "@/lib/updateSupabase";
 
-interface IUpdateCollections {
-  collectionId: string;
-  collectionTitle: string;
-  collectionDescription: string;
-}
 type FormDataType = {
   collectionID: string;
   nameCollection: string;
   descriptionCollection: string;
 };
+interface IUpdateCollections {
+  collectionId: string;
+  collectionTitle: string;
+  collectionDescription: string;
+  storeId: string;
+}
+
 export default function UpdateCollections({
   collectionId,
   collectionTitle,
   collectionDescription,
+  storeId,
 }: IUpdateCollections) {
   const [newInputs, setNewInputs] = useState<FormDataType>({
     nameCollection: collectionTitle,
     descriptionCollection: collectionDescription,
     collectionID: collectionId,
   });
+
+  // console.log("storeid in update collections form", storeId);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewInputs({ ...newInputs, [e.target.name]: e.target.value });
@@ -32,7 +37,7 @@ export default function UpdateCollections({
   return (
     <div className="w-1/2 max-w-[500px]">
       <form
-        action={() => updateCollections(newInputs)}
+        action={() => updateCollections(newInputs, storeId)}
         className="flex flex-col">
         <div className="text-2xl mt-6">
           <label htmlFor="nameCollection">Name</label>

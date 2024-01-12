@@ -68,8 +68,8 @@ export default function AddCollectionsForm({
         <p className="text-primary-foreground">Add new collection</p>
       </Button>
       {dataCollections.length > 0 && (
-        <div>
-          <h3 className="text-2xl">Title</h3>
+        <div className="flex-col flex gap-6">
+          <h3 className="mt-8 text-2xl">Title</h3>
           <ul className="flex flex-col gap-4 mt-">
             {dataCollections.map((item) => (
               <div key={item.id}>
@@ -82,8 +82,6 @@ export default function AddCollectionsForm({
                         query: {
                           id: storeId,
                           collectionId: `${item.id}`,
-                          collectionTitle: `${item.name}`,
-                          collectionDescription: `${item.description}`,
                         },
                       }}>
                       <PencilLineIcon className="mr-2 h-4 w-4" />
