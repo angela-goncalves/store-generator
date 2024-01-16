@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
-import { updateCollections } from "@/lib/updateSupabase";
+import { updateCollections } from "@/lib/action/updateSupabase";
 
 type FormDataType = {
   collectionID: string;

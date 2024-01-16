@@ -14,7 +14,7 @@ import { handleInsertProduct } from "@/lib/insertSupabase";
 import { DialogVariants } from "../DialogVariants";
 import { v4 as uuidv4 } from "uuid";
 import AddInventoryForm from "./addInventoryForm";
-import { updateProduct } from "@/lib/updateSupabase";
+import { updateProduct } from "@/lib/action/updateSupabase";
 import { Textarea } from "../ui/textarea";
 import { Plus } from "lucide-react";
 import { Button } from "../ui/button";
@@ -155,7 +155,6 @@ export default function AddProductsForm({
 
     setInventoryList(inventoryTolist);
   };
-  // console.log("attributesChildren", attributesChildren);
 
   return (
     <div className="w-full max-w-[800px] dark:text-gray-800">
@@ -307,19 +306,6 @@ export default function AddProductsForm({
             <div className="flex-col flex gap-6">
               <div className="flex gap-4 items-baseline self-end">
                 <label
-                  htmlFor="priceToAll"
-                  className="flex text-sm items-center max-w-[300px] gap-4 mb-6">
-                  Apply to all price values
-                  <Input
-                    type="number"
-                    name="priceToAll"
-                    value={priceToAll}
-                    placeholder="price"
-                    className="w-20"
-                    onChange={(e) => handlePriceChange(e.target.value)}
-                  />
-                </label>
-                <label
                   htmlFor="stockToAll"
                   className="flex text-sm items-center max-w-[300px] gap-4">
                   Apply to all stock values
@@ -330,6 +316,19 @@ export default function AddProductsForm({
                     value={stock}
                     className="w-20"
                     onChange={(e) => handleStockChange(e.target.value)}
+                  />
+                </label>
+                <label
+                  htmlFor="priceToAll"
+                  className="flex text-sm items-center max-w-[300px] gap-4 mb-6">
+                  Apply to all price values
+                  <Input
+                    type="number"
+                    name="priceToAll"
+                    value={priceToAll}
+                    placeholder="price"
+                    className="w-20"
+                    onChange={(e) => handlePriceChange(e.target.value)}
                   />
                 </label>
               </div>
