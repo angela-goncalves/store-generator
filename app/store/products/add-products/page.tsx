@@ -7,7 +7,6 @@ import {
   getInventory,
   getProductsToEdit,
 } from "@/lib/action/getData";
-import { v4 as uuidv4 } from "uuid";
 
 export default async function FormAddProducts({
   searchParams,
@@ -64,7 +63,7 @@ export default async function FormAddProducts({
         productToEdit={productToEdit.length > 0 ? productToEdit[0] : {}}
         storeId={searchParams.id}
         inventory={inventoryDefault ?? []}
-        attributesDefault={attributesDefault}
+        attributesDefault={attributesDefault ?? []}
       />
     </div>
   );
