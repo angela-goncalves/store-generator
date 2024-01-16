@@ -25,11 +25,17 @@ interface IVariants {
   price: string;
   stock: string;
 }
+interface IAttributeschildren {
+  id: string;
+  name: string;
+  childrenValue: string[];
+}
 
 export const updateProduct = async (
   formData: IFormDataUpdateProduct,
   storeId: string,
-  inventory: IVariants[]
+  inventory: IVariants[],
+  attributesChildren: IAttributeschildren[]
 ) => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
@@ -65,13 +71,14 @@ export const updateProduct = async (
 
   // console.log("error in update the product", error);
 
+  await upsertInventory(inventory, storeId, idProduct);
+  await upsertAttributes(attributesChildren, storeId, idProduct);
+
   if (error !== null) {
     redirect(
       `/store/products/add-products?id=${storeId}&productId=${formData.id}&message=something-went-wrong-when-try-to-update-the-product`
     );
   }
-
-  await upsertInventory(inventory, storeId, idProduct);
 
   redirect(`/store/products?id=${storeId}`);
 };
@@ -94,20 +101,60 @@ export const upsertInventory = async (
     };
   });
 
-  const { data, error } = await supabase
+  const { error: deleteError } = await supabase
     .from("inventory")
-    .upsert(inventories)
+    .delete()
+    .eq("product_id", idProduct);
+
+  if (deleteError === null) {
+    const { error } = await supabase
+      .from("inventory")
+      .insert(inventories)
+      .select();
+
+    // console.log("error deleting and inserting inventory", deleteError, error);
+
+    if (error !== null) {
+      redirect(
+        `/store/products/add-products?id=${storeId}&message=something-went-wrong-when-try-to-replace-inventory`
+      );
+    }
+  }
+
+  // redirect(`/store/products?id=${storeId}`);
+};
+
+export const upsertAttributes = async (
+  attributesChildren: IAttributeschildren[],
+  storeId: string,
+  idProduct: string
+) => {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+
+  const attributes = attributesChildren.map((item) => {
+    return {
+      id: item.id,
+      product_id: idProduct,
+      children_values: item.childrenValue,
+      name: item.name,
+    };
+  });
+
+  const { error } = await supabase
+    .from("attributes")
+    .upsert(attributes)
     .select();
 
-  // console.log("error upserting inventory", error);
+  // console.log("error upserting attributes", error);
 
-  if (data === null || error !== null) {
+  if (error !== null) {
     redirect(
       `/store/products/add-products?id=${storeId}&message=something-went-wrong-when-try-to-upsert-inventory`
     );
   }
 
-  redirect(`/store/products?id=${storeId}`);
+  // redirect(`/store/products?id=${storeId}`);
 };
 
 export const updateCollections = async (

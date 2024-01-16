@@ -15,23 +15,27 @@ interface IDialogVariants {
   title: string;
   description?: string;
   children: ReactElement;
-  handleSubmitAttributes: any;
+  inventoryList: boolean;
+  generateVariants: () => void;
 }
 
 export function DialogVariants({
   title,
   description,
   children,
-
-  handleSubmitAttributes,
+  inventoryList,
+  generateVariants,
 }: IDialogVariants) {
   return (
     <Dialog>
       <div className="flex items-center justify-between">
         <h3 className="text-xl font-semibold">Variants</h3>
-        <DialogTrigger asChild>
-          <Button variant="outline" className="self-end bg-neutral-light">
-            <Plus className="w-4 mr-2" /> New variant
+        <DialogTrigger
+          asChild
+          className="dark:text-black dark:bg-secondary self-end border-none">
+          <Button variant="outline">
+            <Plus className="w-4 mr-2" />{" "}
+            <p>{inventoryList ? "Edit variants" : "New variant"}</p>
           </Button>
         </DialogTrigger>
       </div>
@@ -46,7 +50,7 @@ export function DialogVariants({
         <DialogClose asChild>
           <Button
             type="button"
-            onClick={handleSubmitAttributes}
+            onClick={generateVariants}
             className="hover:shadow-md hover:shadow-primary hover:bg-primary hover:text-primary-foreground"
             variant="default">
             Save all

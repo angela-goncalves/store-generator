@@ -126,16 +126,50 @@ export default function AddInventory({
   };
 
   const saveNewAttribute = () => {
-    const findEmptyNameWithChildren = attributesChildrenCopy.some(
-      (item) => item.name === "" && item.childrenValue.length > 1
+    const validAttributesChildrenCopy = attributesChildrenCopy.filter(
+      (copyAttribute) => {
+        const hasValidName = copyAttribute.name.trim() !== "";
+        const hasValidChildren = copyAttribute.childrenValue.some(
+          (child) => child.trim() !== ""
+        );
+        return hasValidName && hasValidChildren;
+      }
     );
-    if (findEmptyNameWithChildren) {
+
+    if (validAttributesChildrenCopy.length === 0) {
       setMessageToAddData(true);
-    } else {
-      setAttributesChildrenCopy([]);
-      setAttributesChildren([...attributesChildren, ...attributesChildrenCopy]);
-      setMessageToAddData(false);
+      return;
     }
+
+    let updatedAttributesChildren = [...attributesChildren];
+
+    validAttributesChildrenCopy.forEach((copyAttribute) => {
+      const existingAttributeIndex = updatedAttributesChildren.findIndex(
+        (attr) => attr.name === copyAttribute.name
+      );
+
+      if (existingAttributeIndex !== -1) {
+        const existingAttribute =
+          updatedAttributesChildren[existingAttributeIndex];
+        const updatedChildrenValues = Array.from(
+          new Set([
+            ...existingAttribute.childrenValue,
+            ...copyAttribute.childrenValue.filter(
+              (child) => child.trim() !== ""
+            ),
+          ])
+        );
+        updatedAttributesChildren[existingAttributeIndex] = {
+          ...existingAttribute,
+          childrenValue: updatedChildrenValues,
+        };
+      } else {
+        updatedAttributesChildren.push(copyAttribute);
+      }
+    });
+    setAttributesChildren(updatedAttributesChildren);
+    setAttributesChildrenCopy([]);
+    setMessageToAddData(false);
   };
 
   const AddNewAttribute = () => {
@@ -190,10 +224,10 @@ export default function AddInventory({
             <Select
               name="variantParent"
               onValueChange={(e) => handleChangeAttributeName(attribute.id, e)}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full dark:bg-secondary bg-neutral-light dark:text-black">
                 <SelectValue placeholder="Select an attribute" />
               </SelectTrigger>
-              <SelectContent className="">
+              <SelectContent className="text-secondary dark:text-gray-800">
                 <SelectGroup>
                   {variantsobj?.map((item) => {
                     return (
