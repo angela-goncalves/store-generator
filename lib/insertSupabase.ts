@@ -163,7 +163,7 @@ export const handleInsertProduct = async (
         .insert(productAdded)
         .select();
 
-      console.log("error product", productError);
+      // console.log("error product", productError);
 
       if (productError !== null) {
         redirect(
