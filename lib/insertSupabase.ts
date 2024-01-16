@@ -136,6 +136,13 @@ export const handleInsertProduct = async (
   const description = product.description;
   const price = product.price;
   const image = product.image;
+  const url = name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/ñ/g, "n")
+    .replace(/ç/g, "c")
+    .replace(/[^a-zA-Z0-9]/g, "-");
 
   if (product.collectionName) {
     const isFromProductPage = true;
@@ -153,6 +160,7 @@ export const handleInsertProduct = async (
           description,
           price: Number(price),
           image,
+          url,
           collection_id: collection[0].id,
           store_id: storeId,
         },
@@ -188,6 +196,7 @@ export const handleInsertProduct = async (
       description,
       price: Number(price),
       image,
+      url,
       collection_id: product.collectionId ? product.collectionId : null,
       store_id: storeId,
     },
@@ -207,8 +216,8 @@ export const handleInsertProduct = async (
   }
 
   if (data !== null && data[0].id) {
-    await handleInsertInventory(inventory, storeId, data[0].id);
     await insertAttributes(attributesChildren, storeId, data[0].id);
+    await handleInsertInventory(inventory, storeId, data[0].id);
   }
 
   redirect(`/store/products?id=${storeId}`);
@@ -267,7 +276,7 @@ export const insertAttributes = async (
     .insert(attributes)
     .select();
 
-  console.log("error upserting attributes", error);
+  // console.log("error upserting attributes", error);
 
   if (error !== null) {
     redirect(

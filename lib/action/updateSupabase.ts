@@ -1,9 +1,24 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
-import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+
+interface ISocialMedia {
+  name: string;
+  url: string;
+}
+
+interface IStore {
+  id: string;
+  name: string;
+  description: string;
+  location: string;
+  phone: string;
+  whatsapp: string;
+  contact_mail: string;
+  social_media: ISocialMedia[];
+}
 
 type FormDataType = {
   collectionID: string;
@@ -31,6 +46,36 @@ interface IAttributeschildren {
   childrenValue: string[];
 }
 
+export const updateStore = async (formData: IStore, storeId: string) => {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+
+  const { data: sessionData, error: sessionError } =
+    await supabase.auth.getSession();
+  const { session } = sessionData;
+
+  if (session === null || sessionError !== null) {
+    redirect(`/login?signin=true`);
+  }
+
+  const storeData = {
+    ...formData,
+    user_id: session.user.id,
+  };
+
+  // console.log("storeData in updateStore", storeData);
+  const { error } = await supabase.from("store").upsert(storeData).select();
+
+  // console.log("error updating store", error);
+
+  if (error !== null) {
+    redirect(
+      `/store/edit-store?id=${storeId}&message=something-went-wrong-when-try-to-update-the-store`
+    );
+  }
+  redirect(`/store?id=${storeId}`);
+};
+
 export const updateProduct = async (
   formData: IFormDataUpdateProduct,
   storeId: string,
@@ -46,12 +91,21 @@ export const updateProduct = async (
   const price = formData.price;
   const image = formData.image;
   const collection_id = formData.collectionId;
+  const url = name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/ñ/g, "n")
+    .replace(/ç/g, "c")
+    .replace(/[^a-zA-Z0-9]/g, "-");
+
   const updateProductWithCollection = collection_id
     ? {
         name,
         description,
         collection_id,
         price,
+        url,
         store_id: storeId,
         image,
       }
@@ -59,6 +113,7 @@ export const updateProduct = async (
         name,
         description,
         price,
+        url,
         store_id: storeId,
         image,
       };

@@ -91,10 +91,7 @@ export default function AddInventory({
     setAttributesChildrenCopy(newAttributes);
   };
 
-  const removeEmptyAttributeChild = (
-    attributeId: string,
-    valueIndex: number
-  ) => {
+  const removeAttributeChild = (attributeId: string, valueIndex: number) => {
     const newAttributes = attributesChildrenCopy.map((attribute) => {
       if (attribute.id === attributeId) {
         const newValues = [...attribute.childrenValue];
@@ -106,16 +103,16 @@ export default function AddInventory({
     setAttributesChildrenCopy(newAttributes);
   };
 
-  const removeAttributeChild = (
+  const removeSavedAttributeChild = (
     attributeId: string,
-    attributeChildName: string
+    indexofvalue: number
   ) => {
     const findParentId = attributesChildren.map((attribute) => {
       if (attribute.id === attributeId) {
         return {
           ...attribute,
           childrenValue: attribute.childrenValue.filter(
-            (ele) => !ele.includes(attributeChildName)
+            (ele, index) => index !== indexofvalue
           ),
         };
       } else {
@@ -195,7 +192,10 @@ export default function AddInventory({
           <div key={item.id} className="mb-4">
             <div className="flex items-center ">
               <p>{item.name}</p>
-              <Button variant="ghost" onClick={() => removeAttribute(item.id)}>
+              <Button
+                variant="ghost"
+                onClick={() => removeAttribute(item.id)}
+                type="button">
                 <XIcon className="w-4 " />
               </Button>
             </div>
@@ -206,9 +206,10 @@ export default function AddInventory({
                   className="border m-2 rounded-md flex items-center">
                   <p className="ml-4">{value}</p>
                   <Button
+                    type="button"
                     variant="ghost"
                     onClick={() => {
-                      removeAttributeChild(item.id, value);
+                      removeSavedAttributeChild(item.id, index);
                     }}>
                     <XIcon className="w-4 p-0" />
                   </Button>
@@ -268,8 +269,9 @@ export default function AddInventory({
                 />
                 <Button
                   variant="ghost"
+                  type="button"
                   onClick={() =>
-                    removeEmptyAttributeChild(attribute.id, valueIndex)
+                    removeAttributeChild(attribute.id, valueIndex)
                   }>
                   <XIcon className="w-4 " />
                 </Button>
@@ -279,6 +281,7 @@ export default function AddInventory({
               <p className="text-destructive">Should fill all options</p>
             )}
             <Button
+              type="button"
               onClick={() => addAttributeChild(attribute.id)}
               className="self-start"
               variant="outline">
@@ -286,6 +289,7 @@ export default function AddInventory({
             </Button>
 
             <Button
+              type="button"
               onClick={saveNewAttribute}
               className="self-end hover:bg-secondary "
               variant="secondary">
@@ -295,6 +299,7 @@ export default function AddInventory({
         ))
       ) : (
         <Button
+          type="button"
           onClick={AddNewAttribute}
           variant="outline"
           className="w-max flex items-center gap-2">
