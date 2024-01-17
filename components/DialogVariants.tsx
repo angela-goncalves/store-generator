@@ -33,7 +33,7 @@ export function DialogVariants({
         <DialogTrigger
           asChild
           className="dark:text-black dark:bg-secondary self-end border-none">
-          <Button variant="outline">
+          <Button variant="outline" type="button">
             <Plus className="w-4 mr-2" />{" "}
             <p>{inventoryList ? "Edit variants" : "New variant"}</p>
           </Button>

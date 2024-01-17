@@ -36,7 +36,9 @@ export default function AddCollectionsForm({
     { name: "", id: uuidv4() },
   ]);
 
-  const [addCollection, setAddCollection] = useState(false);
+  const [addCollection, setAddCollection] = useState(
+    dataCollections.length === 0 ? true : false
+  );
 
   const handleInputChange = (index: number, field: "name", value: string) => {
     const updatedCollection = [...collectionslist];
