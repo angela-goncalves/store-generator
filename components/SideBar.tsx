@@ -9,7 +9,6 @@ import {
   MenubarItem,
   MenubarMenu,
   MenubarSeparator,
-  MenubarShortcut,
   MenubarTrigger,
 } from "@/components/ui/menubar";
 
@@ -26,7 +25,14 @@ export default function SideBar({ dataStore }: { dataStore: any[] }) {
   return (
     <Menubar className="bg-secondary-foreground border border-r-neutral-dark px-2 pt-10 min-h-screen w-[180px] flex flex-col text-neutral-foreground items-center">
       <MenubarMenu>
-        <MenubarTrigger className="text-xl">Your stores</MenubarTrigger>
+        <MenubarTrigger
+          className={`text-lg px-4 cursor-pointer rounded-lg ${
+            !collections && !product
+              ? "rounded-lg bg-neutral-medium"
+              : "hover:bg-accent"
+          }`}>
+          Your stores
+        </MenubarTrigger>
         <MenubarContent>
           <MenubarItem>
             <Link
@@ -34,11 +40,7 @@ export default function SideBar({ dataStore }: { dataStore: any[] }) {
                 pathname: "/store",
                 query: { id: storeID },
               }}
-              className={`text-lg ${
-                !collections && !product
-                  ? "p-4 rounded-lg bg-neutral-medium"
-                  : "px-4"
-              }`}>
+              className="text-lg">
               {selectedStore[0]?.name}
             </Link>
           </MenubarItem>
@@ -57,7 +59,7 @@ export default function SideBar({ dataStore }: { dataStore: any[] }) {
             <PencilIcon className="mr-2 w-3" />
             <Link
               href={{
-                pathname: "/add-store",
+                pathname: "/store/edit-store",
                 query: { id: storeID },
               }}>
               Edit store
@@ -65,7 +67,7 @@ export default function SideBar({ dataStore }: { dataStore: any[] }) {
           </MenubarItem>
           <MenubarItem>
             <Plus className="mr-2 h-4 w-4" />
-            <Link href="/add-store">New store</Link>
+            <Link href="add-store">New store</Link>
           </MenubarItem>
         </MenubarContent>
       </MenubarMenu>
@@ -77,10 +79,8 @@ export default function SideBar({ dataStore }: { dataStore: any[] }) {
           pathname: `/store/products`,
           query: { id: storeID },
         }}
-        className={`text-lg underline underline-offset-4 ${
-          product
-            ? "hover:underline bg-neutral-medium p-4 rounded-lg"
-            : "hover:no-underline bg-transparent p-4"
+        className={`text-lg my-2 p-2 rounded-lg ${
+          product ? "bg-neutral-medium" : "hover:bg-accent bg-transparent"
         }`}>
         Products
       </Link>
@@ -90,10 +90,8 @@ export default function SideBar({ dataStore }: { dataStore: any[] }) {
           pathname: `/store/collections`,
           query: { id: storeID },
         }}
-        className={`text-lg underline underline-offset-4 ${
-          collections
-            ? "hover:underline bg-neutral-medium p-4 rounded-lg"
-            : "hover:no-underline bg-transparent p-4"
+        className={`text-lg my-2 p-2 rounded-lg ${
+          collections ? "bg-neutral-medium" : "hover:bg-accent bg-transparent"
         }`}>
         Collections
       </Link>
