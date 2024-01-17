@@ -2,11 +2,9 @@ import React from "react";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { capitalizeFirstLetter } from "@/lib/uppercase";
-import Link from "next/link";
 import BackButton from "@/components/BackButton";
-import { Button } from "@/components/ui/button";
 import Product from "@/components/store/product";
+import { getAttributes } from "@/lib/action/getData";
 
 export default async function pageProduct({
   params,
@@ -27,10 +25,17 @@ export default async function pageProduct({
     redirect(`${params.name}&message=product-error`);
   }
 
+  const attributes = productData[0]
+    ? await getAttributes(productData[0].id, params.name)
+    : [];
+
   return (
     <div className="w-full flex flex-col p-20 max-h-[800px]">
-      <BackButton href={`/${params.name}`} />
-      <Product productData={productData ? productData[0] : []} />
+      <BackButton href={`${params.name}/products`} />
+      <Product
+        productData={productData ? productData[0] : []}
+        attributes={attributes}
+      />
     </div>
   );
 }

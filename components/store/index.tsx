@@ -58,17 +58,17 @@ export default async function TemplateComponent({
                   : { pathname: "/store/collections", query: { id: storeId } }
               }>
               <div className="grid grid-cols-3 gap-8 my-10">
-                <div className="flex-col flex justify-center w-96 border border-gray-400 h-96 rounded-lg">
+                <div className="flex-col flex justify-center w-full min-w-[200px] border border-gray-400 h-96 rounded-lg">
                   <div className="self-center">
                     <p>Category name</p>
                   </div>
                 </div>
-                <div className="flex-col flex justify-center w-96 border border-gray-400 h-96 rounded-lg">
+                <div className="flex-col flex justify-center w-full min-w-[200px] border border-gray-400 h-96 rounded-lg">
                   <div className="self-center">
                     <p>Category name</p>
                   </div>
                 </div>
-                <div className="flex-col flex justify-center w-96 border border-gray-400 h-96 rounded-lg">
+                <div className="flex-col flex justify-center w-full min-w-[200px] border border-gray-400 h-96 rounded-lg">
                   <div className="self-center">
                     <p>Category name</p>
                   </div>
@@ -99,7 +99,7 @@ export default async function TemplateComponent({
                 storeForUser
                   ? "#"
                   : {
-                      pathname: "/store/products",
+                      pathname: "/store/products/add-products",
                       query: { id: storeId },
                     }
               }>
