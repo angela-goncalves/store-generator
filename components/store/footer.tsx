@@ -1,9 +1,7 @@
-import { getCollectionsOfStore } from "@/lib/action/getData";
-import { capitalizeFirstLetter } from "@/lib/uppercase";
 import {
   CopyrightIcon,
   Facebook,
-  InstagramIcon,
+  Instagram,
   MailIcon,
   PhoneIcon,
 } from "lucide-react";
@@ -12,7 +10,13 @@ import React from "react";
 import { Separator } from "../ui/separator";
 import Image from "next/image";
 import whatsapp from "@/app/public/whatsapp.png";
+import imageOfX from "@/app/public/x.png";
+import tiktok from "@/app/public/tiktok.png";
 
+interface ISocialMedia {
+  name: string;
+  url: string;
+}
 interface IStore {
   id: string;
   created_at: string;
@@ -20,7 +24,7 @@ interface IStore {
   logo: string | null;
   location: string;
   name: string | null;
-  social_media: any[];
+  social_media: ISocialMedia[];
   phone: string;
   whatsapp: string;
   contact_mail: string;
@@ -31,14 +35,7 @@ export default async function Footer({ storeData }: { storeData: IStore }) {
   return (
     <footer className="w-full p-4 flex mt-10 text-sm items-center gap-4 flex-col bg-slate-300 text-black">
       <p className="text-lg">{storeData.name}</p>
-      <div className="flex">
-        <Link href="#">
-          <InstagramIcon className="w-5" />
-        </Link>
-        <Link href="#">
-          <Facebook className="w-5" />
-        </Link>
-      </div>
+      <SocialMedia socialMedia={storeData.social_media} />
 
       <div className="flex gap-2">
         <PhoneIcon className="w-5" />
@@ -78,3 +75,68 @@ export default async function Footer({ storeData }: { storeData: IStore }) {
     </footer>
   );
 }
+
+const SocialMedia = ({ socialMedia }: { socialMedia: ISocialMedia[] }) => {
+  return (
+    <div>
+      {socialMedia.map((item, index) => {
+        const name = item.name.toLowerCase();
+        if (name.includes("insta")) {
+          return (
+            <div className="flex" key={index}>
+              <Link href={item.url}>
+                <Instagram className="w-5" />
+              </Link>
+            </div>
+          );
+        }
+        if (name.includes("x") || name.includes("twitter")) {
+          return (
+            <div className="flex" key={index}>
+              <Link href={item.url}>
+                <Image
+                  src={imageOfX}
+                  width={20}
+                  height={20}
+                  alt="x icon or twitter icon"
+                />
+              </Link>
+            </div>
+          );
+        }
+        if (name.includes("facebook") || name.includes("fb")) {
+          return (
+            <div className="flex" key={index}>
+              <Link href={item.url}>
+                <Facebook className="w-4" />
+              </Link>
+            </div>
+          );
+        }
+        if (name.includes("tiktok")) {
+          return (
+            <div className="flex" key={index}>
+              <Link href={item.url}>
+                <Image
+                  src={tiktok}
+                  width={20}
+                  height={20}
+                  alt="whatsapp icon"
+                />
+              </Link>
+            </div>
+          );
+        }
+        if (name.includes("tiktok")) {
+          return (
+            <div className="flex" key={index}>
+              <Link href={item.url}>
+                <p>{item.name}</p>
+              </Link>
+            </div>
+          );
+        }
+      })}
+    </div>
+  );
+};
