@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import NavBar from "@/components/NavBar";
-import { Plus } from "lucide-react";
+import { Copyright, Plus } from "lucide-react";
 
 export default async function Index() {
   const cookieStore = cookies();
@@ -12,14 +12,6 @@ export default async function Index() {
 
   const { data, error } = await supabase.auth.getSession();
   const { session } = data;
-  // const session = {
-  //   user: {
-  //     id: "cb515485-43a2-4ffb-91f1-6511fa08f660",
-  //     email: "angelakgo20@gmail.com",
-  //   },
-  // };
-
-  // const error = "session";
 
   if (session === null || error !== null) {
     return (
@@ -59,6 +51,7 @@ export default async function Index() {
       <NavBar user={session.user.id} />
       {session.user.id && (
         <div className="animate-in opacity-0 self-center flex-1 w-full text-primary-foreground flex flex-col items-center mt-10">
+          <h2>Welcome to EcomPalace.store!</h2>
           {dataStore.length > 0 ? (
             <div className=" text-center w-full max-w-[800px]  flex flex-col gap-10 ">
               <Link
@@ -71,21 +64,23 @@ export default async function Index() {
                 <h1 className="text-3xl">
                   Which one are you working on today?
                 </h1>
-                {dataStore.map((item) => (
-                  <Link href={`/store?id=${item.id}`} key={item.id}>
-                    <div className="h-32 w-44 p-4 text-lg text-center bg-white shadow-sm hover:shadow-xl rounded-lg ">
-                      <h3 className="">{item.name}</h3>
-                      <h3 className="text-sm">http:{item.name}.com</h3>
-                    </div>
-                  </Link>
-                ))}
+                <div className="flex gap-4">
+                  {dataStore.map((item) => (
+                    <Link href={`/store?id=${item.id}`} key={item.id}>
+                      <div className="h-32 w-44 p-4 text-lg text-center bg-white shadow-sm hover:shadow-xl rounded-lg ">
+                        <h3 className="">{item.name}</h3>
+                        <h3 className="text-sm">http:{item.name}.com</h3>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
           ) : (
             <div className="animate-in opacity-0 w-full flex-1 flex flex-col items-center gap-6 max-w-4xl px-3">
               <Header usermail={session.user.email ? session.user.email : ""} />
               <Link
-                href={`/add-storeore`}
+                href={`/add-store`}
                 className="text-2xl p-4 border-none bg-primary text-primary-foreground rounded-lg w-max">
                 Let's create your new store!
               </Link>
@@ -94,10 +89,10 @@ export default async function Index() {
         </div>
       )}
 
-      <footer className="w-full bg-footer text-neutral-foreground flex justify-center text-center text-xs py-6">
-        <div className="self-end text-neutral-medium p-4 ">
-          <p>Built with Next.js, Tailwind, Supabase and Vercel</p>
-          <Link href="https://github.com/angela-goncalves">by Angela</Link>
+      <footer className="w-full bg-footer text-neutral-foreground flex justify-around text-center text-xs py-6">
+        <div className="text-neutral-medium p-4 flex gap-4">
+          <Copyright className="w-4" />
+          2023 EcomPalace.store
         </div>
       </footer>
     </div>

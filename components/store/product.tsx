@@ -17,9 +17,13 @@ interface IProduct {
 
 interface IProductComponent {
   productData: IProduct;
+  attributes: any;
 }
 
-export default function Product({ productData }: IProductComponent) {
+export default function Product({
+  productData,
+  attributes,
+}: IProductComponent) {
   const [openCart, setOpenCart] = useState(false);
   return (
     <div className="flex w-full justify-around ">
@@ -42,11 +46,6 @@ export default function Product({ productData }: IProductComponent) {
             src={productData.image}
             alt={`${productData.name} image`}
           />
-          {/* <img
-              className="max-w-[300px]"
-              src={productData.image}
-              alt={`${productData.name} image`}
-            /> */}
         </div>
       </div>
       <div className="flex flex-col justify-center gap-14">
@@ -56,6 +55,18 @@ export default function Product({ productData }: IProductComponent) {
           </p>
         </div>
         <p className="text-2xl">${productData.price}</p>
+        <div>
+          {attributes.map((item: any) => (
+            <div key={item.id}>
+              <p className="font-bold">{item.name}</p>
+              <div className="flex gap-4">
+                {item.children_values.map((ele: any) => (
+                  <p key={ele}>{ele}</p>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
         <Button onClick={() => setOpenCart(true)}>
           <p className="p-4 text-center text-md">Add to shopping bag</p>
         </Button>

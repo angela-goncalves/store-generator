@@ -31,7 +31,7 @@ export default async function LayoutEditStore({
   return (
     <main className="flex w-full">
       <SideBar dataStore={data} />
-      <div className="flex flex-col w-full">
+      <div className="flex flex-col w-full h-screen overflow-y-auto overscroll-y-auto">
         <NavBar user={session.user.id} />
         {children}
       </div>
