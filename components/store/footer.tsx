@@ -10,7 +10,7 @@ import React from "react";
 import { Separator } from "../ui/separator";
 import Image from "next/image";
 import whatsapp from "@/app/public/whatsapp.png";
-import imageOfX from "@/app/public/x.png";
+import imageOfX from "@/app/public/X.png";
 import tiktok from "@/app/public/tiktok.png";
 
 interface ISocialMedia {
