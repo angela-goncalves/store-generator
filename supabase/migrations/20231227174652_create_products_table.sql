@@ -6,10 +6,11 @@ create table
     description text null default ''::text,
     price bigint null,
     image text null default ''::text,
-    collection_id uuid null default gen_random_uuid (),
+    collection_id uuid null,
     store_id uuid null,
     url text null default ''::text,
     extrainfo text null default ''::text,
     constraint products_pkey primary key (id),
-    constraint products_store_id_fkey foreign key (store_id) references store (id) on update cascade on delete cascade
+    constraint products_store_id_fkey foreign key (store_id) references store (id) on update cascade on delete cascade,
+    constraint products_collection_id_fkey foreign key (collection_id) references collections (id) on update cascade on delete cascade
   ) tablespace pg_default;

@@ -10,7 +10,7 @@ create table
     phone text null default ''::text,
     whatsapp text null default ''::text,
     social_media jsonb[] null,
-    contact_mail text null,
+    contact_mail text null default ''::text,
     constraint store_pkey primary key (id),
     constraint store_user_id_fkey foreign key (user_id) references auth.users (id)
   ) tablespace pg_default;

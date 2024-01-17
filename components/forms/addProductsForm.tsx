@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
@@ -13,11 +14,11 @@ import { handleInsertProduct } from "@/lib/insertSupabase";
 import { DialogVariants } from "../DialogVariants";
 import { v4 as uuidv4 } from "uuid";
 import AddInventoryForm from "./addInventoryForm";
-import Link from "next/link";
-import { updateProduct, upsertInventory } from "@/lib/updateSupabase";
+import { updateProduct } from "@/lib/action/updateSupabase";
 import { Textarea } from "../ui/textarea";
 import { Plus } from "lucide-react";
 import { Button } from "../ui/button";
+import { capitalizeFirstLetter } from "@/lib/uppercase";
 
 interface IInventory {
   id: string;
@@ -48,11 +49,12 @@ interface IAttributeschildren {
   name: string;
   childrenValue: string[];
 }
-interface IDataCollection {
+interface IProductsForm {
   dataCollections: ICollections[] | null;
   productToEdit: IProducts;
   storeId: string;
   inventory: IInventory[];
+  attributesDefault: IAttributeschildren[];
 }
 
 export default function AddProductsForm({
@@ -60,7 +62,8 @@ export default function AddProductsForm({
   productToEdit,
   storeId,
   inventory,
-}: IDataCollection) {
+  attributesDefault,
+}: IProductsForm) {
   const {
     collection_id,
     description,
@@ -82,7 +85,7 @@ export default function AddProductsForm({
 
   const [attributesChildren, setAttributesChildren] = useState<
     IAttributeschildren[]
-  >([]);
+  >(attributesDefault.length > 0 ? attributesDefault : []);
 
   const [inventoryList, setInventoryList] = useState<IInventory[]>(
     inventory.length > 0 ? inventory : []
@@ -90,6 +93,7 @@ export default function AddProductsForm({
 
   const [attributeParent, setAttributeParent] = useState<string>("");
   const [stock, setStock] = useState<string>("");
+  const [priceToAll, setPriceToAll] = useState<string>("");
   const [addNewCollection, setAddNewCollection] = useState<boolean>(false);
 
   const handleInputChange = (
@@ -125,6 +129,14 @@ export default function AddProductsForm({
     setInventoryList(changeStockOfAllList);
   };
 
+  const handlePriceChange = (value: string) => {
+    setPriceToAll(value);
+    const changePriceOfAllList = inventoryList.map((list) => {
+      return { ...list, price: value };
+    });
+    setInventoryList(changePriceOfAllList);
+  };
+
   const generateVariants = () => {
     const combinations = attributesChildren.reduce((acc, attribute) => {
       if (acc.length === 0)
@@ -134,23 +146,33 @@ export default function AddProductsForm({
       );
     }, [] as string[][]);
 
-    const inventory = combinations.map((combination) => ({
+    const inventoryTolist = combinations.map((combination) => ({
       id: uuidv4(),
       combination: combination.join(", "),
       price: formData.price ? formData.price : "",
-      stock: "",
+      stock: stock,
     }));
-    setInventoryList(inventory);
+
+    setInventoryList(inventoryTolist);
   };
-  console.log(formData);
 
   return (
     <div className="w-full max-w-[800px] dark:text-gray-800">
       <form
         action={() =>
           productId
-            ? updateProduct(formData, storeId, inventoryList)
-            : handleInsertProduct(formData, storeId, inventoryList)
+            ? updateProduct(
+                formData,
+                storeId,
+                inventoryList,
+                attributesChildren
+              )
+            : handleInsertProduct(
+                formData,
+                storeId,
+                inventoryList,
+                attributesChildren
+              )
         }
         className="flex flex-col gap-2">
         <section className="bg-white p-6 pb-8 rounded-lg flex flex-col my-4 gap-6">
@@ -171,29 +193,31 @@ export default function AddProductsForm({
               />
             ) : (
               <div className="w-full">
-                {formData.collectionId && !addNewCollection && (
-                  <div className="w-full">
-                    <Select
-                      name="collectionId"
-                      defaultValue={formData.collectionId}
-                      onValueChange={handleSelectChange}>
-                      <SelectTrigger className="w-full max-w-[300px] dark:bg-secondary bg-neutral-light dark:text-black">
-                        <SelectValue placeholder="Select a collection to this product" />
-                      </SelectTrigger>
-                      <SelectContent className="max-w-[300px] text-secondary dark:text-gray-800">
-                        <SelectGroup>
-                          {dataCollections?.map((item) => {
-                            return (
-                              <SelectItem key={item.id} value={item.id}>
-                                {item.name}
-                              </SelectItem>
-                            );
-                          })}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
+                {dataCollections &&
+                  dataCollections.length > 0 &&
+                  !addNewCollection && (
+                    <div className="w-full">
+                      <Select
+                        name="collectionId"
+                        defaultValue={formData.collectionId}
+                        onValueChange={handleSelectChange}>
+                        <SelectTrigger className="w-full max-w-[300px] dark:bg-secondary bg-neutral-light dark:text-black">
+                          <SelectValue placeholder="Select a collection to this product" />
+                        </SelectTrigger>
+                        <SelectContent className="max-w-[300px] text-secondary dark:text-gray-800">
+                          <SelectGroup>
+                            {dataCollections?.map((item) => {
+                              return (
+                                <SelectItem key={item.id} value={item.id}>
+                                  {capitalizeFirstLetter(item.name || "")}
+                                </SelectItem>
+                              );
+                            })}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
               </div>
             )}
 
@@ -218,6 +242,7 @@ export default function AddProductsForm({
               type="text"
               name="name"
               className="mt-2"
+              required
               value={formData.name}
               onChange={handleInputChange}
               placeholder="Name of the product"
@@ -263,29 +288,12 @@ export default function AddProductsForm({
             />
           </label>
         </section>
-        {/* {inventoryList.length > 0 ? (
-          <div className="bg-white p-6 pb-8 w-full flex-col flex gap-4 rounded-lg">
-            <h3 className="text-xl font-semibold">Variants</h3>
-            <h3>Combine attibutes to have a price per item</h3>
-            <div className="flex gap-6">
-              <p className="w-[60%]">Variant</p>
-              <p className="w-[30%]">Stock</p>
-              <p className="w-[30%]">Price</p>
-            </div>
-            {inventoryList.map((variant: any) => (
-              <div key={variant.id} className="flex gap-6">
-                <span className="w-[60%]">{variant.combination}</span>
-                <p className="w-[30%]">{variant.stock}</p>
-                <p className="w-[30%]">{variant.price}</p>
-              </div>
-            ))}
-          </div>
-        ) : ( */}
         <section className="bg-white my-4 p-6 pb-8 w-full flex-col flex gap-4 rounded-lg">
           <DialogVariants
             title="Add variant"
             description="Here you can add the variants for your product"
-            handleSubmitAttributes={generateVariants}>
+            generateVariants={generateVariants}
+            inventoryList={inventoryList.length > 0}>
             <AddInventoryForm
               attributesChildren={attributesChildren}
               setAttributesChildren={setAttributesChildren}
@@ -296,18 +304,34 @@ export default function AddProductsForm({
           <h3>Combine attibutes to have a price per item</h3>
           {inventoryList.length > 0 && (
             <div className="flex-col flex gap-6">
-              <label
-                htmlFor="stock"
-                className="flex text-sm items-center self-end max-w-[300px] gap-4 mb-6">
-                Apply to all stock values
-                <Input
-                  type="number"
-                  name="stock"
-                  value={stock}
-                  className="w-20"
-                  onChange={(e) => handleStockChange(e.target.value)}
-                />
-              </label>
+              <div className="flex gap-4 items-baseline self-end">
+                <label
+                  htmlFor="stockToAll"
+                  className="flex text-sm items-center max-w-[300px] gap-4">
+                  Apply to all stock values
+                  <Input
+                    type="number"
+                    name="stockToAll"
+                    placeholder="stock"
+                    value={stock}
+                    className="w-20"
+                    onChange={(e) => handleStockChange(e.target.value)}
+                  />
+                </label>
+                <label
+                  htmlFor="priceToAll"
+                  className="flex text-sm items-center max-w-[300px] gap-4 mb-6">
+                  Apply to all price values
+                  <Input
+                    type="number"
+                    name="priceToAll"
+                    value={priceToAll}
+                    placeholder="price"
+                    className="w-20"
+                    onChange={(e) => handlePriceChange(e.target.value)}
+                  />
+                </label>
+              </div>
               <div className="flex gap-6">
                 <p className="w-[20%]">Variant</p>
                 <p className="w-[30%]">Stock</p>
@@ -315,35 +339,40 @@ export default function AddProductsForm({
               </div>
               {inventoryList.map((variant: any) => (
                 <div key={variant.id} className="flex gap-6">
-                  <span className="w-[20%]">{variant.combination}</span>
-                  <Input
-                    type="number"
-                    value={variant.stock}
-                    className="w-[30%]"
-                    onChange={(e) =>
-                      handleVariantChange(variant.id, "stock", e.target.value)
-                    }
-                  />
-                  <Input
-                    type="number"
-                    value={variant.price}
-                    className="w-[30%]"
-                    onChange={(e) =>
-                      handleVariantChange(variant.id, "price", e.target.value)
-                    }
-                  />
+                  <p className="w-[20%]">{variant.combination}</p>
+                  <label htmlFor="stock" className="w-[30%]">
+                    <Input
+                      type="number"
+                      name="stock"
+                      value={variant.stock}
+                      className=""
+                      onChange={(e) =>
+                        handleVariantChange(variant.id, "stock", e.target.value)
+                      }
+                    />
+                  </label>
+                  <label htmlFor="price" className="w-[30%]">
+                    <Input
+                      type="number"
+                      name="price"
+                      value={variant.price}
+                      className=""
+                      onChange={(e) =>
+                        handleVariantChange(variant.id, "price", e.target.value)
+                      }
+                    />
+                  </label>
                 </div>
               ))}
             </div>
           )}
         </section>
-        {/* )} */}
 
-        <button
+        <Button
           type="submit"
           className="bg-primary text-primary-foreground rounded-lg px-6 py-4 my-6 self-end">
           Save
-        </button>
+        </Button>
       </form>
     </div>
   );

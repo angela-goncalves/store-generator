@@ -2,13 +2,11 @@ import React from "react";
 import AddProductsForm from "@/components/forms/addProductsForm";
 import BackButton from "@/components/BackButton";
 import {
-  getAttributeChildren,
-  getAttributeParent,
+  getAttributes,
   getCollectionsOfStore,
   getInventory,
   getProductsToEdit,
 } from "@/lib/action/getData";
-import { v4 as uuidv4 } from "uuid";
 
 export default async function FormAddProducts({
   searchParams,
@@ -36,6 +34,17 @@ export default async function FormAddProducts({
       stock: item.stock_level,
     };
   });
+  const attributeParentTable = searchParams.productId
+    ? await getAttributes(searchParams.productId, searchParams.id)
+    : [];
+
+  const attributesDefault = attributeParentTable.map((item) => {
+    return {
+      id: item.id,
+      name: item.name,
+      childrenValue: item.children_values,
+    };
+  });
 
   return (
     <div className="my-10 mx-2 w-full flex flex-col items-center ">
@@ -54,6 +63,7 @@ export default async function FormAddProducts({
         productToEdit={productToEdit.length > 0 ? productToEdit[0] : {}}
         storeId={searchParams.id}
         inventory={inventoryDefault ?? []}
+        attributesDefault={attributesDefault ?? []}
       />
     </div>
   );

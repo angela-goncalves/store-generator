@@ -28,6 +28,11 @@ interface IVariants {
   price: string;
   stock: string;
 }
+interface IAttributeschildren {
+  id: string;
+  name: string;
+  childrenValue: string[];
+}
 
 export const handleInsertStore = async (formData: IStore) => {
   const cookieStore = cookies();
@@ -44,22 +49,26 @@ export const handleInsertStore = async (formData: IStore) => {
   const name = formData.name;
   const description = formData.description;
   const location = formData.location;
+  const store =
+    formData.id !== ""
+      ? {
+          id: formData.id,
+          name,
+          description,
+          location,
+          user_id: session.user.id,
+        }
+      : {
+          name,
+          description,
+          location,
+          user_id: session.user.id,
+        };
 
-  const { data, error } = await supabase
-    .from("store")
-    .upsert([
-      {
-        id: formData.id ? formData.id : "",
-        name,
-        description,
-        location,
-        user_id: session.user.id,
-      },
-    ])
-    .select();
+  const { data, error } = await supabase.from("store").upsert([store]).select();
 
   if (error !== null) {
-    redirect("/add-storeore?message=store-error");
+    redirect("/add-store?message=store-error");
   }
   redirect(`/store?id=${data[0].id}`);
 };
@@ -116,7 +125,8 @@ export const handleInsertCollections = async (
 export const handleInsertProduct = async (
   product: IFormProduct,
   storeId: string,
-  inventory: IVariants[]
+  inventory: IVariants[],
+  attributesChildren: IAttributeschildren[]
 ) => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
@@ -126,6 +136,13 @@ export const handleInsertProduct = async (
   const description = product.description;
   const price = product.price;
   const image = product.image;
+  const url = name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/ñ/g, "n")
+    .replace(/ç/g, "c")
+    .replace(/[^a-zA-Z0-9]/g, "-");
 
   if (product.collectionName) {
     const isFromProductPage = true;
@@ -143,6 +160,7 @@ export const handleInsertProduct = async (
           description,
           price: Number(price),
           image,
+          url,
           collection_id: collection[0].id,
           store_id: storeId,
         },
@@ -153,7 +171,7 @@ export const handleInsertProduct = async (
         .insert(productAdded)
         .select();
 
-      console.log("error product", productError);
+      // console.log("error product", productError);
 
       if (productError !== null) {
         redirect(
@@ -178,6 +196,7 @@ export const handleInsertProduct = async (
       description,
       price: Number(price),
       image,
+      url,
       collection_id: product.collectionId ? product.collectionId : null,
       store_id: storeId,
     },
@@ -197,6 +216,7 @@ export const handleInsertProduct = async (
   }
 
   if (data !== null && data[0].id) {
+    await insertAttributes(attributesChildren, storeId, data[0].id);
     await handleInsertInventory(inventory, storeId, data[0].id);
   }
 
@@ -231,5 +251,38 @@ const handleInsertInventory = async (
     );
   }
 
-  redirect(`/store/products?id=${storeid}`);
+  // redirect(`/store/products?id=${storeid}`);
+};
+
+export const insertAttributes = async (
+  attributesChildren: IAttributeschildren[],
+  storeId: string,
+  idProduct: string
+) => {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+
+  const attributes = attributesChildren.map((item) => {
+    return {
+      id: item.id,
+      product_id: idProduct,
+      children_values: item.childrenValue,
+      name: item.name,
+    };
+  });
+
+  const { error } = await supabase
+    .from("attributes")
+    .insert(attributes)
+    .select();
+
+  // console.log("error upserting attributes", error);
+
+  if (error !== null) {
+    redirect(
+      `/store/products/add-products?id=${storeId}&message=something-went-wrong-when-try-to-upsert-inventory`
+    );
+  }
+
+  // redirect(`/store/products?id=${storeId}`);
 };

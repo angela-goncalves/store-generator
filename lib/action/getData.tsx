@@ -10,9 +10,7 @@ export const getStore = async (id: string) => {
   const { data, error } = await supabase.from("store").select().eq("id", id);
 
   if (data === null || error !== null) {
-    redirect(
-      `/store?id=${id}&message=something-went-wrong-trying-to-get-stores`
-    );
+    redirect(`/add-store&message=something-went-wrong-trying-to-get-stores`);
   }
   return data;
 };
@@ -82,35 +80,12 @@ export const getProductsToEdit = async (id: string) => {
   return data;
 };
 
-export const getAttributeChildren = async (
-  productid: string,
-  storeId: string
-) => {
+export const getAttributes = async (productid: string, storeId: string) => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
   const { data, error } = await supabase
-    .from("attributeschildren")
-    .select()
-    .eq("product_id", productid);
-
-  if (data === null || error !== null) {
-    redirect(
-      `/store/products/add-products?id=${storeId}&message=something-went-wrong-trying-to-get-children-attributes`
-    );
-  }
-  return data;
-};
-
-export const getAttributeParent = async (
-  productid: string,
-  storeId: string
-) => {
-  const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
-
-  const { data, error } = await supabase
-    .from("attributesparent")
+    .from("attributes")
     .select()
     .eq("product_id", productid);
 
