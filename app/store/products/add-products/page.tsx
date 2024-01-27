@@ -2,7 +2,7 @@ import React from "react";
 import AddProductsForm from "@/components/forms/addProductsForm";
 import BackButton from "@/components/BackButton";
 import {
-  getAttributes,
+  getAttributesByProductId,
   getCollectionsOfStore,
   getInventory,
   getProductsToEdit,
@@ -35,7 +35,7 @@ export default async function FormAddProducts({
     };
   });
   const attributeParentTable = searchParams.productId
-    ? await getAttributes(searchParams.productId, searchParams.id)
+    ? await getAttributesByProductId(searchParams.productId, searchParams.id)
     : [];
 
   const attributesDefault = attributeParentTable.map((item) => {

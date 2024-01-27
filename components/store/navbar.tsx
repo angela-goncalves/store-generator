@@ -3,14 +3,12 @@ import React from "react";
 import {
   NavigationMenu,
   NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
-import { SearchIcon, ShoppingBag } from "lucide-react";
+import { SearchIcon } from "lucide-react";
 import { Input } from "../ui/input";
 import { capitalizeFirstLetter } from "@/lib/uppercase";
 
@@ -63,10 +61,9 @@ export default function Navbar({ dataCollections, nameStore }: NavbarProps) {
           <SearchIcon className="absolute top-1 right-2 w-5" />
         </div>
       </div>
-      <h3 className="justify-self-center text-lg">
+      <Link href={`/${nameStore}`} className="justify-self-center text-lg">
         {nameStore || "Name of your store"}
-      </h3>
-      <ShoppingBag className="justify-self-end" />
+      </Link>
     </div>
   );
 }
