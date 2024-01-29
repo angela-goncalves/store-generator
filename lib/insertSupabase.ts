@@ -183,10 +183,6 @@ export const handleInsertProduct = async (
         await handleInsertInventory(inventory, storeId, productData[0].id);
       }
     }
-
-    redirect(
-      `/store/collections?id=${storeId}&message=collections-errors-when-try-to-insert-products`
-    );
   }
 
   const productAdded = [
@@ -243,15 +239,11 @@ const handleInsertInventory = async (
 
   const { error } = await supabase.from("inventory").insert(inventory).select();
 
-  // console.log("error insert inventory", error);
-
   if (error !== null) {
     redirect(
       `/store/products/add-products?id=${storeid}&productId=${productId}&message=inventory-error`
     );
   }
-
-  // redirect(`/store/products?id=${storeid}`);
 };
 
 export const insertAttributes = async (
@@ -276,13 +268,9 @@ export const insertAttributes = async (
     .insert(attributes)
     .select();
 
-  // console.log("error upserting attributes", error);
-
   if (error !== null) {
     redirect(
       `/store/products/add-products?id=${storeId}&message=something-went-wrong-when-try-to-upsert-inventory`
     );
   }
-
-  // redirect(`/store/products?id=${storeId}`);
 };

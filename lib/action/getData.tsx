@@ -15,6 +15,21 @@ export const getStore = async (id: string) => {
   return data;
 };
 
+export const getStoreByName = async (name: string) => {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+
+  const { data, error: storeError } = await supabase
+    .from("store")
+    .select()
+    .eq("name", name);
+
+  if (data === null || storeError !== null) {
+    redirect(`/${name}?message=Something-went-wrong-with-${name}`);
+  }
+  return data;
+};
+
 export const getCollectionsOfStore = async (id: string) => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
@@ -80,7 +95,10 @@ export const getProductsToEdit = async (id: string) => {
   return data;
 };
 
-export const getAttributes = async (productid: string, storeId: string) => {
+export const getAttributesByProductId = async (
+  productid: string,
+  storeId: string
+) => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
