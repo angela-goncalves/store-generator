@@ -1,7 +1,7 @@
 import { MinusIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { capitalizeFirstLetter } from "@/lib/uppercase";
-import { deleteProductInCookies } from "@/lib/action/cookies";
+import { updateProductInCookies } from "@/lib/action/cookies";
 
 interface IAttributes {
   id: string;
@@ -38,9 +38,10 @@ export default function ShoppingBagForm({
       return item;
     });
     setproductsToBuy(sumNoItems);
+    updateProductInCookies(sumNoItems);
   };
 
-  const handleRestItems = () => {
+  const handleSubtractItems = () => {
     const sumNoItems = productsToBuy.map((item) => {
       if (item.productId === productData.productId) {
         return { ...item, noItems: item.noItems - 1 };
@@ -56,10 +57,11 @@ export default function ShoppingBagForm({
       const filterProductCounterZero = sumNoItems.filter(
         (item) => item.noItems !== 0
       );
-      deleteProductInCookies(filterProductCounterZero, storeName);
+      updateProductInCookies(filterProductCounterZero);
     }
 
     setproductsToBuy(sumNoItems);
+    updateProductInCookies(sumNoItems);
   };
 
   return (
@@ -84,7 +86,7 @@ export default function ShoppingBagForm({
         </div>
 
         <div className="flex items-center">
-          <Button type="button" variant="ghost" onClick={handleRestItems}>
+          <Button type="button" variant="ghost" onClick={handleSubtractItems}>
             <MinusIcon className="w-5" />
           </Button>
           <p>{productData.noItems}</p>

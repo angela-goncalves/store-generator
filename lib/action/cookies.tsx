@@ -3,6 +3,13 @@
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
+interface IProductInCookies {
+  productName: string;
+  productId: string;
+  productPrice: number;
+  attributes: IAttributes[];
+  noItems: number;
+}
 interface IProduct {
   id: string;
   created_at: string;
@@ -70,7 +77,6 @@ export async function onSubmitProductToShoppingBag(
 export async function saveProductsFromShoppingBag(
   productData: IProductFromShoppingBag[]
 ) {
-  // console.log(productData);
   const filterProductCounterZero = productData.filter(
     (item) => item.noItems !== 0
   );
@@ -78,9 +84,8 @@ export async function saveProductsFromShoppingBag(
   cookies().set("products", JSON.stringify(filterProductCounterZero));
 }
 
-export const deleteProductInCookies = (
-  productData: IProductFromShoppingBag[],
-  storeName: string
+export const updateProductInCookies = (
+  productData: IProductFromShoppingBag[]
 ) => {
   cookies().set("products", JSON.stringify(productData));
 };

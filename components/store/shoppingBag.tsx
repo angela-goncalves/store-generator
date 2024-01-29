@@ -5,7 +5,6 @@ import {
   Sheet,
   SheetClose,
   SheetContent,
-  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
@@ -15,10 +14,11 @@ import { Button } from "../ui/button";
 import { ShoppingBagIcon, TrashIcon } from "lucide-react";
 import ShoppingBagForm from "../forms/shoppingBagForm";
 import {
-  deleteProductInCookies,
+  updateProductInCookies,
   saveProductsFromShoppingBag,
 } from "@/lib/action/cookies";
 import { Separator } from "../ui/separator";
+import { capitalizeFirstLetter } from "@/lib/uppercase";
 
 interface IAttributes {
   id: string;
@@ -36,9 +36,14 @@ interface IProduct {
 interface IShoppingBag {
   productsData: IProduct[];
   storeName: string;
+  storeWhatsapp: string;
 }
 
-export default function ShoppingBag({ productsData, storeName }: IShoppingBag) {
+export default function ShoppingBag({
+  productsData,
+  storeName,
+  storeWhatsapp,
+}: IShoppingBag) {
   const [productsToBuy, setproductsToBuy] = useState<IProduct[]>(
     productsData ? productsData : []
   );
@@ -57,7 +62,25 @@ export default function ShoppingBag({ productsData, storeName }: IShoppingBag) {
     );
 
     setproductsToBuy(filterProductCounterZero);
-    deleteProductInCookies(filterProductCounterZero, storeName);
+    updateProductInCookies(filterProductCounterZero);
+  };
+
+  const handleSaveAndSendMessage = async () => {
+    await saveProductsFromShoppingBag(productsToBuy);
+    const text = productsToBuy
+      .reduce(
+        (message, product) =>
+          message.concat(
+            `* ${capitalizeFirstLetter(product.productName || "")} - $${
+              product.productPrice * product.noItems
+            }\n`
+          ),
+        ""
+      )
+      .concat(`\nTotal: $${total}`);
+    window.location.href = `https://wa.me/${storeWhatsapp}?text=${encodeURIComponent(
+      text
+    )}`;
   };
 
   useEffect(() => {
@@ -81,9 +104,6 @@ export default function ShoppingBag({ productsData, storeName }: IShoppingBag) {
       <SheetContent className="bg-white dark:bg-gray-800 rounded-lg shadow-md w-full max-w-2xl p-6 pb-0">
         <SheetHeader>
           <SheetTitle className="text-2xl">Shopping bag</SheetTitle>
-          <SheetDescription>
-            {/* Make changes to your profile here. Click save when you're done. */}
-          </SheetDescription>
         </SheetHeader>
         <div className="flex flex-col h-[87vh] justify-between overflow-y-scroll">
           <div className="flex-col flex-1 flex justify-between">
@@ -121,9 +141,7 @@ export default function ShoppingBag({ productsData, storeName }: IShoppingBag) {
           </div>
           <SheetFooter>
             <SheetClose asChild>
-              <Button
-                type="button"
-                onClick={() => saveProductsFromShoppingBag(productsToBuy)}>
+              <Button type="button" onClick={handleSaveAndSendMessage}>
                 Save changes
               </Button>
             </SheetClose>
