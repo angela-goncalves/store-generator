@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { capitalizeFirstLetter } from "@/lib/uppercase";
-import ShoppingBag from "./shoppingBag";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { onSubmitProductToShoppingBag } from "@/lib/action/cookies";
 
 interface IProduct {
   id: string;
@@ -14,19 +15,42 @@ interface IProduct {
   price: string;
   store_id: string;
 }
-
+interface IAttributes {
+  id: string;
+  name: string;
+  children_values: string[];
+}
 interface IProductComponent {
   productData: IProduct;
-  attributes: any;
+  attributes: any[];
+  storeName: string;
 }
 
 export default function Product({
   productData,
   attributes,
+  storeName,
 }: IProductComponent) {
-  const [openCart, setOpenCart] = useState(false);
+  const [attributesForm, setAttributesForm] = useState<IAttributes[]>(
+    attributes ? attributes : [{ id: "", name: "", child: [""] }]
+  );
+
+  const onChange = (value: string, parent: string) => {
+    const newAttributes = attributesForm.map((attribute) => {
+      if (attribute.name === parent) {
+        return { ...attribute, children_values: [value] };
+      }
+      return attribute;
+    });
+    setAttributesForm(newAttributes);
+  };
+
   return (
-    <div className="flex w-full justify-around ">
+    <form
+      className="flex w-full justify-around"
+      action={() =>
+        onSubmitProductToShoppingBag(attributesForm, productData, 1, storeName)
+      }>
       <div className="max-w-xs flex">
         <div className="flex flex-col self-end ml-16">
           <h3>Composition</h3>
@@ -55,23 +79,30 @@ export default function Product({
           </p>
         </div>
         <p className="text-2xl">${productData.price}</p>
-        <div>
-          {attributes.map((item: any) => (
-            <div key={item.id}>
+        {attributes.map((item: IAttributes) => (
+          <div key={item.id}>
+            <RadioGroup
+              name={item.name}
+              onValueChange={(e) => onChange(e, item.name)}>
               <p className="font-bold">{item.name}</p>
               <div className="flex gap-4">
                 {item.children_values.map((ele: any) => (
-                  <p key={ele}>{ele}</p>
+                  <label
+                    key={ele}
+                    htmlFor={ele}
+                    className="flex gap-2 items-center">
+                    <RadioGroupItem value={ele} id={ele} required />
+                    <p>{ele}</p>
+                  </label>
                 ))}
               </div>
-            </div>
-          ))}
-        </div>
-        <Button onClick={() => setOpenCart(true)}>
-          <p className="p-4 text-center text-md">Add to shopping bag</p>
+            </RadioGroup>
+          </div>
+        ))}
+        <Button variant="outline" type="submit">
+          Add to Bag
         </Button>
-        {openCart && <ShoppingBag productData={productData} />}
       </div>
-    </div>
+    </form>
   );
 }

@@ -32,10 +32,6 @@ export default async function TemplateComponent({
 
   return (
     <div className="flex flex-1 flex-col justify-between bg-white">
-      <Navbar
-        dataCollections={dataCollections}
-        nameStore={storeData.length > 0 ? storeData[0].name : ""}
-      />
       <div className="flex flex-col p-10 pt-0 items-center">
         <div className="self-center">
           {dataCollections.length > 0 ? (
