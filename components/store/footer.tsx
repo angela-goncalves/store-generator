@@ -127,15 +127,13 @@ const SocialMedia = ({ socialMedia }: { socialMedia: ISocialMedia[] }) => {
             </div>
           );
         }
-        if (name.includes("tiktok")) {
-          return (
-            <div className="flex" key={index}>
-              <Link href={item.url}>
-                <p>{item.name}</p>
-              </Link>
-            </div>
-          );
-        }
+        return (
+          <div className="flex" key={index}>
+            <Link href={item.url}>
+              <p>{item.name}</p>
+            </Link>
+          </div>
+        );
       })}
     </div>
   );

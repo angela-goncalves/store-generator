@@ -28,7 +28,7 @@ export default function Product({
   return (
     <div className="flex w-full justify-around ">
       <div className="max-w-xs flex">
-        <div className="flex flex-col self-end">
+        <div className="flex flex-col self-end ml-16">
           <h3>Composition</h3>
           <p className="text-sm mt-3">
             We work with monitoring programs to guarantee compliance with the
@@ -38,7 +38,7 @@ export default function Product({
           </p>
         </div>
       </div>
-      <div className="flex flex-col mt-10">
+      <div className="flex flex-col mt-6">
         <h2 className="text-3xl">{productData.name.toUpperCase()}</h2>
         <div className="flex gap-4 mt-14 bg-secondary p-4">
           <img

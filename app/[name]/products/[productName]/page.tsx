@@ -30,8 +30,8 @@ export default async function pageProduct({
     : [];
 
   return (
-    <div className="w-full flex flex-col p-20 max-h-[800px]">
-      <BackButton href={`${params.name}/products`} />
+    <div className="w-full flex flex-col p-6 py-10 max-h-[800px]">
+      <BackButton href={`/${params.name}`} />
       <Product
         productData={productData ? productData[0] : []}
         attributes={attributes}

@@ -36,23 +36,23 @@ export default function SideBar({ dataStore }: { dataStore: any[] }) {
         <MenubarContent>
           <MenubarItem>
             <Link
-              href={{
-                pathname: "/store",
-                query: { id: storeID },
-              }}
-              className="text-lg">
-              {selectedStore[0]?.name}
+              href={`/${selectedStore[0]?.name}`}
+              className="text-lg w-full"
+              target="_blank"
+              rel="noopener noreferrer">
+              <div className="flex items-center justify-between">
+                {selectedStore[0]?.name}
+                <ExternalLinkIcon className="w-4" />
+              </div>
             </Link>
           </MenubarItem>
           <MenubarItem>
             <Link
-              href={`/${selectedStore[0]?.name}`}
-              target="_blank"
-              rel="noopener noreferrer">
-              <div className="flex gap-4 items-center">
-                <p>Your store domain </p>
-                <ExternalLinkIcon className="w-4" />
-              </div>
+              href={{
+                pathname: "/store",
+                query: { id: storeID },
+              }}>
+              <p>Home</p>
             </Link>
           </MenubarItem>
           <MenubarItem>
@@ -67,7 +67,7 @@ export default function SideBar({ dataStore }: { dataStore: any[] }) {
           </MenubarItem>
           <MenubarItem>
             <Plus className="mr-2 h-4 w-4" />
-            <Link href="add-store">New store</Link>
+            <Link href="/add-store">New store</Link>
           </MenubarItem>
         </MenubarContent>
       </MenubarMenu>
