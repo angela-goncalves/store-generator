@@ -45,7 +45,7 @@ export default function Navbar({ dataCollections }: NavbarProps) {
               aria-hidden="true"
             />
           </MenubarTrigger>
-          <MenubarContent className="">
+          <MenubarContent className="data-[state=open]:duration-500">
             {dataCollections.length > 0 ? (
               <div>
                 {dataCollections.map((item) => (
