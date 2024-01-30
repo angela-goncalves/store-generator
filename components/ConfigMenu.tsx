@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useTheme } from "next-themes";
 import { signOut } from "@/lib/auth";
+import person from "@/app/public/person.png";
 
 export function ConfigMenu() {
   const { setTheme } = useTheme();
@@ -27,8 +28,10 @@ export function ConfigMenu() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="hover:bg-transparent">
           <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-            <AvatarFallback>CN</AvatarFallback>
+            <AvatarImage src="#" alt="@shadcn" />
+            <AvatarFallback>
+              <User />
+            </AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>

@@ -68,7 +68,7 @@ export default async function Index() {
                   {dataStore.map((item) => (
                     <Link href={`/store?id=${item.id}`} key={item.id}>
                       <div className="h-32 w-44 p-4 text-lg text-center bg-white shadow-sm hover:shadow-xl rounded-lg ">
-                        <h3 className="">{item.name}</h3>
+                        <h3>{item.name}</h3>
                         <h3 className="text-sm">http:{item.name}.com</h3>
                       </div>
                     </Link>
@@ -90,7 +90,7 @@ export default async function Index() {
       )}
 
       <footer className="w-full bg-footer text-neutral-foreground flex justify-around text-center text-xs py-6">
-        <div className="text-neutral-medium p-4 flex gap-4">
+        <div className="text-neutral-medium p-4 flex gap-4 items-center">
           <Copyright className="w-4" />
           2023 EcomPalace.store
         </div>
