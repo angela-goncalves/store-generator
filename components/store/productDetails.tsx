@@ -26,7 +26,7 @@ interface IProductComponent {
   storeName: string;
 }
 
-export default function Product({
+export default function ProductDetails({
   productData,
   attributes,
   storeName,

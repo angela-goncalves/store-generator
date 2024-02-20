@@ -3,7 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import BackButton from "@/components/BackButton";
-import Product from "@/components/store/product";
+import ProductDetails from "@/components/store/productDetails";
 import { getAttributesByProductId } from "@/lib/action/getData";
 
 export default async function pageProduct({
@@ -32,7 +32,7 @@ export default async function pageProduct({
   return (
     <div className="w-full flex flex-col p-6 py-10 max-h-[800px]">
       <BackButton href={`/${params.name}`} />
-      <Product
+      <ProductDetails
         productData={productData ? productData[0] : []}
         attributes={attributes}
         storeName={params.name}
