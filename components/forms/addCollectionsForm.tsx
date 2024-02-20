@@ -90,6 +90,7 @@ export default function AddCollectionsForm({
                     </Link>
                     <DeleteDialog
                       id={item.id}
+                      from="collection"
                       storeId={storeId}
                       deleteFunction={handleDeleteCollection}
                     />

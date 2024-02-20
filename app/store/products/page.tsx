@@ -45,28 +45,30 @@ export default async function Products({
               </div>
               {dataProducts.map((item) => (
                 <div key={item.id}>
-                  <li className="flex justify-between gap-4 items-center">
-                    <p className="w-[250px] font-semibold">
-                      {capitalizeFirstLetter(item.name)}
-                    </p>
-                    <p className="w-[50px]">${item.price}</p>
-                    <div className="flex gap-2 items-center">
-                      <Link
-                        href={{
-                          pathname: "/store/products/add-products",
-                          query: {
-                            id: searchParams.id,
-                            productId: item.id,
-                          },
-                        }}>
+                  <li className="flex gap-4 items-center justify-between w-full">
+                    <Link
+                      href={{
+                        pathname: "/store/products/add-products",
+                        query: {
+                          id: searchParams.id,
+                          productId: item.id,
+                        },
+                      }}
+                      className="w-full">
+                      <div className="flex gap-2 items-center justify-between w-full">
+                        <p className="w-[30%] font-semibold">
+                          {capitalizeFirstLetter(item.name)}
+                        </p>
+                        <p className="w-[30%]">${item.price}</p>
                         <PencilLineIcon className="mr-2 h-4 w-4" />
-                      </Link>
-                      <DeleteDialog
-                        id={item.id}
-                        storeId={searchParams.id}
-                        deleteFunction={handleDeleteProduct}
-                      />
-                    </div>
+                      </div>
+                    </Link>
+                    <DeleteDialog
+                      id={item.id}
+                      storeId={searchParams.id}
+                      from="products"
+                      deleteFunction={handleDeleteProduct}
+                    />
                   </li>
                   <Separator className="bg-neutral-dark my-2" />
                 </div>
