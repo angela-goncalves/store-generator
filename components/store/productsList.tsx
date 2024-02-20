@@ -3,9 +3,32 @@
 import React from "react";
 import Products from "@/components/store/products";
 
+interface IProductData {
+  name: string;
+  description: string;
+  image: string;
+  price: string;
+  id: string;
+  url: string;
+}
+interface ISocialMedia {
+  name: string;
+  url: string;
+}
+interface IStore {
+  id: string;
+  name: string;
+  description: string;
+  location: string;
+  phone: string;
+  whatsapp: string;
+  contact_mail: string;
+  social_media: ISocialMedia[];
+}
+
 interface IProsuctsList {
-  storeData: any;
-  allProducts: any;
+  storeData: IStore;
+  allProducts: IProductData[];
   collection?: boolean;
 }
 
