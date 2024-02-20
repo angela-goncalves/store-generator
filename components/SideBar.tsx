@@ -67,7 +67,13 @@ export default function SideBar({ dataStore }: { dataStore: any[] }) {
           </MenubarItem>
           <MenubarItem>
             <Plus className="mr-2 h-4 w-4" />
-            <Link href="/add-store">New store</Link>
+            <Link
+              href={{
+                pathname: "/add-store",
+                query: { id: storeID },
+              }}>
+              New store
+            </Link>
           </MenubarItem>
         </MenubarContent>
       </MenubarMenu>

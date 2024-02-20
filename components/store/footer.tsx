@@ -37,14 +37,14 @@ export default async function Footer({ storeData }: { storeData: IStore }) {
       <p className="text-lg">{storeData.name}</p>
       <SocialMedia socialMedia={storeData.social_media} />
 
-      <div className="flex gap-2">
-        <PhoneIcon className="w-5" />
-        {storeData.phone !== "" ? (
+      {storeData.phone !== "" ? (
+        <div className="flex gap-2">
+          <PhoneIcon className="w-5" />
           <p>{storeData.phone}</p>
-        ) : (
-          <p>00 00 000 000</p>
-        )}
-      </div>
+        </div>
+      ) : (
+        <></>
+      )}
 
       <div className="flex gap-2">
         <Image src={whatsapp} width={20} height={20} alt="whatsapp icon" />
