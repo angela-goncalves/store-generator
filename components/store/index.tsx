@@ -9,7 +9,6 @@ import Products from "./products";
 import Collections from "./collections";
 import Link from "next/link";
 import Footer from "./footer";
-import Navbar from "./navbar";
 interface ICollections {
   created_at: string;
   description: string | null;
@@ -24,7 +23,7 @@ export default async function TemplateComponent({
   storeForUser,
 }: {
   storeId: string;
-  storeForUser: boolean;
+  storeForUser?: boolean;
 }) {
   const storeData = await getStore(storeId);
   const dataCollections: ICollections[] = await getCollectionsOfStore(storeId);
@@ -136,7 +135,11 @@ export default async function TemplateComponent({
           )}
         </div>
       </div>
-      <Footer storeData={storeData.length > 0 ? storeData[0] : []} />
+      {storeForUser ? (
+        <></>
+      ) : (
+        <Footer storeData={storeData.length > 0 ? storeData[0] : []} />
+      )}
     </div>
   );
 }

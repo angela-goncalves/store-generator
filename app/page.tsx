@@ -55,7 +55,7 @@ export default async function Index() {
           {dataStore.length > 0 ? (
             <div className=" text-center w-full max-w-[800px]  flex flex-col gap-10 ">
               <Link
-                href={`/add-storeore`}
+                href={`/add-store`}
                 className="p-2 flex items-center gap-2 border border-neutral-dark text-primary-foreground rounded-lg w-max self-end hover:bg-neutral-light hover:text-secondary">
                 <Plus className="w-4" />
                 <p className="text-sm">New store</p>

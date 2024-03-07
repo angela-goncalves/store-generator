@@ -64,6 +64,23 @@ export const getCollectionById = async (id: string, storeId: string) => {
   return data;
 };
 
+export const getCollectionByName = async (name: string, storeName: string) => {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+
+  const { data, error } = await supabase
+    .from("collections")
+    .select()
+    .eq("name", name);
+
+  if (data === null || error !== null) {
+    redirect(
+      `/${storeName}/collections?message=something-went-wrong-trying-to-get-collections`
+    );
+  }
+  return data;
+};
+
 export const getAllProductsOfStore = async (id: string) => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
@@ -76,6 +93,26 @@ export const getAllProductsOfStore = async (id: string) => {
   if (data === null || error !== null) {
     redirect(
       `/store?id=${id}&message=something-went-wrong-trying-to-get-products`
+    );
+  }
+  return data;
+};
+
+export const getAllProductsOfCollection = async (
+  collection_id: string,
+  storeName: string
+) => {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+
+  const { data, error } = await supabase
+    .from("products")
+    .select()
+    .eq("collection_id", collection_id);
+
+  if (data === null || error !== null) {
+    redirect(
+      `/${storeName}?message=something-went-wrong-trying-to-get-products`
     );
   }
   return data;

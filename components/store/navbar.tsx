@@ -1,16 +1,16 @@
 "use client";
 import Link from "next/link";
 import React, { useState } from "react";
-import { MenuIcon, SearchIcon } from "lucide-react";
-import { Input } from "../ui/input";
+import { MenuIcon } from "lucide-react";
 import { capitalizeFirstLetter } from "@/lib/uppercase";
 import {
-  Menubar,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarTrigger,
-} from "../ui/menubar";
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 interface ICollections {
   created_at: string;
@@ -23,53 +23,63 @@ interface ICollections {
 
 interface NavbarProps {
   dataCollections: ICollections[];
+  nameStore: string;
 }
 
-export default function Navbar({ dataCollections }: NavbarProps) {
+export default function Navbar({ dataCollections, nameStore }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const toggleMenu = () => {
+  const closeMenuAndRedirect = (url: string) => {
     setIsMenuOpen(!isMenuOpen);
   };
 
   return (
-    <div className="p-4 w-full flex items-center">
-      <Menubar className="mr-6 bg-transparent border-none">
-        <MenubarMenu>
-          <MenubarTrigger
-            className="data-[state=open]:bg-transparent focus:bg-transparent"
-            onClick={toggleMenu}>
-            <MenuIcon
-              className={`ml-1 h-6 w-6 transition duration-150 ${
-                isMenuOpen ? "rotate-180" : ""
-              }`}
-              aria-hidden="true"
-            />
-          </MenubarTrigger>
-          <MenubarContent className="data-[state=open]:duration-500">
-            {dataCollections.length > 0 ? (
-              <div>
-                {dataCollections.map((item) => (
-                  <MenubarItem key={item.id}>
-                    <Link href="#" className="text-sm">
-                      <p className=" w-32">
-                        {capitalizeFirstLetter(item.name || "")}
-                      </p>
-                    </Link>
-                  </MenubarItem>
-                ))}
-              </div>
-            ) : (
-              <MenubarItem>
-                <h3>Categories</h3>
-              </MenubarItem>
-            )}
-          </MenubarContent>
-        </MenubarMenu>
-      </Menubar>
-      <div className="relative w-full max-w-xs">
-        <Input type="text" className="h-8 rounded-full" />
-        <SearchIcon className="absolute top-1 right-2 w-5" />
-      </div>
+    <div className="m-4  flex items-center gap-6">
+      <Sheet>
+        <SheetTrigger>
+          <MenuIcon
+            className={`ml-1 h-6 w-6 transition duration-150 ${
+              isMenuOpen ? "rotate-180" : ""
+            }`}
+            aria-hidden="true"
+          />
+        </SheetTrigger>
+        <SheetContent className="" side="left">
+          {dataCollections.length > 0 ? (
+            <div className="flex flex-col gap-6">
+              <SheetHeader className="self-center mb-12">
+                <SheetTitle className="text-4xl">{nameStore}</SheetTitle>
+              </SheetHeader>
+              <SheetClose asChild>
+                <Link href={`/${nameStore}`} className="hover:font-semibold">
+                  Home
+                </Link>
+              </SheetClose>
+              {dataCollections.map((item) => (
+                <SheetClose asChild key={item.id}>
+                  <Link
+                    href={`/${nameStore}/collections/${item.name}`}
+                    scroll
+                    className="hover:font-semibold"
+                    key={item.id}>
+                    <p className="w-32 text-xl">
+                      {capitalizeFirstLetter(item.name || "")}
+                    </p>
+                  </Link>
+                </SheetClose>
+              ))}
+              <SheetClose asChild>
+                <Link
+                  href={`/${nameStore}/products`}
+                  className="hover:font-semibold">
+                  All products
+                </Link>
+              </SheetClose>
+            </div>
+          ) : (
+            <h3>Categories</h3>
+          )}
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

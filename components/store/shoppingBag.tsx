@@ -73,11 +73,11 @@ export default function ShoppingBag({
           message.concat(
             `* ${capitalizeFirstLetter(product.productName || "")} - $${
               product.productPrice * product.noItems
-            }\n`
+            }\nTotal: $${total}`
           ),
         ""
       )
-      .concat(`\nTotal: $${total}`);
+      .concat(`\nHi! How are you? I would like to buy this products \n`);
     window.location.href = `https://wa.me/${storeWhatsapp}?text=${encodeURIComponent(
       text
     )}`;
@@ -92,7 +92,7 @@ export default function ShoppingBag({
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" className="relative m-4">
+        <Button variant="ghost" className="relative">
           {count > 1 && (
             <div className="absolute top-0 right-2 bg-secondary text-primary rounded-full px-1 p-0">
               {count}
@@ -142,7 +142,7 @@ export default function ShoppingBag({
           <SheetFooter>
             <SheetClose asChild>
               <Button type="button" onClick={handleSaveAndSendMessage}>
-                Save changes
+                Proceed to buy!
               </Button>
             </SheetClose>
           </SheetFooter>
