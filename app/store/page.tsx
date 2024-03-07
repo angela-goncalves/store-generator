@@ -7,7 +7,7 @@ export default function Store({
 }) {
   return (
     <div className="">
-      <TemplateComponent storeId={searchParams.id} storeForUser={false} />
+      <TemplateComponent storeId={searchParams.id} />
     </div>
   );
 }

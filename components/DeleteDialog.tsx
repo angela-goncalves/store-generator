@@ -18,10 +18,12 @@ import {
 export default function DeleteDialog({
   id, //could be a collection id or product id
   storeId,
+  from, // from where is called this Alert
   deleteFunction,
 }: {
   id: string;
   deleteFunction: (storeId: string, id: string) => void;
+  from: string;
   storeId: string;
 }) {
   return (
@@ -31,25 +33,25 @@ export default function DeleteDialog({
           <XIcon className="mr-2 h-4 w-4 text-destructive" />
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent className="bg-destructive-foreground">
+      <AlertDialogContent className="bg-white p-8 max-w-md">
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-secondary font-semibold">
+          <AlertDialogTitle className="text-secondary text-bold text-xl mb-4">
             Are you absolutely sure?
           </AlertDialogTitle>
-          <AlertDialogDescription className="text-secondary">
-            This action cannot be undone. This will permanently delete your
-            collection and remove that data from our servers.
+          <AlertDialogDescription className="text-gray-600">
+            {`This action cannot be undone. This will permanently delete your
+            ${from} and remove that data from our servers.`}
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel className="border-btn-successBorder hover:bg-btn-successBorder bg-transparent">
-            Cancel
-          </AlertDialogCancel>
+        <AlertDialogFooter className="mt-6 w-full flex justify-center items-center">
           <AlertDialogAction
-            className="bg-destructive text-destructive-foregroundLight font-semibold hover:text-destructive"
+            className="bg-destructive text-white font-semibold hover:bg-destructive w-full max-w-[200px]"
             onClick={() => deleteFunction(id, storeId)}>
-            Delete
+            Yes, delete it
           </AlertDialogAction>
+          <AlertDialogCancel className="bg-gray-200 hover:bg-btn-successBg-foreground w-full max-w-[200px]">
+            No, keep it
+          </AlertDialogCancel>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

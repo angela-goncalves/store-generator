@@ -77,7 +77,7 @@ export const updateStore = async (formData: IStore, storeId: string) => {
 };
 
 export const updateProduct = async (
-  formData: IFormDataUpdateProduct,
+  product: IFormDataUpdateProduct,
   storeId: string,
   inventory: IVariants[],
   attributesChildren: IAttributeschildren[]
@@ -85,12 +85,12 @@ export const updateProduct = async (
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
-  const idProduct = formData.id;
-  const name = formData.name;
-  const description = formData.description;
-  const price = formData.price;
-  const image = formData.image;
-  const collection_id = formData.collectionId;
+  const idProduct = product.id;
+  const name = product.name;
+  const description = product.description;
+  const price = product.price;
+  const image = product.image;
+  const collection_id = product.collectionId;
   const url = name
     .toLowerCase()
     .normalize("NFD")
@@ -131,7 +131,7 @@ export const updateProduct = async (
 
   if (error !== null) {
     redirect(
-      `/store/products/add-products?id=${storeId}&productId=${formData.id}&message=something-went-wrong-when-try-to-update-the-product`
+      `/store/products/add-products?id=${storeId}&productId=${product.id}&message=something-went-wrong-when-try-to-update-the-product`
     );
   }
 

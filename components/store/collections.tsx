@@ -7,20 +7,25 @@ import Image from "next/image";
 
 export default async function Collections({
   collectionId,
-  nameStore,
   storeId,
   storeForUser,
+  nameStore,
 }: {
   collectionId: string;
   nameStore: string;
   storeId: string;
-  storeForUser: boolean;
+  storeForUser?: boolean;
 }) {
   const collection = await getCollectionById(collectionId, storeId);
 
   return (
     <div className="w-96 h-full" id="collections-store">
-      <Link href={"#collections-store"}>
+      <Link
+        href={
+          storeForUser
+            ? `/${nameStore}/collections/${collection[0].name}`
+            : "#collections-store"
+        }>
         <div className="relative h-full">
           <Image
             src={heroImage}
