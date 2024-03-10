@@ -1,6 +1,3 @@
-// export const baseURL = process.env.VERCEL_URL
-//   ? "https://" + process.env.NEXT_PUBLIC_VERCEL_URL
-//   : "http://localhost:54323";
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
