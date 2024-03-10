@@ -2,59 +2,86 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
-import { FileRejection } from "react-dropzone";
+import { redirect } from "next/navigation";
 
-interface IImageFile {
-  file: File;
-  preview?: string;
-  rejected: boolean;
-  errors?: FileRejection["errors"];
-}
+export const saveStorage = async (files: FormData, storeId: string) => {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
 
-interface IPreparedFile {
-  base64: string;
-  name: string;
-  type: string;
-}
+  const { data: sessionData, error: sessionError } =
+    await supabase.auth.getSession();
+  const { session } = sessionData;
 
-export const saveStorage = async (files: any) => {
-  console.log("server", files);
-  // const cookieStore = cookies();
-  // const supabase = createClient(cookieStore);
+  if (session === null || sessionError !== null) {
+    redirect(`/login?signin=true`);
+  }
 
-  // const uploadPromises = files.map((file, index) => {
-  //   // Convert base64 string to Blob
-  //   const blob = base64ToBlob(file.base64, file.type);
-  //   const filePath = `uploads/${Date.now()}-${index}-${file.name}`;
-  //   return supabase.storage.from("products").upload(filePath, blob);
-  // });
+  const imageFiles: File[] = [];
+  files.forEach((value, key) => {
+    if (value instanceof File) {
+      imageFiles.push(value);
+    }
+  });
 
-  // console.log("uploadPromises", uploadPromises);
+  const uploadPromises = imageFiles.map((file, index) => {
+    const fileName = file.name.toLowerCase();
+    const filePath = `${session.user.id}_${fileName}`;
+    return supabase.storage.from("products").upload(filePath, file);
+  });
 
-  // const base64ToBlob = (base64: string, type: string): Blob => {
-  //   const binaryString = window.atob(base64.split(",")[1]);
-  //   const bytes = new Uint8Array(binaryString.length);
-  //   for (let i = 0; i < binaryString.length; i++) {
-  //     bytes[i] = binaryString.charCodeAt(i);
-  //   }
-  //   return new Blob([bytes], { type: type });
-  // };
+  try {
+    const results = await Promise.all(uploadPromises);
+    const findErrors = results.find((item) => {
+      return item.error?.message;
+    });
 
-  // // Use Promise.all to concurrently upload all files and wait for them to finish
-  // const results = await Promise.all(uploadPromises);
+    if (findErrors) {
+      console.error(findErrors.error);
+      redirect(`/store/products?id=${storeId}&message=${findErrors.error}`);
+    }
+    let images: any[] = [];
+    if (results && results.length > 0) {
+      images = results.map((item) => {
+        return item.data?.path;
+      });
+    }
+    const imagesUrl = await getSignedUrl(images);
 
-  // // // Process results here (e.g., check for errors, extract URLs)
-  // const uploadResults = results.map((result, index) => {
-  //   if (result.error) {
-  //     console.error(
-  //       `Error uploading file ${files[index].name}:`,
-  //       result.error.message
-  //     );
-  //     return { success: false, error: result.error };
-  //   } else {
-  //     return { success: true, data: result.data };
-  //   }
-  // });
-  // console.log("uploadResults", uploadResults);
-  // return uploadResults;
+    return imagesUrl;
+  } catch (error) {
+    console.error("Upload failed", error);
+  }
 };
+
+export const getSignedUrl = async (images: string[]) => {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+
+  const imagesUploaded = images.map((item) =>
+    supabase.storage.from("products").createSignedUrl(item, 5000)
+  );
+  try {
+    const results = await Promise.all(imagesUploaded);
+    return results;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// export const upsertStorage = async (file: string[]) => {
+//   const cookieStore = cookies();
+//   const supabase = createClient(cookieStore);
+//   const mapImages = file.map(item=>
+//     supabase.storage.from("bucket_name").upload("file_path", item, {
+//     upsert: true,
+//   }));
+
+//   try{
+//     const results = await Promise.all(mapImages);
+//     return results
+
+//   }catch(error){
+// console.error(error);
+//   }
+
+// };
