@@ -35,7 +35,11 @@ export default async function Footer({ storeData }: { storeData: IStore }) {
   return (
     <footer className="w-full p-4 flex mt-10 text-sm items-center gap-4 flex-col bg-slate-300 text-black">
       <p className="text-lg">{storeData.name}</p>
-      <SocialMedia socialMedia={storeData.social_media} />
+      {storeData.social_media ? (
+        <SocialMedia socialMedia={storeData.social_media} />
+      ) : (
+        <></>
+      )}
 
       {storeData.phone !== "" ? (
         <div className="flex gap-2">
