@@ -6,7 +6,7 @@ import Products from "@/components/store/products";
 interface IProductData {
   name: string;
   description: string;
-  image: string;
+  images: string[];
   price: string;
   id: string;
   url: string;
