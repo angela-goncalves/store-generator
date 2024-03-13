@@ -25,7 +25,7 @@ export const saveStorage = async (files: FormData, storeId: string) => {
 
   const uploadPromises = imageFiles.map((file, index) => {
     const fileName = file.name.toLowerCase();
-    const filePath = `${session.user.id}_${fileName}`;
+    const filePath = `${session.user.id}/${storeId}/${fileName}`;
     return supabase.storage.from("products").upload(filePath, file);
   });
 
@@ -36,7 +36,7 @@ export const saveStorage = async (files: FormData, storeId: string) => {
     });
 
     if (findErrors) {
-      console.error(findErrors.error);
+      console.error("something happen saving images", findErrors.error);
       redirect(`/store/products?id=${storeId}&message=${findErrors.error}`);
     }
     let images: any[] = [];
@@ -58,30 +58,14 @@ export const getSignedUrl = async (images: string[]) => {
   const supabase = createClient(cookieStore);
 
   const imagesUploaded = images.map((item) =>
-    supabase.storage.from("products").createSignedUrl(item, 5000)
+    supabase.storage.from("products").getPublicUrl(`${item}`)
   );
+
   try {
     const results = await Promise.all(imagesUploaded);
+    console.log("results", results);
     return results;
   } catch (error) {
     console.error(error);
   }
 };
-
-// export const upsertStorage = async (file: string[]) => {
-//   const cookieStore = cookies();
-//   const supabase = createClient(cookieStore);
-//   const mapImages = file.map(item=>
-//     supabase.storage.from("bucket_name").upload("file_path", item, {
-//     upsert: true,
-//   }));
-
-//   try{
-//     const results = await Promise.all(mapImages);
-//     return results
-
-//   }catch(error){
-// console.error(error);
-//   }
-
-// };

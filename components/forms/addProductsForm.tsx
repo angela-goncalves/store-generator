@@ -87,7 +87,7 @@ export default function AddProductsForm({
     name: name ?? "",
     description: description ?? "",
     price: price ?? "",
-    images: images ?? [""],
+    images: images ?? null,
     collectionId: collection_id ?? "",
     collectionName: "",
   });
@@ -161,6 +161,7 @@ export default function AddProductsForm({
     });
     setInventoryList(changePriceOfAllList);
   };
+
   const handleDeleteUpdatedImage = (imageName: string) => {
     const filterIamges = formData.images.filter((item) => item !== imageName);
     setFormData((currentFormData) => ({
@@ -168,6 +169,7 @@ export default function AddProductsForm({
       images: filterIamges,
     }));
   };
+
   const generateVariants = () => {
     const combinations = attributesChildren.reduce((acc, attribute) => {
       if (acc.length === 0)
@@ -196,6 +198,8 @@ export default function AddProductsForm({
         }
       });
     }
+
+    console.log(formDataImage);
 
     productId
       ? updateProduct(
@@ -403,7 +407,6 @@ export default function AddProductsForm({
             </div>
           )}
         </section>
-
         <Button
           type="submit"
           className="bg-primary text-primary-foreground rounded-lg px-6 py-4 my-6 self-end">

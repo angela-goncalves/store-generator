@@ -10,7 +10,7 @@ interface IProduct {
   id: string;
   created_at: string;
   description: string;
-  image: string;
+  images: string[];
   name: string;
   price: string;
   store_id: string;
@@ -64,12 +64,14 @@ export default function ProductDetails({
       </div>
       <div className="flex flex-col mt-6">
         <h2 className="text-3xl">{productData.name.toUpperCase()}</h2>
-        <div className="flex gap-4 mt-14 bg-secondary p-4">
-          <img
-            className="max-w-[300px]"
-            src={productData.image}
-            alt={`${productData.name} image`}
-          />
+        <div className="flex gap-4 mt-14 bg-secondary p-4 max-w-2xl overflow-scroll overflow-y-scroll">
+          {productData.images.map((item) => (
+            <img
+              className="max-w-[300px]"
+              src={item}
+              alt={`${productData.name} image`}
+            />
+          ))}
         </div>
       </div>
       <div className="flex flex-col justify-center gap-14">
