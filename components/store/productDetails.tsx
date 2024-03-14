@@ -5,7 +5,6 @@ import { Button } from "../ui/button";
 import { capitalizeFirstLetter } from "@/lib/uppercase";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { onSubmitProductToShoppingBag } from "@/lib/action/cookies";
-import Link from "next/link";
 
 interface IAttributes {
   id: string;
