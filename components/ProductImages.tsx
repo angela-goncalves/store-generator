@@ -112,16 +112,14 @@ function ProductImages({
         )}
         {uploadedImage &&
           uploadedImage.map((img) => {
-            const fileWithQuery = img.split("?")[0];
-            const fileName = fileWithQuery.split("/").pop();
             return (
-              <li key={fileName} className="flex items-center gap-6 w-full">
+              <li key={img} className="flex items-center gap-6 w-full">
                 <img
                   src={img}
                   alt="image of the product"
                   className="w-14 rounded-lg"
                 />
-                <p className="w-1/3">{fileName}</p>
+                <p className="w-1/3">{img}</p>
                 <div className="flex flex-col w-1/3 items-end">
                   <TooltipProvider>
                     <Tooltip>
@@ -130,9 +128,7 @@ function ProductImages({
                           variant="ghost"
                           type="button"
                           className=""
-                          onClick={() =>
-                            handleDeleteUpdatedImage(fileName || "")
-                          }>
+                          onClick={() => handleDeleteUpdatedImage(img || "")}>
                           <Trash2Icon className="w-4" />
                         </Button>
                       </TooltipTrigger>

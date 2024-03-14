@@ -3,6 +3,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { saveStorage } from "./storage";
 
 interface ISocialMedia {
   name: string;
@@ -31,6 +32,7 @@ type IFormDataUpdateProduct = {
   name: string;
   description: string;
   price: string;
+  images: string[];
   collectionId: string;
 };
 interface IVariants {
@@ -77,8 +79,9 @@ export const updateProduct = async (
   storeId: string,
   inventory: IVariants[],
   attributesChildren: IAttributeschildren[],
-  images: any
+  newImages: any
 ) => {
+  
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
@@ -91,12 +94,19 @@ export const updateProduct = async (
   }
 
   const idProduct = product.id;
-  const name = product.name;
-  const description = product.description;
-  const price = product.price;
 
-  const collection_id = product.collectionId;
-  const url = name
+  const uploadedImages = product.images;
+
+  const uploadImages = await saveStorage(newImages, storeId);
+
+  let images: any[] = [];
+  if (uploadImages && uploadImages.length > 0) {
+    images = uploadImages.map((item) => {
+      return item.data?.publicUrl;
+    });
+  }
+
+  const url = product.name
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
@@ -104,24 +114,17 @@ export const updateProduct = async (
     .replace(/ç/g, "c")
     .replace(/[^a-zA-Z0-9]/g, "-");
 
-  const updateProductWithCollection = collection_id
-    ? {
-        name,
-        description,
-        collection_id,
-        price,
-        url,
-        store_id: storeId,
-        images,
-      }
-    : {
-        name,
-        description,
-        price,
-        url,
-        store_id: storeId,
-        images,
-      };
+  
+  const updateProductWithCollection = {
+    name: product.name,
+    description: product.description,
+    collection_id: product.collectionId || null,
+    price: product.price,
+    url,
+    store_id: storeId,
+    images: uploadedImages,
+  };
+
 
   const { error } = await supabase
     .from("products")
