@@ -81,6 +81,7 @@ export const updateProduct = async (
   attributesChildren: IAttributeschildren[],
   newImages: any
 ) => {
+  
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
@@ -93,6 +94,7 @@ export const updateProduct = async (
   }
 
   const idProduct = product.id;
+
   const uploadedImages = product.images;
 
   const uploadImages = await saveStorage(newImages, storeId);
@@ -112,6 +114,7 @@ export const updateProduct = async (
     .replace(/ç/g, "c")
     .replace(/[^a-zA-Z0-9]/g, "-");
 
+  
   const updateProductWithCollection = {
     name: product.name,
     description: product.description,
@@ -122,13 +125,12 @@ export const updateProduct = async (
     images: uploadedImages,
   };
 
+
   const { error } = await supabase
     .from("products")
     .update(updateProductWithCollection)
     .eq("id", idProduct)
     .select();
-
-  console.log(error);
 
   await upsertInventory(inventory, storeId, idProduct);
   await upsertAttributes(attributesChildren, storeId, idProduct);

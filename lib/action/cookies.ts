@@ -14,7 +14,7 @@ interface IProduct {
   id: string;
   created_at: string;
   description: string;
-  image: string;
+  images: string[];
   name: string;
   price: string;
   store_id: string;
@@ -46,7 +46,7 @@ const getCookies = () => {
 
 export async function onSubmitProductToShoppingBag(
   formData: IAttributes[],
-  productData: IProduct,
+  productData: Products,
   itemsCount: number,
   storeName: string
 ) {

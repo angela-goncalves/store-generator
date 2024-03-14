@@ -92,6 +92,7 @@ function ProductImages({
   }, [newImageFile]);
 
   const findRejected = newImageFile?.find((item) => item.rejected) || null;
+
   return (
     <div>
       <section className="bg-white p-6 pb-8 rounded-lg flex flex-col my-4 gap-6 w-full">
@@ -110,7 +111,6 @@ function ProductImages({
           </div>
         )}
         {uploadedImage &&
-          uploadedImage.length &&
           uploadedImage.map((img) => {
             return (
               <li key={img} className="flex items-center gap-6 w-full">

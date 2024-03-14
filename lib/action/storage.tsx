@@ -1,3 +1,4 @@
+
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
@@ -36,7 +37,9 @@ export const saveStorage = async (files: FormData, storeId: string) => {
     });
 
     if (findErrors) {
-      console.error("something happen saving images", findErrors.error);
+
+     // console.error("something happen saving images", findErrors.error);
+      
       redirect(`/store/products?id=${storeId}&message=${findErrors.error}`);
     }
     let images: any[] = [];
@@ -60,10 +63,9 @@ export const getSignedUrl = async (images: string[]) => {
   const imagesUploaded = images.map((item) =>
     supabase.storage.from("products").getPublicUrl(`${item}`)
   );
-
+  
   try {
     const results = await Promise.all(imagesUploaded);
-    console.log("results", results);
     return results;
   } catch (error) {
     console.error(error);

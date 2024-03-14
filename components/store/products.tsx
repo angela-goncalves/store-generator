@@ -22,6 +22,7 @@ export default async function Products({
   storeForUser,
 }: IProduct) {
   const { name, price, url, images } = productData;
+
   const link = storeForUser
     ? `/${nameStore}/products/${url}`
     : "#products-store";

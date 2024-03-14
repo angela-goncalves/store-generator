@@ -161,7 +161,7 @@ export default function AddProductsForm({
     });
     setInventoryList(changePriceOfAllList);
   };
-
+  
   const handleDeleteUpdatedImage = (imageName: string) => {
     const filterIamges = formData.images.filter((item) => item !== imageName);
     setFormData((currentFormData) => ({
@@ -198,8 +198,6 @@ export default function AddProductsForm({
         }
       });
     }
-
-    console.log(formDataImage);
 
     productId
       ? updateProduct(
