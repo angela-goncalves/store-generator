@@ -19,6 +19,8 @@ import { Textarea } from "../ui/textarea";
 import { Plus } from "lucide-react";
 import { Button } from "../ui/button";
 import { capitalizeFirstLetter } from "@/lib/uppercase";
+import ProductImages from "../ProductImages";
+import { FileRejection } from "react-dropzone";
 
 interface IInventory {
   id: string;
@@ -40,7 +42,7 @@ interface IProducts {
   created_at: string;
   description: string | null;
   id: string;
-  image: string | null;
+  images: string[];
   name: string | null;
   price: string | null;
 }
@@ -49,6 +51,13 @@ interface IAttributeschildren {
   name: string;
   childrenValue: string[];
 }
+interface IImageFile {
+  file: File;
+  preview?: string;
+  rejected: boolean;
+  errors?: FileRejection["errors"];
+}
+
 interface IProductsForm {
   dataCollections: ICollections[] | null;
   productToEdit: IProducts;
@@ -68,8 +77,8 @@ export default function AddProductsForm({
     collection_id,
     description,
     id: productId,
-    image,
     name,
+    images,
     price,
   } = productToEdit;
 
@@ -78,7 +87,7 @@ export default function AddProductsForm({
     name: name ?? "",
     description: description ?? "",
     price: price ?? "",
-    image: image ?? "",
+    images: images ?? null,
     collectionId: collection_id ?? "",
     collectionName: "",
   });
@@ -95,6 +104,7 @@ export default function AddProductsForm({
   const [stock, setStock] = useState<string>("");
   const [priceToAll, setPriceToAll] = useState<string>("");
   const [addNewCollection, setAddNewCollection] = useState<boolean>(false);
+  const [newImageFile, setNewImageFile] = useState<IImageFile[] | undefined>();
 
   const handleInputChange = (
     event:
@@ -103,17 +113,26 @@ export default function AddProductsForm({
   ) => {
     const { name, value } = event.target;
 
-    setFormData({ ...formData, [name]: value });
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   };
 
   const handleSelectChange = (event: string) => {
-    setFormData({ ...formData, collectionId: event });
+    setFormData({
+      ...formData,
+      collectionId: event,
+    });
   };
 
   const handleVariantChange = (id: string, field: string, value: string) => {
     const newInventories = inventoryList.map((inventory) => {
       if (inventory.id === id) {
-        return { ...inventory, [field]: value };
+        return {
+          ...inventory,
+          [field]: value,
+        };
       }
       return inventory;
     });
@@ -124,7 +143,10 @@ export default function AddProductsForm({
   const handleStockChange = (value: string) => {
     setStock(value);
     const changeStockOfAllList = inventoryList.map((list) => {
-      return { ...list, stock: value };
+      return {
+        ...list,
+        stock: value,
+      };
     });
     setInventoryList(changeStockOfAllList);
   };
@@ -132,9 +154,20 @@ export default function AddProductsForm({
   const handlePriceChange = (value: string) => {
     setPriceToAll(value);
     const changePriceOfAllList = inventoryList.map((list) => {
-      return { ...list, price: value };
+      return {
+        ...list,
+        price: value,
+      };
     });
     setInventoryList(changePriceOfAllList);
+  };
+  
+  const handleDeleteUpdatedImage = (imageName: string) => {
+    const filterIamges = formData.images.filter((item) => item !== imageName);
+    setFormData((currentFormData) => ({
+      ...currentFormData,
+      images: filterIamges,
+    }));
   };
 
   const generateVariants = () => {
@@ -156,25 +189,36 @@ export default function AddProductsForm({
     setInventoryList(inventoryTolist);
   };
 
+  const handleSubmit = async () => {
+    const formDataImage = new FormData();
+    if (newImageFile && newImageFile.length > 0) {
+      newImageFile.forEach((file) => {
+        if (!file.rejected) {
+          formDataImage.append("images", file.file);
+        }
+      });
+    }
+
+    productId
+      ? updateProduct(
+          formData,
+          storeId,
+          inventoryList,
+          attributesChildren,
+          formDataImage
+        )
+      : handleInsertProduct(
+          formData,
+          storeId,
+          inventoryList,
+          attributesChildren,
+          formDataImage
+        );
+  };
+
   return (
     <div className="w-full max-w-[800px] dark:text-gray-800">
-      <form
-        action={() =>
-          productId
-            ? updateProduct(
-                formData,
-                storeId,
-                inventoryList,
-                attributesChildren
-              )
-            : handleInsertProduct(
-                formData,
-                storeId,
-                inventoryList,
-                attributesChildren
-              )
-        }
-        className="flex flex-col gap-2">
+      <form action={handleSubmit} className="flex flex-col gap-2">
         <section className="bg-white p-6 pb-8 rounded-lg flex flex-col my-4 gap-6">
           <h2 className="self-center">
             You can add a new collection{" "}
@@ -235,7 +279,7 @@ export default function AddProductsForm({
         </section>
 
         <section className="bg-white p-6 pb-8 rounded-lg flex flex-col my-4 gap-6">
-          <h3 className="text-xl font-semibold">Name and Description</h3>
+          <h3 className="text-xl font-semibold">Name and Description </h3>
           <label htmlFor="name">
             <p>Name</p>
             <Input
@@ -274,20 +318,14 @@ export default function AddProductsForm({
             />
           </label>
         </section>
-        <section className="bg-white p-6 pb-8 rounded-lg flex flex-col my-4 gap-6">
-          <h3 className="text-xl font-semibold">Images</h3>
-          <label htmlFor="image">
-            <p>URL of the image</p>
-            <Input
-              type="text"
-              name="image"
-              value={formData.image}
-              className="mt-2"
-              placeholder="Image url"
-              onChange={handleInputChange}
-            />
-          </label>
-        </section>
+        {
+          <ProductImages
+            newImageFile={newImageFile}
+            setNewImageFile={setNewImageFile}
+            uploadedImage={formData.images}
+            handleDeleteUpdatedImage={handleDeleteUpdatedImage}
+          />
+        }
         <section className="bg-white my-4 p-6 pb-8 w-full flex-col flex gap-4 rounded-lg">
           <DialogVariants
             title="Add variant"
@@ -367,7 +405,6 @@ export default function AddProductsForm({
             </div>
           )}
         </section>
-
         <Button
           type="submit"
           className="bg-primary text-primary-foreground rounded-lg px-6 py-4 my-6 self-end">

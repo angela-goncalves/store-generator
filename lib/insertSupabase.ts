@@ -2,6 +2,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { saveStorage } from "./action/storage";
 
 interface IStore {
   id: string;
@@ -18,7 +19,6 @@ interface IFormProduct {
   name: string;
   description: string;
   price: string;
-  image: string;
   collectionId: string;
   collectionName: string;
 }
@@ -109,8 +109,6 @@ export const handleInsertCollections = async (
     .insert(collections)
     .select();
 
-  // console.log("error inserting collections", error);
-
   if (error !== null) {
     redirect(`/store/collections?id=${storeId}&message=collections-errors`);
   }
@@ -126,16 +124,34 @@ export const handleInsertProduct = async (
   product: IFormProduct,
   storeId: string,
   inventory: IVariants[],
-  attributesChildren: IAttributeschildren[]
+  attributesChildren: IAttributeschildren[],
+  imagesToStorage: FormData
 ) => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
+
+  const { data: sessionData, error: sessionError } =
+    await supabase.auth.getSession();
+  const { session } = sessionData;
+
+  if (session === null || sessionError !== null) {
+    redirect(`/login?signin=true`);
+  }
+
+  const uploadImages = await saveStorage(imagesToStorage, storeId);
+
+  let images: any[] = [];
+  if (uploadImages && uploadImages.length > 0) {
+    images = uploadImages.map((item) => {
+      return item.data?.publicUrl;
+    });
+  }
 
   const id = product.id;
   const name = product.name;
   const description = product.description;
   const price = product.price;
-  const image = product.image;
+
   const url = name
     .toLowerCase()
     .normalize("NFD")
@@ -152,6 +168,7 @@ export const handleInsertProduct = async (
       isFromProductPage
     );
 
+    //errors about the collection insert is handle in handleInsertCollections
     if (collection.length > 0) {
       const productAdded = [
         {
@@ -159,7 +176,7 @@ export const handleInsertProduct = async (
           name,
           description,
           price: Number(price),
-          image,
+          images,
           url,
           collection_id: collection[0].id,
           store_id: storeId,
@@ -170,8 +187,6 @@ export const handleInsertProduct = async (
         .from("products")
         .insert(productAdded)
         .select();
-
-      // console.log("error product", productError);
 
       if (productError !== null) {
         redirect(
@@ -191,7 +206,7 @@ export const handleInsertProduct = async (
       name,
       description,
       price: Number(price),
-      image,
+      images,
       url,
       collection_id: product.collectionId ? product.collectionId : null,
       store_id: storeId,
@@ -203,11 +218,14 @@ export const handleInsertProduct = async (
     .insert(productAdded)
     .select();
 
-  // console.log("error product", error);
-
   if (error !== null) {
+    const errorMessage = error.message
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/ñ/g, "n")
+      .replace(/ç/g, "c")
+      .replace(/[^a-zA-Z0-9]/g, "-");
     redirect(
-      `/store/products/add-products?id=${storeId}&message=error-when-try-to-insert-products`
+      `/store/products/add-products?id=${storeId}&message=${errorMessage}`
     );
   }
 
