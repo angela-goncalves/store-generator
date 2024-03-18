@@ -143,7 +143,7 @@ export const handleInsertProduct = async (
   let images: any[] = [];
   if (uploadImages && uploadImages.length > 0) {
     images = uploadImages.map((item) => {
-      return item.data?.signedUrl;
+      return item.data?.publicUrl;
     });
   }
 

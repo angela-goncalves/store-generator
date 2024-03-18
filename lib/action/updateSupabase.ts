@@ -3,6 +3,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { saveStorage } from "./storage";
 
 interface ISocialMedia {
   name: string;
@@ -31,6 +32,7 @@ type IFormDataUpdateProduct = {
   name: string;
   description: string;
   price: string;
+  images: string[];
   collectionId: string;
 };
 interface IVariants {
@@ -73,11 +75,11 @@ export const updateStore = async (formData: IStore, storeId: string) => {
 };
 
 export const updateProduct = async (
-  product: IFormDataUpdateProduct,
+  product: Products,
   storeId: string,
   inventory: IVariants[],
   attributesChildren: IAttributeschildren[],
-  images: any
+  newImages: any
 ) => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
@@ -90,47 +92,43 @@ export const updateProduct = async (
     redirect(`/login?signin=true`);
   }
 
-  const idProduct = product.id;
-  const name = product.name;
-  const description = product.description;
-  const price = product.price;
+  const uploadImages = await saveStorage(newImages, storeId);
 
-  const collection_id = product.collectionId;
-  const url = name
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/ñ/g, "n")
-    .replace(/ç/g, "c")
-    .replace(/[^a-zA-Z0-9]/g, "-");
+  let images: any[] = [];
+  if (uploadImages && uploadImages.length > 0) {
+    images = uploadImages.map((item) => {
+      return item.data?.publicUrl;
+    });
+  }
 
-  const updateProductWithCollection = collection_id
-    ? {
-        name,
-        description,
-        collection_id,
-        price,
-        url,
-        store_id: storeId,
-        images,
-      }
-    : {
-        name,
-        description,
-        price,
-        url,
-        store_id: storeId,
-        images,
-      };
+  const url =
+    product.name &&
+    product.name
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/ñ/g, "n")
+      .replace(/ç/g, "c")
+      .replace(/[^a-zA-Z0-9]/g, "-");
+
+  const updateProductWithCollection = {
+    name: product.name,
+    description: product.description,
+    collection_id: product.collection_id || null,
+    price: product.price,
+    url,
+    store_id: storeId,
+    images: product.images,
+  };
 
   const { error } = await supabase
     .from("products")
     .update(updateProductWithCollection)
-    .eq("id", idProduct)
+    .eq("id", product.id)
     .select();
 
-  await upsertInventory(inventory, storeId, idProduct);
-  await upsertAttributes(attributesChildren, storeId, idProduct);
+  await upsertInventory(inventory, storeId, product.id);
+  await upsertAttributes(attributesChildren, storeId, product.id);
 
   if (error !== null) {
     redirect(
