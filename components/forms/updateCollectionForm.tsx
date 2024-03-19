@@ -1,51 +1,48 @@
 "use client";
+
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
 import { updateCollections } from "@/lib/action/updateSupabase";
 
-type FormDataType = {
-  collectionID: string;
-  nameCollection: string;
-  descriptionCollection: string;
-};
 interface IUpdateCollections {
-  collectionId: string;
-  collectionTitle: string;
-  collectionDescription: string;
+  collection: Collections;
   storeId: string;
 }
 
 export default function UpdateCollections({
-  collectionId,
-  collectionTitle,
-  collectionDescription,
+  collection,
   storeId,
 }: IUpdateCollections) {
-  const [newInputs, setNewInputs] = useState<FormDataType>({
-    nameCollection: collectionTitle,
-    descriptionCollection: collectionDescription,
-    collectionID: collectionId,
+  const [updateCollection, setUpdateCollection] = useState<Collections>({
+    created_at: collection.created_at,
+    description: collection.description,
+    id: collection.id,
+    image: collection.image,
+    name: collection.name,
+    store_id: collection.store_id,
+    user_id: collection.user_id,
   });
 
-  // console.log("storeid in update collections form", storeId);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewInputs({ ...newInputs, [e.target.name]: e.target.value });
+    setUpdateCollection({
+      ...updateCollection,
+      [e.target.name]: e.target.value,
+    });
   };
 
   return (
     <div className="w-1/2 max-w-[500px]">
       <form
-        action={() => updateCollections(newInputs, storeId)}
+        action={() => updateCollections(updateCollection, storeId)}
         className="flex flex-col">
         <div className="text-2xl mt-6">
-          <label htmlFor="nameCollection">Name</label>
+          <label htmlFor="name">Name</label>
           <Input
             type="text"
-            name="nameCollection"
+            name="name"
             className="mt-2"
-            value={newInputs.nameCollection}
+            value={updateCollection.name || ""}
             onChange={handleChange}
             placeholder="Name of the collection"
             required
@@ -57,7 +54,7 @@ export default function UpdateCollections({
             type="text"
             name="descriptionCollection"
             className="mt-2"
-            value={newInputs.descriptionCollection}
+            value={updateCollection.description || ""}
             onChange={handleChange}
             placeholder="Description of the collection"
           />

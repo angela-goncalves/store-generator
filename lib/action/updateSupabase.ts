@@ -21,32 +21,6 @@ interface IStore {
   social_media: ISocialMedia[];
 }
 
-type FormDataType = {
-  collectionID: string;
-  nameCollection: string;
-  descriptionCollection: string;
-};
-
-type IFormDataUpdateProduct = {
-  id: string;
-  name: string;
-  description: string;
-  price: string;
-  images: string[];
-  collectionId: string;
-};
-interface IVariants {
-  id: string;
-  combination: string;
-  price: string;
-  stock: string;
-}
-interface IAttributeschildren {
-  id: string;
-  name: string;
-  childrenValue: string[];
-}
-
 export const updateStore = async (formData: IStore, storeId: string) => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
@@ -77,8 +51,8 @@ export const updateStore = async (formData: IStore, storeId: string) => {
 export const updateProduct = async (
   product: Products,
   storeId: string,
-  inventory: IVariants[],
-  attributesChildren: IAttributeschildren[],
+  inventory: Inventory[],
+  attributesChildren: Attributes[],
   newImages: any
 ) => {
   const cookieStore = cookies();
@@ -92,33 +66,31 @@ export const updateProduct = async (
     redirect(`/login?signin=true`);
   }
 
-  const uploadImages = await saveStorage(newImages, storeId);
+  const uploadImages = await saveStorage(newImages, storeId, product.id);
 
-  let images: any[] = [];
+  let images: string[] = [];
   if (uploadImages && uploadImages.length > 0) {
     images = uploadImages.map((item) => {
       return item.data?.publicUrl;
     });
   }
 
-  const url =
-    product.name &&
-    product.name
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/ñ/g, "n")
-      .replace(/ç/g, "c")
-      .replace(/[^a-zA-Z0-9]/g, "-");
-
   const updateProductWithCollection = {
     name: product.name,
     description: product.description,
     collection_id: product.collection_id || null,
     price: product.price,
-    url,
+    url:
+      product.name &&
+      product.name
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/ñ/g, "n")
+        .replace(/ç/g, "c")
+        .replace(/[^a-zA-Z0-9]/g, "-"),
     store_id: storeId,
-    images: product.images,
+    images: product.images?.concat(images),
   };
 
   const { error } = await supabase
@@ -140,7 +112,7 @@ export const updateProduct = async (
 };
 
 export const upsertInventory = async (
-  inventory: IVariants[],
+  inventory: Inventory[],
   storeId: string,
   idProduct: string
 ) => {
@@ -151,9 +123,9 @@ export const upsertInventory = async (
     return {
       id: item.id,
       product_id: idProduct,
-      attributeschildren: item.combination,
+      attributeschildren: item.attributeschildren,
       price: Number(item.price) ?? 0,
-      stock_level: Number(item.stock) ?? 0,
+      stock_level: Number(item.stock_level) ?? 0,
     };
   });
 
@@ -179,7 +151,7 @@ export const upsertInventory = async (
 };
 
 export const upsertAttributes = async (
-  attributesChildren: IAttributeschildren[],
+  attributesChildren: Attributes[],
   storeId: string,
   idProduct: string
 ) => {
@@ -190,7 +162,7 @@ export const upsertAttributes = async (
     return {
       id: item.id,
       product_id: idProduct,
-      children_values: item.childrenValue,
+      children_values: item.children_values,
       name: item.name,
     };
   });
@@ -208,15 +180,15 @@ export const upsertAttributes = async (
 };
 
 export const updateCollections = async (
-  formData: FormDataType,
+  formData: Collections,
   storeId: string
 ) => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
-  const description = formData.descriptionCollection;
-  const name = formData.nameCollection;
-  const collectionid = formData.collectionID;
+  const description = formData.description;
+  const name = formData.name;
+  const collectionid = formData.id;
 
   const { data, error } = await supabase
     .from("collections")

@@ -6,20 +6,11 @@ import Image from "next/image";
 import collectionImage from "@/app/public/categories.png";
 import { Button } from "./ui/button";
 
-interface IDataCollections {
-  created_at: string;
-  description: string | null;
-  id: string;
-  image: string | null;
-  name: string | null;
-  store_id: string | null;
-}
-
 export default function AddCollections({
   dataCollections,
   storeId,
 }: {
-  dataCollections: IDataCollections[];
+  dataCollections: Collections[];
   storeId: string;
 }) {
   const [addCollection, setAddCollection] = useState(false);

@@ -4,7 +4,11 @@ import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-export const saveStorage = async (files: FormData, storeId: string) => {
+export const saveStorage = async (
+  files: FormData,
+  storeId: string,
+  productId: string
+) => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
@@ -25,7 +29,7 @@ export const saveStorage = async (files: FormData, storeId: string) => {
 
   const uploadPromises = imageFiles.map((file, index) => {
     const fileName = file.name.toLowerCase();
-    const filePath = `${session.user.id}/${storeId}/${fileName}`;
+    const filePath = `${storeId}/${productId}/${fileName}`;
     return supabase.storage.from("products").upload(filePath, file);
   });
 
@@ -36,9 +40,18 @@ export const saveStorage = async (files: FormData, storeId: string) => {
     });
 
     if (findErrors) {
-      // console.error("something happen saving images", findErrors.error);
-
-      redirect(`/store/products?id=${storeId}&message=${findErrors.error}`);
+      console.error(
+        "something happen saving images",
+        findErrors.error?.message
+      );
+      const errorMessage = findErrors.error?.message
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/ñ/g, "n")
+        .replace(/ç/g, "c")
+        .replace(/[^a-zA-Z0-9]/g, "-");
+      redirect(
+        `/store/products/add-products?id=${storeId}&message=something_went_wrong_saving_images:${errorMessage}`
+      );
     }
     let images: any[] = [];
     if (results && results.length > 0) {
@@ -46,15 +59,18 @@ export const saveStorage = async (files: FormData, storeId: string) => {
         return item.data?.path;
       });
     }
-    const imagesUrl = await getSignedUrl(images);
+    const imagesUrl = await getPublicUrl(images, storeId);
 
     return imagesUrl;
   } catch (error) {
     console.error("Upload failed", error);
+    redirect(
+      `/store/products/add-products?id=${storeId}&message=something_went_wrong_saving_images:${error}`
+    );
   }
 };
 
-export const getSignedUrl = async (images: string[]) => {
+export const getPublicUrl = async (images: string[], storeId: string) => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
@@ -67,5 +83,6 @@ export const getSignedUrl = async (images: string[]) => {
     return results;
   } catch (error) {
     console.error(error);
+    redirect(`/store/products/add-products?id=${storeId}&message=${error}`);
   }
 };

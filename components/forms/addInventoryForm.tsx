@@ -13,19 +13,14 @@ import { v4 as uuidv4 } from "uuid";
 import { Input } from "@/components/ui/input";
 import { Plus, XIcon } from "lucide-react";
 
-interface IAttributeschildren {
-  id: string;
-  name: string;
-  childrenValue: string[];
-}
 export default function AddInventory({
   attributesChildren,
   setAttributesChildren,
   attributeParent,
   setAttributeParent,
 }: {
-  attributesChildren: IAttributeschildren[];
-  setAttributesChildren: (attributes: IAttributeschildren[]) => void;
+  attributesChildren: Attributes[];
+  setAttributesChildren: (attributes: Attributes[]) => void;
   setAttributeParent: (attributeParent: string) => void;
   attributeParent: string;
 }) {
@@ -38,8 +33,16 @@ export default function AddInventory({
   const [messageToAddData, setMessageToAddData] = useState<boolean>(false);
 
   const [attributesChildrenCopy, setAttributesChildrenCopy] = useState<
-    IAttributeschildren[]
-  >([{ id: uuidv4(), name: "", childrenValue: [""] }]);
+    Attributes[]
+  >([
+    {
+      id: uuidv4(),
+      children_values: [""],
+      created_at: "",
+      name: "" || null,
+      product_id: "" || null,
+    },
+  ]);
 
   const handleChangeAttributeName = (id: string, value: string) => {
     const newAttributesChildren = attributesChildrenCopy.map((attribute) => {
@@ -69,9 +72,9 @@ export default function AddInventory({
   ) => {
     const newAttributes = attributesChildrenCopy.map((attribute) => {
       if (attribute.id === attributeId) {
-        const newValues = [...attribute.childrenValue];
+        const newValues = [...attribute.children_values];
         newValues[valueIndex] = value;
-        return { ...attribute, childrenValue: newValues };
+        return { ...attribute, children_values: newValues };
       }
       return attribute;
     });
@@ -83,7 +86,7 @@ export default function AddInventory({
       if (attribute.id === attributeId) {
         return {
           ...attribute,
-          childrenValue: [...attribute.childrenValue, ""],
+          children_values: [...attribute.children_values, ""],
         };
       }
       return attribute;
@@ -94,9 +97,9 @@ export default function AddInventory({
   const removeAttributeChild = (attributeId: string, valueIndex: number) => {
     const newAttributes = attributesChildrenCopy.map((attribute) => {
       if (attribute.id === attributeId) {
-        const newValues = [...attribute.childrenValue];
+        const newValues = [...attribute.children_values];
         newValues.splice(valueIndex, 1);
-        return { ...attribute, childrenValue: newValues };
+        return { ...attribute, children_values: newValues };
       }
       return attribute;
     });
@@ -111,7 +114,7 @@ export default function AddInventory({
       if (attribute.id === attributeId) {
         return {
           ...attribute,
-          childrenValue: attribute.childrenValue.filter(
+          children_values: attribute.children_values.filter(
             (ele, index) => index !== indexofvalue
           ),
         };
@@ -125,8 +128,9 @@ export default function AddInventory({
   const saveNewAttribute = () => {
     const validAttributesChildrenCopy = attributesChildrenCopy.filter(
       (copyAttribute) => {
-        const hasValidName = copyAttribute.name.trim() !== "";
-        const hasValidChildren = copyAttribute.childrenValue.some(
+        const hasValidName =
+          copyAttribute.name && copyAttribute.name.trim() !== "";
+        const hasValidChildren = copyAttribute.children_values.some(
           (child) => child.trim() !== ""
         );
         return hasValidName && hasValidChildren;
@@ -150,15 +154,15 @@ export default function AddInventory({
           updatedAttributesChildren[existingAttributeIndex];
         const updatedChildrenValues = Array.from(
           new Set([
-            ...existingAttribute.childrenValue,
-            ...copyAttribute.childrenValue.filter(
+            ...existingAttribute.children_values,
+            ...copyAttribute.children_values.filter(
               (child) => child.trim() !== ""
             ),
           ])
         );
         updatedAttributesChildren[existingAttributeIndex] = {
           ...existingAttribute,
-          childrenValue: updatedChildrenValues,
+          children_values: updatedChildrenValues,
         };
       } else {
         updatedAttributesChildren.push(copyAttribute);
@@ -171,7 +175,13 @@ export default function AddInventory({
 
   const AddNewAttribute = () => {
     setAttributesChildrenCopy([
-      { id: uuidv4(), name: "", childrenValue: [""] },
+      {
+        id: uuidv4(),
+        children_values: [""],
+        created_at: "",
+        name: "" || null,
+        product_id: "" || null,
+      },
     ]);
   };
 
@@ -200,7 +210,7 @@ export default function AddInventory({
               </Button>
             </div>
             <div className="flex w-full flex-wrap max-w-sm">
-              {item.childrenValue.map((value, index) => (
+              {item.children_values.map((value, index) => (
                 <div
                   key={value + index}
                   className="border m-2 rounded-md flex items-center">
@@ -243,7 +253,7 @@ export default function AddInventory({
             {attributeParent === "other..." ? (
               <Input
                 type="text"
-                value={attribute.name}
+                value={attribute.name || ""}
                 onChange={(e) =>
                   handleChangeIfAttributeNameIsOther(
                     attribute.id,
@@ -254,7 +264,7 @@ export default function AddInventory({
             ) : (
               <></>
             )}
-            {attribute.childrenValue.map((value, valueIndex: number) => (
+            {attribute.children_values.map((value, valueIndex: number) => (
               <div key={valueIndex} className="flex items-center">
                 <Input
                   type="text"

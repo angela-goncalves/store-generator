@@ -16,21 +16,13 @@ type FormDataType = {
   name: string;
   id: string;
 };
-interface IDataCollections {
-  created_at: string;
-  description: string | null;
-  id: string;
-  image: string | null;
-  name: string | null;
-  store_id: string | null;
-}
 
 export default function AddCollectionsForm({
   storeId,
   dataCollections,
 }: {
   storeId: string;
-  dataCollections: IDataCollections[];
+  dataCollections: Collections[];
 }) {
   const [collectionslist, setCollectionslist] = useState<FormDataType[]>([
     { name: "", id: uuidv4() },

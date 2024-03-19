@@ -14,6 +14,7 @@ export default async function FormAddProducts({
   searchParams: {
     id: string;
     productId: string;
+    message?: string;
   };
 }) {
   const collections = await getCollectionsOfStore(searchParams.id);
@@ -22,27 +23,31 @@ export default async function FormAddProducts({
     ? await getProductsToEdit(searchParams.productId)
     : [];
 
-  const inventoryList = searchParams.productId
+  const inventoryList: Inventory[] = searchParams.productId
     ? await getInventory(searchParams.productId, searchParams.id)
     : [];
 
   const inventoryDefault = inventoryList.map((item) => {
     return {
       id: item.id,
-      combination: item.attributeschildren,
+      created_at: item.created_at,
+      attributeschildren: item.attributeschildren,
       price: item.price,
-      stock: item.stock_level,
+      product_id: item.product_id,
+      stock_level: item.stock_level,
     };
   });
-  const attributeParentTable = searchParams.productId
+  const attributes: Attributes[] = searchParams.productId
     ? await getAttributesByProductId(searchParams.productId, searchParams.id)
     : [];
 
-  const attributesDefault = attributeParentTable.map((item) => {
+  const attributesDefault = attributes.map((item) => {
     return {
       id: item.id,
       name: item.name,
-      childrenValue: item.children_values,
+      created_at: item.created_at,
+      product_id: item.product_id,
+      children_values: item.children_values,
     };
   });
 
@@ -64,6 +69,7 @@ export default async function FormAddProducts({
         storeId={searchParams.id}
         inventory={inventoryDefault ?? []}
         attributesDefault={attributesDefault ?? []}
+        message={searchParams.message || ""}
       />
     </div>
   );

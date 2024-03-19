@@ -120,11 +120,15 @@ export const handleInsertCollections = async (
   }
 };
 
+export type ExtendedProducts = Products & {
+  collectionName: string;
+};
+
 export const handleInsertProduct = async (
-  product: IFormProduct,
+  product: ExtendedProducts,
   storeId: string,
-  inventory: IVariants[],
-  attributesChildren: IAttributeschildren[],
+  inventory: Inventory[],
+  attributesChildren: Attributes[],
   imagesToStorage: FormData
 ) => {
   const cookieStore = cookies();
@@ -138,7 +142,7 @@ export const handleInsertProduct = async (
     redirect(`/login?signin=true`);
   }
 
-  const uploadImages = await saveStorage(imagesToStorage, storeId);
+  const uploadImages = await saveStorage(imagesToStorage, storeId, product.id);
 
   let images: any[] = [];
   if (uploadImages && uploadImages.length > 0) {
@@ -147,18 +151,7 @@ export const handleInsertProduct = async (
     });
   }
 
-  const id = product.id;
-  const name = product.name;
-  const description = product.description;
-  const price = product.price;
-
-  const url = name
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/ñ/g, "n")
-    .replace(/ç/g, "c")
-    .replace(/[^a-zA-Z0-9]/g, "-");
+  let collectionID = "";
 
   if (product.collectionName) {
     const isFromProductPage = true;
@@ -168,48 +161,27 @@ export const handleInsertProduct = async (
       isFromProductPage
     );
 
-    //errors about the collection insert is handle in handleInsertCollections
-    if (collection.length > 0) {
-      const productAdded = [
-        {
-          id,
-          name,
-          description,
-          price: Number(price),
-          images,
-          url,
-          collection_id: collection[0].id,
-          store_id: storeId,
-        },
-      ];
-
-      const { data: productData, error: productError } = await supabase
-        .from("products")
-        .insert(productAdded)
-        .select();
-
-      if (productError !== null) {
-        redirect(
-          `/store/products/add-products?id=${storeId}&message=error-when-try-to-insert-products`
-        );
-      }
-
-      if (productData[0].id) {
-        await handleInsertInventory(inventory, storeId, productData[0].id);
-      }
-    }
+    collectionID = collection.length > 0 ? collection[0].id : "";
   }
 
   const productAdded = [
     {
-      id,
-      name,
-      description,
-      price: Number(price),
+      id: product.id,
+      collection_id: product.collectionName ? collectionID : null,
+      description: product.description,
       images,
-      url,
-      collection_id: product.collectionId ? product.collectionId : null,
+      name: product.name,
+      price: Number(product.price),
       store_id: storeId,
+      url:
+        product.name &&
+        product.name
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/ñ/g, "n")
+          .replace(/ç/g, "c")
+          .replace(/[^a-zA-Z0-9]/g, "-"),
     },
   ];
 
@@ -238,7 +210,7 @@ export const handleInsertProduct = async (
 };
 
 const handleInsertInventory = async (
-  variants: IVariants[],
+  variants: Inventory[],
   storeid: string,
   productId: string
 ) => {
@@ -249,9 +221,9 @@ const handleInsertInventory = async (
     return {
       id: item.id,
       product_id: productId,
-      attributeschildren: item.combination,
+      attributeschildren: item.attributeschildren,
       price: Number(item.price) ?? 0,
-      stock_level: Number(item.stock) ?? 0,
+      stock_level: Number(item.stock_level) ?? 0,
     };
   });
 
@@ -265,7 +237,7 @@ const handleInsertInventory = async (
 };
 
 export const insertAttributes = async (
-  attributesChildren: IAttributeschildren[],
+  attributesChildren: Attributes[],
   storeId: string,
   idProduct: string
 ) => {
@@ -276,7 +248,7 @@ export const insertAttributes = async (
     return {
       id: item.id,
       product_id: idProduct,
-      children_values: item.childrenValue,
+      children_values: item.children_values,
       name: item.name,
     };
   });

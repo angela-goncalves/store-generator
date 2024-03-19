@@ -16,20 +16,10 @@ interface IImageFile {
   errors?: FileRejection["errors"];
 }
 
-interface IProducts {
-  id: string;
-  name: string;
-  description: string;
-  price: string;
-  images: string[];
-  collectionId: string;
-  collectionName: string;
-}
-
 interface IProductImages {
   newImageFile: IImageFile[] | undefined;
   setNewImageFile: (file: IImageFile[] | undefined) => void;
-  uploadedImage: string[] | undefined;
+  uploadedImage: string[] | null;
   handleDeleteUpdatedImage: (imageName: string) => void;
 }
 
@@ -92,7 +82,6 @@ function ProductImages({
   }, [newImageFile]);
 
   const findRejected = newImageFile?.find((item) => item.rejected) || null;
-
   return (
     <div>
       <section className="bg-white p-6 pb-8 rounded-lg flex flex-col my-4 gap-6 w-full">
