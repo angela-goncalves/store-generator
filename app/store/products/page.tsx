@@ -3,7 +3,6 @@ import React from "react";
 import Link from "next/link";
 import { PencilLineIcon, Plus } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import BackButton from "@/components/BackButton";
 import Image from "next/image";
 import productImage from "@/app/public/product.png";
 import { capitalizeFirstLetter } from "@/lib/uppercase";
@@ -16,7 +15,7 @@ export default async function Products({
 }: {
   searchParams: { id: string };
 }) {
-  const dataProducts = await getAllProductsOfStore(searchParams.id);
+  const dataProducts: Products[] = await getAllProductsOfStore(searchParams.id);
 
   if (dataProducts === null) {
     redirect(`store/products?id=${searchParams.id}&message=products-errors`);
@@ -57,7 +56,7 @@ export default async function Products({
                       className="w-full">
                       <div className="flex gap-2 items-center justify-between w-full">
                         <p className="w-[30%] font-semibold">
-                          {capitalizeFirstLetter(item.name)}
+                          {capitalizeFirstLetter(item.name || "")}
                         </p>
                         <p className="w-[30%]">${item.price}</p>
                         <PencilLineIcon className="mr-2 h-4 w-4" />

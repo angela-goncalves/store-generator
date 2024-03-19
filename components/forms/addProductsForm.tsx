@@ -22,35 +22,6 @@ import { capitalizeFirstLetter } from "@/lib/uppercase";
 import ProductImages from "../ProductImages";
 import { FileRejection } from "react-dropzone";
 
-interface IInventory {
-  id: string;
-  combination: string;
-  price: string;
-  stock: string;
-}
-interface ICollections {
-  created_at: string;
-  description: string | null;
-  id: string;
-  image: string | null;
-  name: string | null;
-  store_id: string | null;
-}
-[];
-interface IProducts {
-  collection_id: string | null;
-  created_at: string;
-  description: string | null;
-  id: string;
-  images: string[];
-  name: string | null;
-  price: string | null;
-}
-interface IAttributeschildren {
-  id: string;
-  name: string;
-  childrenValue: string[];
-}
 interface IImageFile {
   file: File;
   preview?: string;
@@ -59,11 +30,12 @@ interface IImageFile {
 }
 
 interface IProductsForm {
-  dataCollections: ICollections[] | null;
-  productToEdit: IProducts;
+  dataCollections: Collections[] | null;
+  productToEdit: Products;
   storeId: string;
-  inventory: IInventory[];
-  attributesDefault: IAttributeschildren[];
+  inventory: Inventory[];
+  attributesDefault: Attributes[];
+  message?: string;
 }
 
 export default function AddProductsForm({
@@ -72,37 +44,33 @@ export default function AddProductsForm({
   storeId,
   inventory,
   attributesDefault,
+  message,
 }: IProductsForm) {
-  const {
-    collection_id,
-    description,
-    id: productId,
-    name,
-    images,
-    price,
-  } = productToEdit;
-
   const [formData, setFormData] = useState({
-    id: productId ? productId : uuidv4(),
-    name: name ?? "",
-    description: description ?? "",
-    price: price ?? "",
-    images: images ?? null,
-    collectionId: collection_id ?? "",
+    id: productToEdit.id ? productToEdit.id : uuidv4(),
+    name: productToEdit.name ?? "",
+    description: productToEdit.description ?? "",
+    price: productToEdit.price ?? 0,
+    images: productToEdit.images ?? null,
+    collection_id: productToEdit.collection_id ?? "",
+    created_at: productToEdit.created_at ?? "",
+    extrainfo: productToEdit.extrainfo ?? "",
+    store_id: productToEdit.store_id ?? "",
+    url: productToEdit.url ?? "",
     collectionName: "",
   });
 
-  const [attributesChildren, setAttributesChildren] = useState<
-    IAttributeschildren[]
-  >(attributesDefault.length > 0 ? attributesDefault : []);
+  const [attributesChildren, setAttributesChildren] = useState<Attributes[]>(
+    attributesDefault.length > 0 ? attributesDefault : []
+  );
 
-  const [inventoryList, setInventoryList] = useState<IInventory[]>(
-    inventory.length > 0 ? inventory : []
+  const [inventoryList, setInventoryList] = useState<Inventory[]>(
+    inventory ?? []
   );
 
   const [attributeParent, setAttributeParent] = useState<string>("");
-  const [stock, setStock] = useState<string>("");
-  const [priceToAll, setPriceToAll] = useState<string>("");
+  const [stock, setStock] = useState<number>(0);
+  const [priceToAll, setPriceToAll] = useState<number>(0);
   const [addNewCollection, setAddNewCollection] = useState<boolean>(false);
   const [newImageFile, setNewImageFile] = useState<IImageFile[] | undefined>();
 
@@ -122,7 +90,7 @@ export default function AddProductsForm({
   const handleSelectChange = (event: string) => {
     setFormData({
       ...formData,
-      collectionId: event,
+      collection_id: event,
     });
   };
 
@@ -141,49 +109,53 @@ export default function AddProductsForm({
   };
 
   const handleStockChange = (value: string) => {
-    setStock(value);
+    setStock(Number(value));
     const changeStockOfAllList = inventoryList.map((list) => {
       return {
         ...list,
-        stock: value,
+        stock_level: Number(value),
       };
     });
     setInventoryList(changeStockOfAllList);
   };
 
   const handlePriceChange = (value: string) => {
-    setPriceToAll(value);
+    setPriceToAll(Number(value));
     const changePriceOfAllList = inventoryList.map((list) => {
       return {
         ...list,
-        price: value,
+        price: Number(value),
       };
     });
     setInventoryList(changePriceOfAllList);
   };
-  
+
   const handleDeleteUpdatedImage = (imageName: string) => {
-    const filterIamges = formData.images.filter((item) => item !== imageName);
+    const filterIamges = formData.images?.filter((item) => item !== imageName);
     setFormData((currentFormData) => ({
       ...currentFormData,
-      images: filterIamges,
+      images: filterIamges || null,
     }));
   };
 
   const generateVariants = () => {
     const combinations = attributesChildren.reduce((acc, attribute) => {
-      if (acc.length === 0)
-        return attribute.childrenValue.map((value) => [value]);
+      const childrenValues = attribute.children_values;
+      if (acc.length === 0) {
+        return childrenValues.map((value) => [value]);
+      }
       return acc.flatMap((combination) =>
-        attribute.childrenValue.map((value) => [...combination, value])
+        childrenValues.map((value) => [...combination, value])
       );
     }, [] as string[][]);
 
     const inventoryTolist = combinations.map((combination) => ({
       id: uuidv4(),
-      combination: combination.join(", "),
-      price: formData.price ? formData.price : "",
-      stock: stock,
+      attributeschildren: combination.join(", "),
+      price: formData.price ? Number(formData.price) : 0,
+      stock_level: Number(stock),
+      product_id: formData.id,
+      created_at: "",
     }));
 
     setInventoryList(inventoryTolist);
@@ -199,7 +171,7 @@ export default function AddProductsForm({
       });
     }
 
-    productId
+    productToEdit.id
       ? updateProduct(
           formData,
           storeId,
@@ -222,7 +194,7 @@ export default function AddProductsForm({
         <section className="bg-white p-6 pb-8 rounded-lg flex flex-col my-4 gap-6">
           <h2 className="self-center">
             You can add a new collection{" "}
-            {formData.collectionId ? "or select" : " "} the one you want to be
+            {formData.collection_id ? "or select" : " "} the one you want to be
             related to your product
           </h2>
           <div className="flex items-center justify-between">
@@ -242,8 +214,8 @@ export default function AddProductsForm({
                   !addNewCollection && (
                     <div className="w-full">
                       <Select
-                        name="collectionId"
-                        defaultValue={formData.collectionId}
+                        name="collection_id"
+                        defaultValue={formData.collection_id}
                         onValueChange={handleSelectChange}>
                         <SelectTrigger className="w-full max-w-[300px] dark:bg-secondary bg-neutral-light dark:text-black">
                           <SelectValue placeholder="Select a collection to this product" />
@@ -377,12 +349,12 @@ export default function AddProductsForm({
               </div>
               {inventoryList.map((variant: any) => (
                 <div key={variant.id} className="flex gap-6">
-                  <p className="w-[20%]">{variant.combination}</p>
-                  <label htmlFor="stock" className="w-[30%]">
+                  <p className="w-[20%]">{variant.attributeschildren}</p>
+                  <label htmlFor="stock_level" className="w-[30%]">
                     <Input
                       type="number"
-                      name="stock"
-                      value={variant.stock}
+                      name="stock_level"
+                      value={variant.stock_level}
                       className=""
                       onChange={(e) =>
                         handleVariantChange(variant.id, "stock", e.target.value)
@@ -407,7 +379,8 @@ export default function AddProductsForm({
         </section>
         <Button
           type="submit"
-          className="bg-primary text-primary-foreground rounded-lg px-6 py-4 my-6 self-end">
+          disabled={message && message !== "" ? true : false}
+          className="bg-primary text-primary-foreground rounded-lg px-6 py-4 my-6 self-end ">
           Save
         </Button>
       </form>
