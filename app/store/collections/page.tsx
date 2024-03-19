@@ -1,28 +1,13 @@
-import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
 import React from "react";
-import BackButton from "@/components/BackButton";
 import AddCollections from "@/components/AddCollections";
+import { getCollectionsOfStore } from "@/lib/action/getData";
 
 export default async function Collections({
   searchParams,
 }: {
   searchParams: { id: string };
 }) {
-  const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
-
-  const storeId = searchParams.id;
-
-  const { data: dataCollections, error } = await supabase
-    .from("collections")
-    .select()
-    .eq("store_id", storeId);
-
-  if (dataCollections === null || error !== null) {
-    redirect(`/store/collections?id=${storeId}&message=collections errors`);
-  }
+  const collectionsData = await getCollectionsOfStore(searchParams.id);
 
   return (
     <div className="w-full flex flex-col items-center text-secondary">
@@ -33,7 +18,7 @@ export default async function Collections({
           </h1>
         </div>
         <AddCollections
-          dataCollections={dataCollections}
+          dataCollections={collectionsData[0]}
           storeId={searchParams.id}
         />
       </div>

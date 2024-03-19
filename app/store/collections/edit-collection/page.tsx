@@ -10,7 +10,7 @@ export default async function EditCollection({
     collectionId: string;
   };
 }) {
-  const collections = await getCollectionById(
+  const collection: Collections[] = await getCollectionById(
     searchParams.collectionId,
     searchParams.id
   );
@@ -23,13 +23,8 @@ export default async function EditCollection({
           query: { id: searchParams.id },
         }}
       />
-      <h3>{`Edit and update ${collections[0].name}`}</h3>
-      <UpdateCollections
-        storeId={searchParams.id}
-        collectionId={searchParams.collectionId}
-        collectionTitle={collections[0].name}
-        collectionDescription={collections[0].description}
-      />
+      <h3>{`Edit and update ${collection[0].name}`}</h3>
+      <UpdateCollections storeId={searchParams.id} collection={collection[0]} />
     </div>
   );
 }
