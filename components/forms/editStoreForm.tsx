@@ -88,7 +88,7 @@ export default function AddStoreForm({ storeData }: IAddStoreForm) {
       <form
         action={() => updateStore(formData, id)}
         className="h-full flex flex-col gap-6 mt-6">
-        <section className="bg-white p-6 rounded-lg flex flex-col gap-6">
+        <section className="bg-white p-6 pb-9 rounded-lg flex flex-col gap-6">
           <h3 className="text-3xl">Name and Description</h3>
           <label htmlFor="name">
             <p>Name</p>
@@ -102,7 +102,7 @@ export default function AddStoreForm({ storeData }: IAddStoreForm) {
               placeholder="Name of your store"
             />
           </label>
-          <label htmlFor="description" className="text-3xl">
+          <label htmlFor="description">
             <p>Description</p>
             <Input
               className="mt-2"
@@ -115,9 +115,9 @@ export default function AddStoreForm({ storeData }: IAddStoreForm) {
           </label>
         </section>
 
-        <section className="bg-white p-6 rounded-lg flex flex-col gap-6">
+        <section className="bg-white p-6 pb-9 rounded-lg flex flex-col gap-6">
           <h3 className="text-3xl">Location</h3>
-          <label htmlFor="location" className="mt-5">
+          <label htmlFor="location">
             <p>Location</p>
             <Input
               className="mt-2"
@@ -130,9 +130,9 @@ export default function AddStoreForm({ storeData }: IAddStoreForm) {
           </label>
         </section>
 
-        <section className="bg-white p-6 rounded-lg flex flex-col gap-6">
+        <section className="bg-white p-6 pb-9 rounded-lg flex flex-col gap-6">
           <h3 className="text-3xl">Contact data</h3>
-          <label htmlFor="phone" className="">
+          <label htmlFor="phone">
             <p>Phone to users can use to contact you</p>
             <Input
               className="mt-2"
@@ -143,7 +143,7 @@ export default function AddStoreForm({ storeData }: IAddStoreForm) {
               placeholder="Contact phone"
             />
           </label>
-          <label htmlFor="whatsapp" className="mt-5">
+          <label htmlFor="whatsapp">
             <p>Whatsapp to contact to order</p>
             <Input
               className="mt-2"
@@ -154,7 +154,7 @@ export default function AddStoreForm({ storeData }: IAddStoreForm) {
               placeholder="Whatsapp"
             />
           </label>
-          <label htmlFor="contact_mail" className="mt-5">
+          <label htmlFor="contact_mail">
             <p>Contact mail</p>
             <Input
               className="mt-2"
@@ -167,12 +167,12 @@ export default function AddStoreForm({ storeData }: IAddStoreForm) {
           </label>
         </section>
 
-        <section className="bg-white p-6 rounded-lg flex flex-col gap-6">
+        <section className="bg-white p-6 pb-9 rounded-lg flex flex-col gap-6">
           <h3 className="text-3xl">Social media</h3>
           {formData.social_media.map((item, index) => (
             <div className="flex" key={index}>
-              <div className="flex-col flex w-full">
-                <label htmlFor="name" className="mt-5">
+              <div className="flex-col flex w-full gap-6">
+                <label htmlFor="name">
                   <p>Name</p>
                   <Input
                     className="mt-2"
@@ -183,7 +183,7 @@ export default function AddStoreForm({ storeData }: IAddStoreForm) {
                     placeholder="Social media name"
                   />
                 </label>
-                <label htmlFor="url" className="mt-5">
+                <label htmlFor="url">
                   <p>URL</p>
                   <Input
                     className="mt-2"
@@ -211,7 +211,7 @@ export default function AddStoreForm({ storeData }: IAddStoreForm) {
 
           <Button
             variant="outline"
-            className="self-start"
+            className="self-end"
             type="button"
             onClick={addSocialMediaField}>
             <PlusIcon className="w-4" />
