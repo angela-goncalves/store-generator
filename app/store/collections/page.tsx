@@ -18,7 +18,7 @@ export default async function Collections({
           </h1>
         </div>
         <AddCollections
-          dataCollections={collectionsData[0]}
+          dataCollections={collectionsData}
           storeId={searchParams.id}
         />
       </div>

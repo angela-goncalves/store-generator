@@ -355,9 +355,12 @@ export default function AddProductsForm({
                       type="number"
                       name="stock_level"
                       value={variant.stock_level}
-                      className=""
                       onChange={(e) =>
-                        handleVariantChange(variant.id, "stock", e.target.value)
+                        handleVariantChange(
+                          variant.id,
+                          "stock_level",
+                          e.target.value
+                        )
                       }
                     />
                   </label>

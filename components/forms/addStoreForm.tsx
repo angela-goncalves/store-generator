@@ -4,6 +4,13 @@ import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { handleInsertStore } from "@/lib/insertSupabase";
 import { Button } from "../ui/button";
+import { InfoIcon } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
 interface IStore {
   id: string;
@@ -13,7 +20,6 @@ interface IStore {
 }
 
 export default function AddStoreForm() {
-  const [addComment, setAddComment] = useState(false);
   const [formData, setFormData] = useState<IStore>({
     id: "",
     name: "",
@@ -32,7 +38,7 @@ export default function AddStoreForm() {
         action={() => handleInsertStore(formData)}
         className="h-full flex flex-col gap-6 mt-6">
         <section className="bg-white p-6 rounded-lg flex flex-col gap-6">
-          <div className="text-3xl">
+          <div className="text-3xl flex justify-between">
             <label htmlFor="name">
               <p>What is your store's name?</p>
               <Input
@@ -42,18 +48,25 @@ export default function AddStoreForm() {
                 required
                 value={formData.name}
                 onChange={handleInputChange}
-                onFocus={() => setAddComment(true)}
-                onBlur={() => setAddComment(false)}
                 placeholder="Name of your store"
               />
             </label>
-            {addComment ? (
-              <h3 className="text-neutral-dark text-sm">
-                Don't worry, you can change this info later
-              </h3>
-            ) : (
-              <p className="h-5"></p>
-            )}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild className="self-end">
+                  <InfoIcon color="#3b82f6" />
+                </TooltipTrigger>
+                <TooltipContent className="bg-gray-100">
+                  <h3 className="black text-sm w-44">
+                    This name will be used in the url, so we recommend using a
+                    name in lowercase, with a hyphen, underscore, or period,
+                    such as <i>storename</i>, <i>store.name</i>,{" "}
+                    <i>store-name</i>, or <i>store_name</i>. If it is written in
+                    any other way, it might not work.
+                  </h3>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
           <label htmlFor="description" className="text-3xl">
             <p>What is your site about? (optional)</p>

@@ -93,7 +93,7 @@ export default function ShoppingBag({
     <Sheet>
       <SheetTrigger asChild>
         <Button variant="ghost" className="relative">
-          {count > 1 && (
+          {count > 0 && (
             <div className="absolute top-0 right-2 bg-secondary text-primary rounded-full px-1 p-0">
               {count}
             </div>
